@@ -20,6 +20,12 @@ Con MonyMonty, estamos construyendo una comunidad comprometida en capacitar a la
 
 Para obtener más información sobre el proyecto, visita nuestras redes sociales y mantente al tanto de las últimas novedades:
 
+<p align="left">
+
+</p>
+
+## Conéctate con el creador
+
 <p align="left"> 
     <a href="https://discord.com/users/Oug#6073" target="_blank" rel="noreferrer">
         <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/discord.svg" width="32" height="32" />
@@ -34,5 +40,3 @@ Para obtener más información sobre el proyecto, visita nuestras redes sociales
         <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" width="32" height="32" />
     </a>
 </p>
-
-
