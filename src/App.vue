@@ -1,13 +1,24 @@
-<script setup>
-
-</script>
-
 <template>
-  <div>
-  hola App
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link>
+      <router-link to="/about">About</router-link>
+      <!-- Agrega más enlaces de navegación según tus rutas -->
+    </nav>
+    <router-view></router-view>
   </div>
 </template>
 
-<style scoped>
+<script>
+export default {
+  name: 'App'
+};
+</script>
 
+<style>
+/* Estilos para tu aplicación */
+nav {
+  display: flex;
+  gap: 10px;
+}
 </style>
