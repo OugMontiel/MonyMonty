@@ -3,7 +3,7 @@
     <h1>Hola desde vista:</h1>
 
     <!-- Iteramos sobre los datos y pasamos cada uno al componente carMov -->
-    <car-mov v-for="(transaccion, index) in transacciones" :key="index" :info="datos" />
+    <car-mov v-for="(transaccion, index) in transacciones" :key="index" :info="transaccion" />
   </main>
 </template>
 
@@ -28,17 +28,17 @@ export default {
           throw new Error("Error al cargar los datos");
         }
         datos.value = await response.json();
-        console.log("Datos cargados:", datos.value); // Verificar que los datos se cargaron correctamente
+        // console.log("Datos cargados:", datos.value); // Verificar que los datos se cargaron correctamente
 
         transacciones.value = datos.value[0].transacciones;
-        console.log("Transacciones cargadas:", transacciones.value); // Verificar que las transacciones se extrajeron correctamente
+        // console.log("Transacciones cargadas:", transacciones.value); // Verificar que las transacciones se extrajeron correctamente
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
     onMounted(() => {
-      console.log("Componente montado, iniciando carga de datos."); // Verificar que el componente se ha montado
+      // console.log("Componente montado, iniciando carga de datos."); // Verificar que el componente se ha montado
       cargarDatos();
     });
 

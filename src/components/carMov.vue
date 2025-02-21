@@ -1,11 +1,54 @@
 <template>
-    <h1>
-        hola desde carMov
-    </h1>
+  <div class="card">
+    <h2>{{ info.fecha }}</h2>
+    <p>
+      <strong>Categoría:</strong>
+      {{ Object.keys(info.categoria)[0]}} -
+      {{ Object.values(info.categoria)[0]}}
+    </p>
+    <p>
+      <strong>Concepto:</strong>
+      {{ Object.keys(info.concepto)[0]}} -
+      {{ Object.values(info.concepto)[0]}}
+    </p>
+    <p>
+      <strong>Entidad:</strong>
+      {{ Object.keys(info.entidad)[0]}} -
+      {{ Object.values(info.entidad)[0]}}
+    </p>
+    <p>
+      <strong>Ingreso/Egreso:</strong>
+      {{ info.ingreso !== "$0,00" ? info.ingreso : info.egreso }}
+    </p>
+    <p>
+      <strong>Divisa:</strong>
+      {{ Object.keys(info.divisa)[0] || "Sin divisa" }} -
+      {{ Object.values(info.divisa)[0] || "Sin nombre" }}
+    </p>
+  </div>
 </template>
 
 <script>
-
+export default {
+  name: "CarMov",
+  props: {
+    info: {
+      type: Object,
+      required: true,
+    },
+  },
+  mounted() {
+    console.log("Datos de la transacción:", this.info); // Verificar que los datos se reciban correctamente
+  },
+  methods: {
+    getValor() {
+      // Devuelve el ingreso o egreso basado en cuál tiene valor
+      return this.info.ingreso !== "$0,00"
+        ? this.info.ingreso
+        : this.info.egreso;
+    },
+  },
+};
 </script>
 
 <style>
