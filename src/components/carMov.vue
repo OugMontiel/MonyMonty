@@ -1,27 +1,11 @@
 <template>
-    hola desde car 
-  <div class="card">
-    <h2>{{ info.categoria.nombre }}</h2>
-    <p><strong>Subcategoría:</strong> {{ info.subCategoria.nombre }}</p>
-    <p><strong>Concepto:</strong> {{ info.concepto }}</p>
-    <p><strong>Entidad:</strong> {{ info.entidad.nombre }}</p>
-    <p><strong>Egreso:</strong> {{ info.egreso }}</p>
-    <p><strong>Ingreso:</strong> {{ info.ingreso }}</p>
-    <p><strong>Divisa:</strong> {{ info.divisa.codigo }}</p>
-    <p><strong>Fecha:</strong> {{ info.fecha }}</p>
-  </div>
+    <h1>
+        hola desde carMov
+    </h1>
 </template>
 
 <script>
-export default {
-  name: "CarMov",
-  props: {
-    info: {
-      type: Object,
-      required: true,
-    },
-  },
-};
+
 </script>
 
 <style>
