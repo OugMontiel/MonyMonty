@@ -10,7 +10,7 @@
 
       <!-- Categoría -->
       <div>
-<!-- titulo -->
+        <!-- titulo -->
         <label for="categoria">Categoría:</label>
 
         <!-- Seccion de categorias -->
@@ -35,11 +35,11 @@
           v-model="nuevaCategoria"
           placeholder="Nueva categoría"
         />
-              </div>
+      </div>
 
       <!-- Subcategoría -->
       <div>
-<!-- titulo -->
+        <!-- titulo -->
         <label for="subCategoria">Subcategoría:</label>
 
         <!-- Seccion de subcategorias -->
@@ -64,11 +64,11 @@
           v-model="nuevaSubCategoria"
           placeholder="Nueva subcategoría"
         />
-              </div>
+      </div>
 
       <!-- Concepto -->
       <div>
-<!-- titulo -->
+        <!-- titulo -->
         <label for="concepto">Concepto:</label>
 
         <!-- imput de concepto -->
@@ -77,7 +77,7 @@
 
       <!-- Entidad -->
       <div>
-<!-- Titulo -->
+        <!-- Titulo -->
         <label for="entidad">Entidad:</label>
 
         <!-- seleccion de entidades -->
@@ -96,11 +96,11 @@
 
         <!-- imput de nueva entidad -->
         <input type="text" v-model="nuevaEntidad" placeholder="Nueva entidad" />
-              </div>
+      </div>
 
       <!-- Cuenta -->
       <div>
-<!-- Titulo -->
+        <!-- Titulo -->
         <label for="cuenta">N° de Cuenta</label>
 
         <!-- seleccion de cuentas -->
@@ -119,11 +119,11 @@
 
         <!-- imput de nueva cuenta -->
         <input type="text" v-model="nuevaCuenta" placeholder="Nueva cuenta" />
-              </div>
+      </div>
 
       <!-- Egreso -->
       <div>
-<!-- Titulo -->
+        <!-- Titulo -->
         <label for="egreso">Egreso:</label>
 
         <!-- imput de egreso -->
@@ -137,7 +137,7 @@
 
       <!-- Ingreso -->
       <div>
-<!-- Titulo -->
+        <!-- Titulo -->
         <label for="ingreso">Ingreso:</label>
 
         <!-- imput de Ingreso -->
@@ -151,7 +151,7 @@
 
       <!-- Divisa -->
       <div>
-<!-- Titulo -->
+        <!-- Titulo -->
         <label for="divisa">Divisa:</label>
 
         <!-- Seleccion de Divisa -->
@@ -170,10 +170,12 @@
 
         <!-- imput de nueva divisa -->
         <input type="text" v-model="nuevaDivisa" placeholder="Nueva divisa" />
-              </div>
+      </div>
 
       <!-- Boton de envio  -->
-      <button type="submit" @click="AgregarDatos()">Agregar Transacción</button>
+      <button type="submit" >
+        Agregar Transacción
+      </button>
     </form>
   </div>
 </template>
@@ -184,6 +186,8 @@ import { ref, watch, onMounted } from "vue";
 export default {
   name: "AddTransaction",
   setup() {
+    //  Definicion de variables
+
     let datos = ref([]);
     let documento = ref({});
 
@@ -214,6 +218,8 @@ export default {
       divisa: "",
     });
 
+    // Funciones
+
     const cargarDatos = async () => {
       try {
         const response = await fetch("/DiegoMontiel.json");
@@ -227,21 +233,30 @@ export default {
         documento.value = datos.value.find(
           (item) => item.nombre === "Diego Montiel"
         );
-// console.log("Documento:", documento.value);
+
+        // valido si hay documentos
+        if (!documento) {
+          throw new Error(
+            "No se encontró el documento con el nombre 'Diego Montiel'"
+          );
+        }
+        // console.log("Documento:", documento.value);
 
         //  Cargar variables de categoría, entidades y divisa por separado para poder agregar nuevas opciones
         categorias.value = Object.keys(documento.value.categorias);
-// console.log("Variables de categoria:", categorias);
+        // console.log("Variables de categoria:", categorias);
 
         entidades.value = Object.keys(documento.value.entidades);
-// console.log("Variables de entidades:", entidades);
+        // console.log("Variables de entidades:", entidades);
 
         divisa.value = Object.keys(documento.value.divisas);
-// console.log("Variables de divisa:", divisa);
+        // console.log("Variables de divisa:", divisa);
       } catch (error) {
         console.error("Error:", error);
       }
     };
+
+    // Funciones para agregar nuevos elementos
 
     const agregarCategoria = () => {
       if (
@@ -284,35 +299,70 @@ export default {
       }
     };
 
-    const agregarTransaccion = () => {
-      console.log("Nueva transacción:", transaccion.value);
-      
-      transaccion.value = {
-        fecha: "",
-        categoria: "",
-        subCategoria: "",
-        concepto: "",
-        entidad: "",
-        cuenta: "",
-        egreso: 0,
-        ingreso: 0,
-        divisa: "",
+    // Funcion para agregar la nueva transaccion
+
+    const agregarTransaccion = async () => {
+      // console.log("Datos transacción:", transaccion.value);
+
+      // Estructura de datos
+      const DatosEstructurados = {
+        fecha: transaccion.value.fecha,
+        categoria: {
+          [transaccion.value.categoria]: transaccion.value.subCategoria,
+        },
+        concepto: {
+          [transaccion.value.concepto]: transaccion.value.descripcion,
+        },
+        entidad: {
+          [transaccion.value.entidad]: transaccion.value.cuenta,
+        },
+        ingreso: transaccion.value.ingreso,
+        egreso: transaccion.value.egreso,
+        divisa: {
+          [transaccion.value.divisa]:
+            documento.value.divisas[transaccion.value.divisa][0],
+        },
       };
+      
+      // Comparar ingreso y egreso y eliminar el que sea 0
+      if (DatosEstructurados.ingreso === 0) {
+        delete DatosEstructurados.ingreso; // Eliminar ingreso si es 0
+      } else if (DatosEstructurados.egreso === 0) {
+        delete DatosEstructurados.egreso; // Eliminar egreso si es 0
+      } else {
+        console.log("Error: Ingreso y egreso no pueden ser 0 al mismo tiempo");
+      }
+      
+      // console.log("Datos estructurados:", DatosEstructurados);
+      
+      try {
+        
+        // Agregar la nueva transacción
+        console.log("Transacción a gregadar:", DatosEstructurados);
+
+        documento.value.transacciones.push(DatosEstructurados);
+
+        console.log("Datos actualizados:", documento.value.transacciones.slice(-2));
+      } catch (error) {
+        console.error("Error al agregar la transacción:", error);
+      }
     };
+
+    // Observa cambios en variables
 
     // Observa cambios en la categoría seleccionada para actualizar las subCategorias
     watch(
       () => transaccion.value.categoria,
       (categoriaSeleccionada) => {
-// console.log("Categoría seleccionada:", categoriaSeleccionada); // Muestra la nueva categoría seleccionada
+        // console.log("Categoría seleccionada:", categoriaSeleccionada); // Muestra la nueva categoría seleccionada
 
         if (categoriaSeleccionada) {
           subCategorias.value =
-documento.value.categorias[categoriaSeleccionada] || [];
-// console.log("Subcategorías actualizadas:", subCategorias.value); // Muestra las subcategorías actualizadas
-                } else {
+            documento.value.categorias[categoriaSeleccionada] || [];
+          // console.log("Subcategorías actualizadas:", subCategorias.value); // Muestra las subcategorías actualizadas
+        } else {
           subCategorias.value = [];
-// console.log("No hay categoría seleccionada, subcategorías vacías."); // Mensaje cuando no hay categoría seleccionada
+          // console.log("No hay categoría seleccionada, subcategorías vacías."); // Mensaje cuando no hay categoría seleccionada
         }
       }
     );
@@ -325,18 +375,20 @@ documento.value.categorias[categoriaSeleccionada] || [];
 
         if (cuentaSeleccionada) {
           cuentas.value = documento.value.entidades[cuentaSeleccionada] || [];
-// console.log("Cuentas actualizadas:", cuentas.value); // Muestra las cuentas actualizadas
+          // console.log("Cuentas actualizadas:", cuentas.value); // Muestra las cuentas actualizadas
         } else {
           cuentas.value = [];
-// console.log("No hay entidad seleccionada, cuentas vacías."); // Mensaje cuando no hay entidad seleccionada
+          // console.log("No hay entidad seleccionada, cuentas vacías."); // Mensaje cuando no hay entidad seleccionada
         }
       }
     );
 
+    // Carga los datos al montar el componente
     onMounted(() => {
       cargarDatos();
     });
 
+    // Retorno de variables y funciones
     return {
       transaccion,
       agregarTransaccion,

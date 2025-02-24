@@ -5258,12 +5258,12 @@
       "Transferencia ": ["A efectivo", "De otras cuentas"]
     },
     "entidades": {
-      "Nequi": [],
-      "Itau": [],
+      "Nequi": [318],
+      "Itau": [7416],
       "Visa Oro": [],
       "Cooprofesores Belcy": [],
       "Cooprofesores": [],
-      "Efectivo": []
+      "Efectivo": ["Cartera"]
     },
     "divisas": {
       "COP": ["Pesos Colombianos"]
