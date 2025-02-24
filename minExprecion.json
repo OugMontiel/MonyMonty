@@ -2,40 +2,40 @@
   {
     "transacciones": [
       {
-          "fecha": "16/08/2022",
-          "categoria": {
-              "Trasferencia": "Trasferencia"
-          },
-          "concepto": {
-              "Trasferencia": ""
-          },
-          "entidad": {
-              "Nequi": ""
-          },
-          "ingreso": "$ 80.000",
-          "divisa": {
-              "COP": "Pesos Colombianos"
-          }
+        "fecha": "16/08/2022",
+        "categoria": {
+          "Trasferencia": "Trasferencia"
+        },
+        "concepto": {
+          "Trasferencia": ""
+        },
+        "entidad": {
+          "Nequi": ""
+        },
+        "ingreso": "$ 80.000",
+        "divisa": {
+          "COP": "Pesos Colombianos"
+        }
       },
       {
-          "fecha": "20/09/2022",
-          "categoria": {
-              "Trasferencia": "Trasferencia"
-          },
-          "concepto": {
-              "BBVA": ""
-          },
-          "entidad": {
-              "Itau": ""
-          },
-          "ingreso": "$ 60.000",
-          "divisa": {
-              "COP": "Pesos Colombianos"
-          }
-      }    
-  ],
+        "fecha": "20/09/2022",
+        "categoria": {
+          "Trasferencia": "Trasferencia"
+        },
+        "concepto": {
+          "BBVA": ""
+        },
+        "entidad": {
+          "Itau": ""
+        },
+        "ingreso": "$ 60.000",
+        "divisa": {
+          "COP": "Pesos Colombianos"
+        }
+      }
+    ],
     "nombre": "Diego Montiel",
-    "Categorías": {
+    "categoria": {
       "Sueldo": ["Pagos", "Intereses", "Cuota de alimentos"],
       "Inicio": ["Inicio"]
     },

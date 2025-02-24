@@ -5,12 +5,7 @@
       <!-- Fecha -->
       <div>
         <label for="fecha">Fecha:</label>
-        <input
-          type="date"
-          id="fecha"
-          v-model="nuevaTransaccion.fecha"
-          required
-        />
+        <input type="date" id="fecha" v-model="transaccion.fecha" required />
       </div>
 
       <!-- Categoría -->
@@ -19,7 +14,7 @@
         <label for="categoria">Categoría:</label>
 
         <!-- Seccion de categorias -->
-        <select v-model="nuevaTransaccion.categoria">
+        <select v-model="transaccion.categoria">
           <option
             v-for="(categoria, index) in categorias"
             :key="index"
@@ -44,8 +39,11 @@
 
       <!-- Subcategoría -->
       <div>
+<!-- titulo -->
         <label for="subCategoria">Subcategoría:</label>
-        <select v-model="nuevaTransaccion.subCategoria">
+
+        <!-- Seccion de subcategorias -->
+        <select v-model="transaccion.subCategoria">
           <option
             v-for="(subCategoria, index) in subCategorias"
             :key="index"
@@ -54,31 +52,41 @@
             {{ subCategoria }}
           </option>
         </select>
+
+        <!-- boton para agregar nueva subcategoria -->
+        <button type="button" @click="agregarSubCategoria">
+          Agregar Subcategoría
+        </button>
+
+        <!-- imput de nueva subcategoria -->
         <input
           type="text"
           v-model="nuevaSubCategoria"
           placeholder="Nueva subcategoría"
         />
-        <button type="button" @click="agregarSubCategoria">
-          Agregar Subcategoría
-        </button>
-      </div>
+              </div>
 
       <!-- Concepto -->
       <div>
+<!-- titulo -->
         <label for="concepto">Concepto:</label>
+
+        <!-- imput de concepto -->
         <input
           type="text"
           id="concepto"
-          v-model="nuevaTransaccion.concepto"
+          v-model="transaccion.concepto"
           required
         />
       </div>
 
       <!-- Entidad -->
       <div>
+<!-- Titulo -->
         <label for="entidad">Entidad:</label>
-        <select v-model="nuevaTransaccion.entidad">
+
+        <!-- seleccion de entidades -->
+        <select v-model="transaccion.entidad">
           <option
             v-for="(entidad, index) in entidades"
             :key="index"
@@ -87,14 +95,21 @@
             {{ entidad }}
           </option>
         </select>
-        <input type="text" v-model="nuevaEntidad" placeholder="Nueva entidad" />
+
+        <!-- boton para agregar nueva entidad -->
         <button type="button" @click="agregarEntidad">Agregar Entidad</button>
-      </div>
+
+        <!-- imput de nueva entidad -->
+        <input type="text" v-model="nuevaEntidad" placeholder="Nueva entidad" />
+              </div>
 
       <!-- Cuenta -->
       <div>
+<!-- Titulo -->
         <label for="cuenta">N° de Cuenta</label>
-        <select v-model="nuevaTransaccion.cuenta">
+
+        <!-- seleccion de cuentas -->
+        <select v-model="transaccion.cuenta">
           <option
             v-for="(cuenta, index) in Cuentas"
             :key="index"
@@ -103,9 +118,13 @@
             {{ cuenta }}
           </option>
         </select>
-        <input type="text" v-model="nuevaCuenta" placeholder="Nueva cuenta" />
+
+        <!-- boton para agregar nueva cuenta -->
         <button type="button" @click="agregarCuenta">Agregar Cuenta</button>
-      </div>
+
+        <!-- imput de nueva cuenta -->
+        <input type="text" v-model="nuevaCuenta" placeholder="Nueva cuenta" />
+              </div>
 
       <!-- Egreso -->
       <div>
@@ -113,7 +132,7 @@
         <input
           type="number"
           id="egreso"
-          v-model="nuevaTransaccion.egreso"
+          v-model="transaccion.egreso"
           step="0.01"
         />
       </div>
@@ -124,7 +143,7 @@
         <input
           type="number"
           id="ingreso"
-          v-model="nuevaTransaccion.ingreso"
+          v-model="transaccion.ingreso"
           step="0.01"
         />
       </div>
@@ -132,14 +151,21 @@
       <!-- Divisa -->
       <div>
         <label for="divisa">Divisa:</label>
-        <input
-          type="text"
-          id="divisa"
-          v-model="nuevaTransaccion.divisa"
-          required
-        />
+        <select v-model="divisa">
+          <option
+            v-for="(divisa, index) in divisa"
+            :key="index"
+            :value="divisa"
+          >
+            {{ divisa }}
+          </option>
+        </select>
+        <input type="text" v-model="nuevaDivisa" placeholder="Nueva divisa" />
+        <button type="button" @click="agregarDivisa">Agregar Divisa</button>
       </div>
-      <button type="submit">Agregar Transacción</button>
+
+      <!-- Boton de envio  -->
+      <button type="submit" @click="AgregarDatos()">Agregar Transacción</button>
     </form>
   </div>
 </template>
@@ -168,7 +194,7 @@ export default {
     let divisa = ref([]);
     let nuevaDivisa = ref("");
 
-    let nuevaTransaccion = ref({
+    let transaccion = ref({
       fecha: "",
       categoria: "",
       subCategoria: "",
@@ -193,17 +219,17 @@ export default {
         documento.value = datos.value.find(
           (item) => item.nombre === "Diego Montiel"
         );
-        console.log("Documento:", documento.value);
+// console.log("Documento:", documento.value);
 
         //  Cargar variables de categoría, entidades y divisa por separado para poder agregar nuevas opciones
         categorias.value = Object.keys(documento.value.categorias);
-        console.log("Variables de categoria:", categorias);
+// console.log("Variables de categoria:", categorias);
 
         entidades.value = Object.keys(documento.value.entidades);
-        console.log("Variables de entidades:", entidades);
+// console.log("Variables de entidades:", entidades);
 
         divisa.value = Object.keys(documento.value.divisas);
-        console.log("Variables de divisa:", divisa);
+// console.log("Variables de divisa:", divisa);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -251,9 +277,9 @@ export default {
     };
 
     const agregarTransaccion = () => {
-      console.log("Nueva transacción:", nuevaTransaccion.value);
+      console.log("Nueva transacción:", transaccion.value);
       
-      nuevaTransaccion.value = {
+      transaccion.value = {
         fecha: "",
         categoria: "",
         subCategoria: "",
@@ -268,19 +294,24 @@ export default {
 
     // Observa cambios en la categoría seleccionada para actualizar las subCategorias
     watch(
-      () => nuevaTransaccion.value.categoria,
+      () => transaccion.value.categoria,
       (nuevaCategoria) => {
+// console.log("Categoría seleccionada:", nuevaCategoria); // Muestra la nueva categoría seleccionada
+
         if (nuevaCategoria) {
-          subCategorias.value = documento.categorias[nuevaCategoria] || [];
+          subCategorias.value = documento.value.categorias[nuevaCategoria] || [];
+// console.log("Subcategorías actualizadas:", subCategorias.value); // Muestra las subcategorías actualizadas
+        
         } else {
           subCategorias.value = [];
+// console.log("No hay categoría seleccionada, subcategorías vacías."); // Mensaje cuando no hay categoría seleccionada
         }
       }
     );
 
     // Observa cambios en la entidad seleccionada para actualizar las cuentas
     watch(
-      () => nuevaTransaccion.value.entidad,
+      () => transaccion.value.entidad,
       (nuevaCuenta) => {
         if (nuevaCuenta) {
           cuentas.value = documento.entidades[nuevaCuenta] || [];
@@ -295,7 +326,7 @@ export default {
     });
 
     return {
-      nuevaTransaccion,
+      transaccion,
       agregarTransaccion,
 
       categorias,
