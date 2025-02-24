@@ -5264,6 +5264,9 @@
       "Cooprofesores Belcy": [],
       "Cooprofesores": [],
       "Efectivo": []
+    },
+    "divisas": {
+      "COP": ["Pesos Colombianos"]
     }
   }
 ]
