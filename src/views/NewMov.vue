@@ -126,24 +126,25 @@ import { ref, watch, onMounted } from "vue";
 export default {
   name: "AddTransaction",
   setup() {
-    const datos = ref([]);
+    let datos = ref([]);
+    let documento = ref({});
 
-    const Categorías = ref([]);
-    const nuevaCategoria = ref("");
+    let Categorías = ref([]);
+    let nuevaCategoria = ref("");
 
-    const subCategorias = ref([]);
-    const nuevaSubCategoria = ref("");
+    let subCategorias = ref([]);
+    let nuevaSubCategoria = ref("");
 
-    const entidades = ref([]);
-    const nuevaEntidad = ref("");
+    let entidades = ref([]);
+    let nuevaEntidad = ref("");
 
-    const Cuentas = ref([]);
-    const nuevaCuenta = ref("");
+    let Cuentas = ref([]);
+    let nuevaCuenta = ref("");
 
-    // const divisa = ref([]);
-    // const nuevaDivisa = ref("");
+    let divisa = ref([]);
+    let nuevaDivisa = ref("");
 
-    const nuevaTransaccion = ref({
+    let nuevaTransaccion = ref({
       fecha: "",
       categoria: "",
       subCategoria: "",
@@ -164,11 +165,21 @@ export default {
         datos.value = await response.json();
         // console.log("Datos cargados:", datos.value); // Verificar que los datos se cargaron correctamente
 
-        Categorías.value = Object.keys(datos.value[0].Categorías);
-        entidades.value = Object.keys(datos.value[0].entidades);
-        // divisa.value = Object.keys(datos.value[0].divisa);
-        console.log("Variables de categoria:", Categorías.key);
-        console.log("Variables de entidades:", entidades.key);
+        // Buscar el documento con el nombre 'Diego Montiel'
+        documento.value = datos.value.find(
+          (item) => item.nombre === "Diego Montiel"
+        );
+        console.log("Documento:", documento.value);
+
+        //  Cargar variables de categoría, entidades y divisa por separado para poder agregar nuevas opciones
+        Categorías = Object.keys(documento.value.Categorías);
+        console.log("Variables de categoria:", Categorías);
+
+        entidades = Object.keys(documento.value.entidades);
+        console.log("Variables de entidades:", entidades);
+
+        divisa = Object.keys(documento.value.divisas);
+        console.log("Variables de divisa:", divisa);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -208,12 +219,12 @@ export default {
       }
     };
 
-    // const agregarDivisa = () => {
-    //   if (nuevaDivisa.value && !divisa.value.includes(nuevaDivisa.value)) {
-        // divisa.value.push(nuevaDivisa.value);
-        // nuevaDivisa.value = "";
-    //   }
-    // };
+    const agregarDivisa = () => {
+      if (nuevaDivisa.value && !divisa.value.includes(nuevaDivisa.value)) {
+        divisa.value.push(nuevaDivisa.value);
+        nuevaDivisa.value = "";
+      }
+    };
 
     const agregarTransaccion = () => {
       console.log("Nueva transacción:", nuevaTransaccion.value);
@@ -236,7 +247,7 @@ export default {
       () => nuevaTransaccion.value.categoria,
       (nuevaCategoria) => {
         if (nuevaCategoria) {
-          subCategorias.value = datos.value[0].Categorías[nuevaCategoria] || [];
+          subCategorias.value = documento.Categorías[nuevaCategoria] || [];
         } else {
           subCategorias.value = [];
         }
@@ -248,7 +259,7 @@ export default {
       () => nuevaTransaccion.value.entidad,
       (nuevaCuenta) => {
         if (nuevaCuenta) {
-          cuentas.value = datos.value[0].entidades[nuevaCuenta] || [];
+          cuentas.value = documento.entidades[nuevaCuenta] || [];
         } else {
           cuentas.value = [];
         }
@@ -279,9 +290,9 @@ export default {
       nuevaCuenta,
       agregarCuenta,
 
-    //   divisa,
-    //   nuevaDivisa,
-    //   agregarDivisa,
+      divisa,
+      nuevaDivisa,
+      agregarDivisa,
     };
   },
 };
