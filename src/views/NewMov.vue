@@ -72,12 +72,7 @@
         <label for="concepto">Concepto:</label>
 
         <!-- imput de concepto -->
-        <input
-          type="text"
-          id="concepto"
-          v-model="transaccion.concepto"
-          required
-        />
+        <input type="text" id="concepto" v-model="transaccion.concepto" />
       </div>
 
       <!-- Entidad -->
@@ -111,7 +106,7 @@
         <!-- seleccion de cuentas -->
         <select v-model="transaccion.cuenta">
           <option
-            v-for="(cuenta, index) in Cuentas"
+            v-for="(cuenta, index) in cuentas"
             :key="index"
             :value="cuenta"
           >
@@ -128,7 +123,10 @@
 
       <!-- Egreso -->
       <div>
+<!-- Titulo -->
         <label for="egreso">Egreso:</label>
+
+        <!-- imput de egreso -->
         <input
           type="number"
           id="egreso"
@@ -139,7 +137,10 @@
 
       <!-- Ingreso -->
       <div>
+<!-- Titulo -->
         <label for="ingreso">Ingreso:</label>
+
+        <!-- imput de Ingreso -->
         <input
           type="number"
           id="ingreso"
@@ -150,8 +151,11 @@
 
       <!-- Divisa -->
       <div>
+<!-- Titulo -->
         <label for="divisa">Divisa:</label>
-        <select v-model="divisa">
+
+        <!-- Seleccion de Divisa -->
+        <select v-model="transaccion.divisa">
           <option
             v-for="(divisa, index) in divisa"
             :key="index"
@@ -160,9 +164,13 @@
             {{ divisa }}
           </option>
         </select>
-        <input type="text" v-model="nuevaDivisa" placeholder="Nueva divisa" />
+
+        <!-- boton para agregar nueva divisa -->
         <button type="button" @click="agregarDivisa">Agregar Divisa</button>
-      </div>
+
+        <!-- imput de nueva divisa -->
+        <input type="text" v-model="nuevaDivisa" placeholder="Nueva divisa" />
+              </div>
 
       <!-- Boton de envio  -->
       <button type="submit" @click="AgregarDatos()">Agregar Transacción</button>
@@ -188,7 +196,7 @@ export default {
     let entidades = ref([]);
     let nuevaEntidad = ref("");
 
-    let Cuentas = ref([]);
+    let cuentas = ref([]);
     let nuevaCuenta = ref("");
 
     let divisa = ref([]);
@@ -263,8 +271,8 @@ export default {
     };
 
     const agregarCuenta = () => {
-      if (nuevaCuenta.value && !Cuentas.value.includes(nuevaCuenta.value)) {
-        Cuentas.value.push(nuevaCuenta.value);
+      if (nuevaCuenta.value && !cuentas.value.includes(nuevaCuenta.value)) {
+        cuentas.value.push(nuevaCuenta.value);
         nuevaCuenta.value = "";
       }
     };
@@ -295,14 +303,14 @@ export default {
     // Observa cambios en la categoría seleccionada para actualizar las subCategorias
     watch(
       () => transaccion.value.categoria,
-      (nuevaCategoria) => {
-// console.log("Categoría seleccionada:", nuevaCategoria); // Muestra la nueva categoría seleccionada
+      (categoriaSeleccionada) => {
+// console.log("Categoría seleccionada:", categoriaSeleccionada); // Muestra la nueva categoría seleccionada
 
-        if (nuevaCategoria) {
-          subCategorias.value = documento.value.categorias[nuevaCategoria] || [];
+        if (categoriaSeleccionada) {
+          subCategorias.value =
+documento.value.categorias[categoriaSeleccionada] || [];
 // console.log("Subcategorías actualizadas:", subCategorias.value); // Muestra las subcategorías actualizadas
-        
-        } else {
+                } else {
           subCategorias.value = [];
 // console.log("No hay categoría seleccionada, subcategorías vacías."); // Mensaje cuando no hay categoría seleccionada
         }
@@ -312,11 +320,15 @@ export default {
     // Observa cambios en la entidad seleccionada para actualizar las cuentas
     watch(
       () => transaccion.value.entidad,
-      (nuevaCuenta) => {
-        if (nuevaCuenta) {
-          cuentas.value = documento.entidades[nuevaCuenta] || [];
+      (cuentaSeleccionada) => {
+        // console.log("Entidad seleccionada:", cuentaSeleccionada); // Muestra la nueva entidad seleccionada
+
+        if (cuentaSeleccionada) {
+          cuentas.value = documento.value.entidades[cuentaSeleccionada] || [];
+// console.log("Cuentas actualizadas:", cuentas.value); // Muestra las cuentas actualizadas
         } else {
           cuentas.value = [];
+// console.log("No hay entidad seleccionada, cuentas vacías."); // Mensaje cuando no hay entidad seleccionada
         }
       }
     );
@@ -341,7 +353,7 @@ export default {
       nuevaEntidad,
       agregarEntidad,
 
-      Cuentas,
+      cuentas,
       nuevaCuenta,
       agregarCuenta,
 
