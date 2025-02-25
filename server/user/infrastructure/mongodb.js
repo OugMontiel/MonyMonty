@@ -1,5 +1,5 @@
 // Configuración y conexión a MongoDB.
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 class ConnectToDatabase {
   static instanceConnect;
   db;
@@ -26,7 +26,7 @@ class ConnectToDatabase {
       this.db = this.connection.db(process.env.MONGO_DB_NAME);
     } catch (error) {
       this.connection = undefined;
-      throw new Error('Error connecting');
+      throw new Error("Error connecting");
     }
   }
   async connectClose() {

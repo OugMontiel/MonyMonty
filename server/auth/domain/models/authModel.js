@@ -1,4 +1,4 @@
-const ConnectToDatabase = require('../../infrastructure/mongodb');
+const ConnectToDatabase = require("../../infrastructure/mongodb");
 
 class authModel {
   constructor() {

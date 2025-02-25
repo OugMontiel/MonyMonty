@@ -60,7 +60,7 @@ class UserService {
       throw new Error(
         JSON.stringify({
           status: 404,
-          message: 'User not found or could not be deleted',
+          message: "User not found or could not be deleted",
         })
       );
     }
@@ -98,7 +98,6 @@ class UserService {
   //     );
   //   return token;
   // }
-
 
   // async searchUsersByName(name) {
   //   return await this.userRepository.searchByName(name);

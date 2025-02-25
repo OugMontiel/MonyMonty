@@ -10,7 +10,7 @@ class UserController {
   validarExpres(req, res) {
     const errors = validationResult(req);
     // console.error("errors:", errors);
-    if (!errors.isEmpty()){
+    if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });
       return; // Detener la ejecución si hay errores
     }
@@ -54,7 +54,10 @@ class UserController {
       // Validar si hay errores
       if (!this.validarExpres(req, res)) return;
       // Actualizar el Usuario
-      const user = await this.insUserService.updateUser(req.params.id, req.body);
+      const user = await this.insUserService.updateUser(
+        req.params.id,
+        req.body
+      );
       // Responder con éxito
       res.status(200).json(user);
     } catch (error) {

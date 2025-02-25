@@ -1,6 +1,5 @@
 // Contiene la interfaz para interactuar con la base de datos o cualquier otro tipo de almacenamiento de datos.
-const UserModelo = require('../models/userModel');
-
+const UserModelo = require("../models/userModel");
 
 class UserRepository {
   constructor() {
@@ -12,7 +11,7 @@ class UserRepository {
     } catch (error) {
       // console.error("Error:", error);
       throw new Error(
-        JSON.stringify({ status: 500, message: 'Error saving user' })
+        JSON.stringify({ status: 500, message: "Error saving user" })
       );
     }
   }
@@ -21,7 +20,7 @@ class UserRepository {
       return await this.insUserModelo.findById(id);
     } catch (error) {
       throw new Error(
-        JSON.stringify({ status: 400, message: 'Error retrieving user' })
+        JSON.stringify({ status: 400, message: "Error retrieving user" })
       );
     }
   }
@@ -30,7 +29,7 @@ class UserRepository {
       return await this.insUserModelo.updateById(id, updateData);
     } catch (error) {
       throw new Error(
-        JSON.stringify({ status: 500, message: 'Error updating user' })
+        JSON.stringify({ status: 500, message: "Error updating user" })
       );
     }
   }
@@ -40,14 +39,14 @@ class UserRepository {
     } catch (error) {
       console.error("Error:", error);
       throw new Error(
-        JSON.stringify({ status: 404, message: 'Error deleting user' })
+        JSON.stringify({ status: 404, message: "Error deleting user" })
       );
     }
   }
   // async getNickByNickAndPassword(nick, password) {
   //   try {
   //     const user = new User();
-      
+
   //     // Definimos el pipeline para la agregación
   //     let query = [
   //       {
