@@ -5,7 +5,7 @@
         <h1>Mony Monty</h1> <!-- Icono de la aplicación -->
       </div>
       <div>
-        <router-link to="/">dashboard</router-link>
+        <router-link to="/dashboard">dashboard</router-link>
         <router-link to="/NewMov">New Mov</router-link>
       </div>
       <div>

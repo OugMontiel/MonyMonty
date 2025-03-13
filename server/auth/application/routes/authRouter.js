@@ -27,7 +27,7 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/home" }),
+  passport.authenticate("google", { failureRedirect: "/dashboard" }),
   (req, res) => authController.callback(req, res)
 );
 

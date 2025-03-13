@@ -20,7 +20,7 @@ class authController {
 
   // Controlador para el callback después de la autenticación
   callback = (req, res) => {
-    res.redirect("/home");
+    res.redirect("/dashboard");
   };
 
   // Validar la session

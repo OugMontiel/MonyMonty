@@ -2,8 +2,9 @@
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
-const passport = require("passport");
 
+// configuracion para login
+const passport = require("passport");
 // Cargar las configuraciones de Passport para Google
 require("./auth/infrastructure/config/passportGoogle");
 
@@ -40,8 +41,8 @@ global.appRoot = path.resolve(__dirname, "..");
 app.use(express.static(path.join(global.appRoot, "dist")));
 
 // Configurar rutas
-app.use("/user", userRoutes); // Rutas para inicio de sesión
-app.use("/auth", authRouter); // Rutas para inicio de sesión
+app.use("/user", userRoutes); // Rutas para inicio de sesión local 
+app.use("/auth", authRouter); // Rutas para inicio de sesión con Google
 // app.use('/product', isAuthenticated, productRoutes); // Rutas para inicio de sesión
 app.use("/rutaProtegida", isAuthenticated, (req, res) =>
   res.json({ message: "Ruta protegida" })
