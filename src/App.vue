@@ -2,7 +2,9 @@
   <div id="app">
     <nav>
       <div>
-        <h1>Mony Monty</h1> <!-- Icono de la aplicación -->
+        <router-link to="/">
+          <img :src="logo" alt="Icono de la aplicación" class="app-logo" />
+        </router-link>
       </div>
       <div>
         <router-link to="/dashboard">dashboard</router-link>
@@ -22,8 +24,15 @@
 </template>
 
 <script>
+import logo from './assets/img/MonyMontySinFondo2.png';
+
 export default {
   name: "App",
+  data() {
+    return {
+      logo
+    };
+  },
 };
 </script>
 
@@ -33,6 +42,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center; /* Alinear verticalmente los elementos */
+  height: 4em;
   background-color:var(--color-fondo-nav); /* Color de fondo de la barra de navegación */
   padding: .3em .4em; /* Espaciado interno */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
@@ -56,4 +66,10 @@ nav a:hover, nav router-link:hover {
   color: var(--color-letra-seleccion); /* Color del texto al pasar el mouse */
 }
 
+.app-logo {
+  
+  max-width: auto; /* Asegura que la imagen no exceda el ancho del contenedor */
+  height: 3em; /* Mantiene la proporción de la imagen */
+  
+}
 </style>
