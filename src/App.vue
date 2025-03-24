@@ -7,8 +7,9 @@
         </router-link>
       </div>
       <div>
-        <router-link to="/dashboard">dashboard</router-link>
-        <router-link to="/NewMov">New Mov</router-link>
+        <router-link to="/">Inicio</router-link>
+        <router-link to="/dashboard">Panel de Control</router-link>
+        <router-link to="/NewMov">Nuevos Movimientos</router-link>
       </div>
       <div>
         <!-- Envolver el icono en un router-link -->
