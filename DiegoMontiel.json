@@ -4,6 +4,22 @@
       {
         "fecha": "14/03/2023",
         "categoria": {
+          "Sueldo": "Puto"
+        },
+        "concepto": {
+          "Uber Drive": "Doble puto"
+        },
+        "entidad": {
+          "Itau": ""
+        },
+        "ingreso": "$96.910,00",
+        "divisa": {
+          "COP": "Pesos Colombianos"
+        }
+      },
+      {
+        "fecha": "14/03/2023",
+        "categoria": {
           "Sueldo": "Pagos"
         },
         "concepto": {
@@ -19,19 +35,11 @@
       },
       {
         "fecha": "14/03/2023",
-        "categoria": {
-          "Transporte": "Gasolina"
-        },
-        "concepto": {
-          "Por definir": ""
-        },
-        "entidad": {
-          "Itau": ""
-        },
+        "categoria":"Gasolina",
+        "concepto":" ",
+        "entidad": "Itau",
         "egreso": "$82.493,00",
-        "divisa": {
-          "COP": "Pesos Colombianos"
-        }
+        "divisa":"Pesos Colombianos"
       },
       {
         "fecha": "13/03/2023",

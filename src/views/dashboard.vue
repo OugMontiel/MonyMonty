@@ -2,12 +2,12 @@
   <main class="dashboard-container">
     <h1 class="dashboard-title">Panel de Transacciones</h1>
 
-    <!-- 🔹 Botón para alternar entre vista de tarjetas y tabla -->
+    <!--  Botón para alternar entre vista de tarjetas y tabla -->
     <button @click="toggleView" class="toggle-button">
       Cambiar a {{ vistaTabla ? "Tarjetas" : "Tabla" }}
     </button>
 
-    <!-- 🔹 Vista en Tarjetas -->
+    <!--  Vista en Tarjetas -->
     <section v-if="!vistaTabla" class="transacciones-container">
       <car-mov
         v-for="(transaccion, index) in transacciones"
@@ -17,7 +17,7 @@
       />
     </section>
 
-    <!-- 🔹 Vista en Tabla -->
+    <!--  Vista en Tabla -->
     <section v-else class="table-container">
       <table class="styled-table">
         <thead>
@@ -92,7 +92,7 @@ export default {
 </script>
 
 <style scoped>
-/* 🔹 Contenedor principal */
+/*  Contenedor principal */
 .dashboard-container {
   max-width: 1100px;
   margin: 0 auto;
@@ -100,7 +100,7 @@ export default {
   text-align: center;
 }
 
-/* 🔹 Título */
+/*  Título */
 .dashboard-title {
   font-size: 2rem;
   color: #333;
@@ -108,7 +108,7 @@ export default {
   font-weight: bold;
 }
 
-/* 🔹 Botón para alternar vista */
+/*  Botón para alternar vista */
 .toggle-button {
   background: #007bff;
   color: white;
@@ -125,7 +125,7 @@ export default {
   background: #0056b3;
 }
 
-/* 🔹 Vista en Tarjetas */
+/*  Vista en Tarjetas */
 .transacciones-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -146,7 +146,7 @@ export default {
   transform: translateY(-5px);
 }
 
-/* 🔹 Vista en Tabla */
+/*  Vista en Tabla */
 .table-container {
   overflow-x: auto;
   margin-top: 20px;
@@ -178,7 +178,7 @@ export default {
   background-color: #ddd;
 }
 
-/* 🔹 Diseño Responsive */
+/*  Diseño Responsive */
 @media (max-width: 768px) {
   .dashboard-title {
     font-size: 1.8rem;

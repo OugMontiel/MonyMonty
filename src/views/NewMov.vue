@@ -1,182 +1,111 @@
 <template>
-  <div class="add-transaction">
-    <h1>Agregar Nueva Transacción</h1>
-    <form @submit.prevent="agregarTransaccion">
-      <!-- Fecha -->
-      <div>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" v-model="transaccion.fecha" required />
-      </div>
+  <div class="add-transaction-container">
+    <div class="add-transaction">
+      <h1>Agregar Nueva Transacción</h1>
+      <form @submit.prevent="agregarTransaccion">
+        <!-- Campo Fecha -->
+        <div class="form-group">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha" v-model="transaccion.fecha" required />
+        </div>
 
-      <!-- Categoría -->
-      <div>
-        <!-- titulo -->
-        <label for="categoria">Categoría:</label>
+        <!-- Campo Categoría -->
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <div class="input-with-display">
+            <select v-model="transaccion.categoria" id="categoria" required @change="updateDisplay">
+              <option value="" disabled>Selecciona una categoría</option>
+              <option v-for="(categoria, index) in categorias" :key="index" :value="categoria">
+                {{ categoria }}
+              </option>
+            </select>
+            <div class="display-box">{{ transaccion.categoria || 'No seleccionada' }}</div>
+          </div>
+        </div>
 
-        <!-- Seccion de categorias -->
-        <select v-model="transaccion.categoria">
-          <option
-            v-for="(categoria, index) in categorias"
-            :key="index"
-            :value="categoria"
-          >
-            {{ categoria }}
-          </option>
-        </select>
+        <!-- Campo Subcategoría -->
+        <div class="form-group">
+          <label for="subCategoria">Subcategoría</label>
+          <div class="input-with-display">
+            <select v-model="transaccion.subCategoria" id="subCategoria" @change="updateDisplay">
+              <option value="" disabled>Selecciona una subcategoría</option>
+              <option v-for="(subCategoria, index) in subCategorias" :key="index" :value="subCategoria">
+                {{ subCategoria }}
+              </option>
+            </select>
+            <div class="display-box">{{ transaccion.subCategoria || 'No seleccionada' }}</div>
+          </div>
+        </div>
 
-        <!-- boton para agregar nueva categoria -->
-        <button type="button" @click="agregarCategoria">
-          Agregar Categoría
-        </button>
+        <!-- Campo Concepto -->
+        <div class="form-group">
+          <label for="concepto">Concepto</label>
+          <input type="text" id="concepto" v-model="transaccion.concepto" placeholder="Escribe el concepto" />
+        </div>
 
-        <!-- imput de nueva categoria -->
-        <input
-          type="text"
-          v-model="nuevaCategoria"
-          placeholder="Nueva categoría"
-        />
-      </div>
+        <!-- Campo Entidad -->
+        <div class="form-group">
+          <label for="entidad">Entidad</label>
+          <div class="input-with-display">
+            <select v-model="transaccion.entidad" id="entidad" required @change="updateDisplay">
+              <option value="" disabled>Selecciona una entidad</option>
+              <option v-for="(entidad, index) in entidades" :key="index" :value="entidad">
+                {{ entidad }}
+              </option>
+            </select>
+            <div class="display-box">{{ transaccion.entidad || 'No seleccionada' }}</div>
+          </div>
+        </div>
 
-      <!-- Subcategoría -->
-      <div>
-        <!-- titulo -->
-        <label for="subCategoria">Subcategoría:</label>
+        <!-- Campo Cuenta -->
+        <div class="form-group">
+          <label for="cuenta">N° de Cuenta</label>
+          <div class="input-with-display">
+            <select v-model="transaccion.cuenta" id="cuenta" @change="updateDisplay">
+              <option value="" disabled>Selecciona una cuenta</option>
+              <option v-for="(cuenta, index) in cuentas" :key="index" :value="cuenta">
+                {{ cuenta }}
+              </option>
+            </select>
+            <div class="display-box">{{ transaccion.cuenta || 'No seleccionada' }}</div>
+          </div>
+        </div>
 
-        <!-- Seccion de subcategorias -->
-        <select v-model="transaccion.subCategoria">
-          <option
-            v-for="(subCategoria, index) in subCategorias"
-            :key="index"
-            :value="subCategoria"
-          >
-            {{ subCategoria }}
-          </option>
-        </select>
+        <!-- Campos Egreso e Ingreso -->
+        <div class="form-group dual-input">
+          <div>
+            <label for="egreso">Egreso</label>
+            <input type="number" id="egreso" v-model="transaccion.egreso" step="0.01" placeholder="0.00" />
+          </div>
+          <div>
+            <label for="ingreso">Ingreso</label>
+            <input type="number" id="ingreso" v-model="transaccion.ingreso" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
 
-        <!-- boton para agregar nueva subcategoria -->
-        <button type="button" @click="agregarSubCategoria">
-          Agregar Subcategoría
-        </button>
+        <!-- Campo Divisa -->
+        <div class="form-group">
+          <label for="divisa">Divisa</label>
+          <div class="input-with-display">
+            <select v-model="transaccion.divisa" id="divisa" required @change="updateDisplay">
+              <option value="" disabled>Selecciona una divisa</option>
+              <option v-for="(divisa, index) in divisa" :key="index" :value="divisa">
+                {{ divisa }}
+              </option>
+            </select>
+            <div class="display-box">{{ transaccion.divisa || 'No seleccionada' }}</div>
+          </div>
+        </div>
 
-        <!-- imput de nueva subcategoria -->
-        <input
-          type="text"
-          v-model="nuevaSubCategoria"
-          placeholder="Nueva subcategoría"
-        />
-      </div>
+        <!-- Botón de envío -->
+        <button type="submit" class="submit-btn">Agregar Transacción</button>
 
-      <!-- Concepto -->
-      <div>
-        <!-- titulo -->
-        <label for="concepto">Concepto:</label>
-
-        <!-- imput de concepto -->
-        <input type="text" id="concepto" v-model="transaccion.concepto" />
-      </div>
-
-      <!-- Entidad -->
-      <div>
-        <!-- Titulo -->
-        <label for="entidad">Entidad:</label>
-
-        <!-- seleccion de entidades -->
-        <select v-model="transaccion.entidad">
-          <option
-            v-for="(entidad, index) in entidades"
-            :key="index"
-            :value="entidad"
-          >
-            {{ entidad }}
-          </option>
-        </select>
-
-        <!-- boton para agregar nueva entidad -->
-        <button type="button" @click="agregarEntidad">Agregar Entidad</button>
-
-        <!-- imput de nueva entidad -->
-        <input type="text" v-model="nuevaEntidad" placeholder="Nueva entidad" />
-      </div>
-
-      <!-- Cuenta -->
-      <div>
-        <!-- Titulo -->
-        <label for="cuenta">N° de Cuenta</label>
-
-        <!-- seleccion de cuentas -->
-        <select v-model="transaccion.cuenta">
-          <option
-            v-for="(cuenta, index) in cuentas"
-            :key="index"
-            :value="cuenta"
-          >
-            {{ cuenta }}
-          </option>
-        </select>
-
-        <!-- boton para agregar nueva cuenta -->
-        <button type="button" @click="agregarCuenta">Agregar Cuenta</button>
-
-        <!-- imput de nueva cuenta -->
-        <input type="text" v-model="nuevaCuenta" placeholder="Nueva cuenta" />
-      </div>
-
-      <!-- Egreso -->
-      <div>
-        <!-- Titulo -->
-        <label for="egreso">Egreso:</label>
-
-        <!-- imput de egreso -->
-        <input
-          type="number"
-          id="egreso"
-          v-model="transaccion.egreso"
-          step="0.01"
-        />
-      </div>
-
-      <!-- Ingreso -->
-      <div>
-        <!-- Titulo -->
-        <label for="ingreso">Ingreso:</label>
-
-        <!-- imput de Ingreso -->
-        <input
-          type="number"
-          id="ingreso"
-          v-model="transaccion.ingreso"
-          step="0.01"
-        />
-      </div>
-
-      <!-- Divisa -->
-      <div>
-        <!-- Titulo -->
-        <label for="divisa">Divisa:</label>
-
-        <!-- Seleccion de Divisa -->
-        <select v-model="transaccion.divisa">
-          <option
-            v-for="(divisa, index) in divisa"
-            :key="index"
-            :value="divisa"
-          >
-            {{ divisa }}
-          </option>
-        </select>
-
-        <!-- boton para agregar nueva divisa -->
-        <button type="button" @click="agregarDivisa">Agregar Divisa</button>
-
-        <!-- imput de nueva divisa -->
-        <input type="text" v-model="nuevaDivisa" placeholder="Nueva divisa" />
-      </div>
-
-      <!-- Boton de envio  -->
-      <button type="submit" >
-        Agregar Transacción
-      </button>
-    </form>
+        <!-- Mensaje de éxito -->
+        <div v-if="mostrarMensajeExito" class="success-message">
+          ¡Transacción agregada exitosamente!
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -186,26 +115,15 @@ import { ref, watch, onMounted } from "vue";
 export default {
   name: "AddTransaction",
   setup() {
-    //  Definicion de variables
-
+    // Definición de variables
     let datos = ref([]);
     let documento = ref({});
-
     let categorias = ref([]);
-    let nuevaCategoria = ref("");
-
     let subCategorias = ref([]);
-    let nuevaSubCategoria = ref("");
-
     let entidades = ref([]);
-    let nuevaEntidad = ref("");
-
     let cuentas = ref([]);
-    let nuevaCuenta = ref("");
-
     let divisa = ref([]);
-    let nuevaDivisa = ref("");
-
+    let mostrarMensajeExito = ref(false); // Nueva variable para el mensaje
     let transaccion = ref({
       fecha: "",
       categoria: "",
@@ -219,240 +137,189 @@ export default {
     });
 
     // Funciones
-
     const cargarDatos = async () => {
       try {
         const response = await fetch("/DiegoMontiel.json");
-        if (!response.ok) {
-          throw new Error("Error al cargar los datos");
-        }
+        if (!response.ok) throw new Error("Error al cargar los datos");
         datos.value = await response.json();
-        // console.log("Datos cargados:", datos.value); // Verificar que los datos se cargaron correctamente
-
-        // Buscar el documento con el nombre 'Diego Montiel'
-        documento.value = datos.value.find(
-          (item) => item.nombre === "Diego Montiel"
-        );
-
-        // valido si hay documentos
-        if (!documento) {
-          throw new Error(
-            "No se encontró el documento con el nombre 'Diego Montiel'"
-          );
-        }
-        // console.log("Documento:", documento.value);
-
-        //  Cargar variables de categoría, entidades y divisa por separado para poder agregar nuevas opciones
+        documento.value = datos.value.find((item) => item.nombre === "Diego Montiel");
+        if (!documento.value) throw new Error("No se encontró el documento 'Diego Montiel'");
         categorias.value = Object.keys(documento.value.categorias);
-        // console.log("Variables de categoria:", categorias);
-
         entidades.value = Object.keys(documento.value.entidades);
-        // console.log("Variables de entidades:", entidades);
-
         divisa.value = Object.keys(documento.value.divisas);
-        // console.log("Variables de divisa:", divisa);
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
-    // Funciones para agregar nuevos elementos
-
-    const agregarCategoria = () => {
-      if (
-        nuevaCategoria.value &&
-        !categorias.value.includes(nuevaCategoria.value)
-      ) {
-        categorias.value.push(nuevaCategoria.value);
-        nuevaCategoria.value = "";
-      }
-    };
-
-    const agregarSubCategoria = () => {
-      if (
-        nuevaSubCategoria.value &&
-        !subCategorias.value.includes(nuevaSubCategoria.value)
-      ) {
-        subCategorias.value.push(nuevaSubCategoria.value);
-        nuevaSubCategoria.value = "";
-      }
-    };
-
-    const agregarEntidad = () => {
-      if (nuevaEntidad.value && !entidades.value.includes(nuevaEntidad.value)) {
-        entidades.value.push(nuevaEntidad.value);
-        nuevaEntidad.value = "";
-      }
-    };
-
-    const agregarCuenta = () => {
-      if (nuevaCuenta.value && !cuentas.value.includes(nuevaCuenta.value)) {
-        cuentas.value.push(nuevaCuenta.value);
-        nuevaCuenta.value = "";
-      }
-    };
-
-    const agregarDivisa = () => {
-      if (nuevaDivisa.value && !divisa.value.includes(nuevaDivisa.value)) {
-        divisa.value.push(nuevaDivisa.value);
-        nuevaDivisa.value = "";
-      }
-    };
-
-    // Funcion para agregar la nueva transaccion
-
     const agregarTransaccion = async () => {
-      // console.log("Datos transacción:", transaccion.value);
-
-      // Estructura de datos
       const DatosEstructurados = {
         fecha: transaccion.value.fecha,
-        categoria: {
-          [transaccion.value.categoria]: transaccion.value.subCategoria,
-        },
-        concepto: {
-          [transaccion.value.concepto]: transaccion.value.descripcion,
-        },
-        entidad: {
-          [transaccion.value.entidad]: transaccion.value.cuenta,
-        },
+        categoria: { [transaccion.value.categoria]: transaccion.value.subCategoria },
+        concepto: { [transaccion.value.concepto]: transaccion.value.descripcion },
+        entidad: { [transaccion.value.entidad]: transaccion.value.cuenta },
         ingreso: transaccion.value.ingreso,
         egreso: transaccion.value.egreso,
-        divisa: {
-          [transaccion.value.divisa]:
-            documento.value.divisas[transaccion.value.divisa][0],
-        },
+        divisa: { [transaccion.value.divisa]: documento.value.divisas[transaccion.value.divisa]?.[0] },
       };
-      
-      // Comparar ingreso y egreso y eliminar el que sea 0
-      if (DatosEstructurados.ingreso === 0) {
-        delete DatosEstructurados.ingreso; // Eliminar ingreso si es 0
-      } else if (DatosEstructurados.egreso === 0) {
-        delete DatosEstructurados.egreso; // Eliminar egreso si es 0
-      } else {
-        console.log("Error: Ingreso y egreso no pueden ser 0 al mismo tiempo");
-      }
-      
-      // console.log("Datos estructurados:", DatosEstructurados);
-      
+
+      if (DatosEstructurados.ingreso === 0) delete DatosEstructurados.ingreso;
+      else if (DatosEstructurados.egreso === 0) delete DatosEstructurados.egreso;
+
       try {
-        
-        // Agregar la nueva transacción
-        console.log("Transacción a gregadar:", DatosEstructurados);
-
         documento.value.transacciones.push(DatosEstructurados);
-
-        console.log("Datos actualizados:", documento.value.transacciones.slice(-2));
+        console.log("Transacción agregada:", DatosEstructurados);
+        // Mostrar mensaje de éxito
+        mostrarMensajeExito.value = true;
+        // Ocultar el mensaje después de 3 segundos
+        setTimeout(() => {
+          mostrarMensajeExito.value = false;
+        }, 3000);
       } catch (error) {
         console.error("Error al agregar la transacción:", error);
       }
     };
 
-    // Observa cambios en variables
+    const updateDisplay = () => {
+      // Función vacía, mantenida por si necesitas lógica adicional en el futuro
+    };
 
-    // Observa cambios en la categoría seleccionada para actualizar las subCategorias
-    watch(
-      () => transaccion.value.categoria,
-      (categoriaSeleccionada) => {
-        // console.log("Categoría seleccionada:", categoriaSeleccionada); // Muestra la nueva categoría seleccionada
-
-        if (categoriaSeleccionada) {
-          subCategorias.value =
-            documento.value.categorias[categoriaSeleccionada] || [];
-          // console.log("Subcategorías actualizadas:", subCategorias.value); // Muestra las subcategorías actualizadas
-        } else {
-          subCategorias.value = [];
-          // console.log("No hay categoría seleccionada, subcategorías vacías."); // Mensaje cuando no hay categoría seleccionada
-        }
-      }
-    );
-
-    // Observa cambios en la entidad seleccionada para actualizar las cuentas
-    watch(
-      () => transaccion.value.entidad,
-      (cuentaSeleccionada) => {
-        // console.log("Entidad seleccionada:", cuentaSeleccionada); // Muestra la nueva entidad seleccionada
-
-        if (cuentaSeleccionada) {
-          cuentas.value = documento.value.entidades[cuentaSeleccionada] || [];
-          // console.log("Cuentas actualizadas:", cuentas.value); // Muestra las cuentas actualizadas
-        } else {
-          cuentas.value = [];
-          // console.log("No hay entidad seleccionada, cuentas vacías."); // Mensaje cuando no hay entidad seleccionada
-        }
-      }
-    );
-
-    // Carga los datos al montar el componente
-    onMounted(() => {
-      cargarDatos();
+    // Observadores
+    watch(() => transaccion.value.categoria, (categoriaSeleccionada) => {
+      subCategorias.value = categoriaSeleccionada ? documento.value.categorias[categoriaSeleccionada] || [] : [];
     });
 
-    // Retorno de variables y funciones
+    watch(() => transaccion.value.entidad, (entidadSeleccionada) => {
+      cuentas.value = entidadSeleccionada ? documento.value.entidades[entidadSeleccionada] || [] : [];
+    });
+
+    onMounted(() => cargarDatos());
+
     return {
       transaccion,
       agregarTransaccion,
-
       categorias,
-      nuevaCategoria,
-      agregarCategoria,
-
       subCategorias,
-      nuevaSubCategoria,
-      agregarSubCategoria,
-
       entidades,
-      nuevaEntidad,
-      agregarEntidad,
-
       cuentas,
-      nuevaCuenta,
-      agregarCuenta,
-
       divisa,
-      nuevaDivisa,
-      agregarDivisa,
+      mostrarMensajeExito, // Retornar la variable para usarla en el template
     };
   },
 };
 </script>
 
 <style scoped>
+.add-transaction-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f7fa;
+}
+
 .add-transaction {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-form div {
-  margin-bottom: 10px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-input,
-select {
   width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+  max-width: 600px;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-button {
-  padding: 10px 20px;
+h1 {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fafafa;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.input-with-display {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.display-box {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #e9ecef;
+  color: #495057;
+  font-size: 14px;
+  text-align: center;
+}
+
+.dual-input {
+  display: flex;
+  gap: 20px;
+}
+
+.dual-input > div {
+  flex: 1;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
+.submit-btn:hover {
   background-color: #0056b3;
+}
+
+.success-message {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 14px;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }
 </style>
