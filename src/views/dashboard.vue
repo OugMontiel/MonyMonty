@@ -1,11 +1,50 @@
 <template>
-  <main>
-    <h1>Hola desde vista:</h1>
+  <main class="dashboard-container">
+    <h1 class="dashboard-title">Panel de Transacciones</h1>
 
-    <!-- Iteramos sobre los datos y pasamos cada uno al componente carMov -->
-    <car-mov v-for="(transaccion, index) in transacciones" :key="index" :info="transaccion" />
+    <!-- 🔹 Botón para alternar entre vista de tarjetas y tabla -->
+    <button @click="toggleView" class="toggle-button">
+      Cambiar a {{ vistaTabla ? "Tarjetas" : "Tabla" }}
+    </button>
+
+    <!-- 🔹 Vista en Tarjetas -->
+    <section v-if="!vistaTabla" class="transacciones-container">
+      <car-mov
+        v-for="(transaccion, index) in transacciones"
+        :key="index"
+        :info="transaccion"
+        class="transaccion-card"
+      />
+    </section>
+
+    <!-- 🔹 Vista en Tabla -->
+    <section v-else class="table-container">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Categoría</th>
+            <th>Concepto</th>
+            <th>Entidad</th>
+            <th>Ingreso/Egreso</th>
+            <th>Divisa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(transaccion, index) in transacciones" :key="index">
+            <td>{{ transaccion.fecha }}</td>
+            <td>{{ formatJson(transaccion.categoria) }}</td>
+            <td>{{ formatJson(transaccion.concepto) }}</td>
+            <td>{{ formatJson(transaccion.entidad) }}</td>
+            <td>{{ transaccion.ingreso }}</td>
+            <td>{{ formatJson(transaccion.divisa) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 </template>
+
 
 <script>
 import { ref, onMounted } from "vue";
@@ -13,73 +52,146 @@ import carMov from "../components/carMov.vue";
 
 export default {
   name: "dashboard",
-  components: {
-    carMov,
-  },
+  components: { carMov },
   setup() {
     const datos = ref([]);
     const transacciones = ref([]);
+    const vistaTabla = ref(false);
 
-    // Cargar datos desde el archivo JSON
     const cargarDatos = async () => {
       try {
         const response = await fetch("/DiegoMontiel.json");
-        if (!response.ok) {
-          throw new Error("Error al cargar los datos");
-        }
-        datos.value = await response.json();
-        // console.log("Datos cargados:", datos.value); // Verificar que los datos se cargaron correctamente
+        if (!response.ok) throw new Error("Error al cargar los datos");
 
-        transacciones.value = datos.value[0].transacciones;
-        // console.log("Transacciones cargadas:", transacciones.value); // Verificar que las transacciones se extrajeron correctamente
+        datos.value = await response.json();
+        transacciones.value = datos.value[0]?.transacciones || [];
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
-    onMounted(() => {
-      // console.log("Componente montado, iniciando carga de datos."); // Verificar que el componente se ha montado
-      cargarDatos();
-    });
-
-    return {
-      datos,
-      transacciones, // Asegúrate de retornar transacciones si las necesitas en el template
+    const toggleView = () => {
+      vistaTabla.value = !vistaTabla.value;
     };
+
+    // Función para formatear JSON y mostrar solo los valores legibles
+    const formatJson = (data) => {
+      if (typeof data === "object" && data !== null) {
+        return Object.entries(data)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", ");
+      }
+      return data; // Si no es objeto, devuelve el valor tal cual
+    };
+
+    onMounted(cargarDatos);
+
+    return { transacciones, vistaTabla, toggleView, formatJson  };
   },
 };
 </script>
 
-<style>
-/* Móvil Vertical (Regla General) */
-
-/* Móvil Horizontal */
-@media (min-width: 600px) and (max-width: 767px) {
-  /* Estilos para móvil horizontal */
+<style scoped>
+/* 🔹 Contenedor principal */
+.dashboard-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
 }
 
-/* Tablet Vertical */
-@media (min-width: 768px) and (max-width: 991px) {
-  /* Estilos para tablet vertical */
+/* 🔹 Título */
+.dashboard-title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
-/* Tablet Horizontal */
-@media (min-width: 992px) and (max-width: 1199px) {
-  /* Estilos para tablet horizontal y portátiles pequeños */
+/* 🔹 Botón para alternar vista */
+.toggle-button {
+  background: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  transition: background 0.3s;
 }
 
-/* Portátil */
-@media (min-width: 1200px) and (max-width: 1599px) {
-  /* Estilos para portátiles */
+.toggle-button:hover {
+  background: #0056b3;
 }
 
-/* PC de Escritorio */
-@media (min-width: 1600px) {
-  /* Estilos para PC de escritorio */
+/* 🔹 Vista en Tarjetas */
+.transacciones-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
 }
 
-/* Reloj Inteligente */
-@media (max-width: 299px) {
-  /* Estilos para reloj inteligente */
+.transaccion-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.transaccion-card:hover {
+  transform: translateY(-5px);
+}
+
+/* 🔹 Vista en Tabla */
+.table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.styled-table th {
+  background-color: #007bff;
+  color: white;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #ddd;
+}
+
+/* 🔹 Diseño Responsive */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 1.8rem;
+  }
+
+  .transacciones-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
 }
 </style>
