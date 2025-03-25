@@ -12,23 +12,15 @@ router.get("/", (req, res) => {
 });
 
 // Define la ruta para obtener un usuario por ID.
-router.get("/:id", insUserValidator.validateUserId(), (req, res) =>
-  insUserController.getUser(req, res)
-);
+router.get("/:id", insUserValidator.validateUserId(), (req, res) => insUserController.getUser(req, res));
 
 // Define la ruta para crear un nuevo usuario.
-router.post("/", insUserValidator.validateUserData(), (req, res) =>
-  insUserController.createUser(req, res)
-);
+router.post("/", insUserValidator.validateUserData(), (req, res) => insUserController.createUser(req, res));
 
 // Define la ruta para actualizar un usuario por ID.
-router.put("/:id", insUserValidator.validateUserUpdateById(), (req, res) =>
-  insUserController.updateUser(req, res)
-);
+router.put("/:id", insUserValidator.validateUserUpdateById(), (req, res) => insUserController.updateUser(req, res));
 
 // Define la ruta para eliminar un usuario por ID.
-router.delete("/:id", insUserValidator.validateUserId(), (req, res) =>
-  insUserController.deleteUser(req, res)
-);
+router.delete("/:id", insUserValidator.validateUserId(), (req, res) => insUserController.deleteUser(req, res));
 
 module.exports = router;

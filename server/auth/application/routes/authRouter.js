@@ -16,19 +16,12 @@ router.get("/check", (req, res) => {
 });
 
 // Define la ruta para iniciar sesión mediante sesión Express.
-router.post("/login", authvalidator.validatorSessionLogin(), (req, res) =>
-  authController.sessionLogin(req, res)
-);
+router.post("/login", authvalidator.validatorSessionLogin(), (req, res) => authController.sessionLogin(req, res));
 
 // Rutas para autenticación con Google
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-router.get(
-  "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/dashboard" }),
-  (req, res) => authController.callback(req, res)
+router.get("/google", passport.authenticate("google", {scope: ["profile", "email"]}));
+router.get("/google/callback", passport.authenticate("google", {failureRedirect: "/dashboard"}), (req, res) =>
+  authController.callback(req, res)
 );
 
 // Cerrar sesión

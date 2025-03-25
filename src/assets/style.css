@@ -1,5 +1,5 @@
 /* Importar iconos de Flaticon */
-@import "@flaticon/flaticon-uicons/css/all/all"; 
+@import "@flaticon/flaticon-uicons/css/all/all";
 
 :root {
   /* Tipografía y legibilidad */
@@ -13,7 +13,7 @@
   --color-letra-seleccion: #ffcc00; /* Color de texto seleccionado */
   --color-fondo-nav: #f0f0f0; /* Color de fondo de la barra de navegación */
   --color-fondo-hover: #e0e0e0; /* Color de fondo al pasar el mouse */
-  
+
   /* Propiedades de texto */
   font-synthesis: none; /* Desactivar síntesis de fuentes */
   text-rendering: optimizeLegibility; /* Mejora la legibilidad del texto */

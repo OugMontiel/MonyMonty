@@ -5173,40 +5173,13 @@
     "nombre": "Diego Montiel",
     "categorias": {
       "Sueldo": ["Pagos", "Intereses", "Cuota de alimentos"],
-      "Transporte": [
-        "Gasolina",
-        "Parqueadero",
-        "Clobi",
-        "Reparaciones",
-        "bus",
-        "Manteniminetos",
-        "Uber"
-      ],
-      "Trasferencias_Ingreso": [
-        "De Efectivo",
-        "De cuentas propias",
-        "De otras cuentas"
-      ],
-      "Relativos_a_la_casa": [
-        "Electricidad",
-        "Telefonia",
-        "Agua",
-        "gas",
-        "Administracion"
-      ],
+      "Transporte": ["Gasolina", "Parqueadero", "Clobi", "Reparaciones", "bus", "Manteniminetos", "Uber"],
+      "Trasferencias_Ingreso": ["De Efectivo", "De cuentas propias", "De otras cuentas"],
+      "Relativos_a_la_casa": ["Electricidad", "Telefonia", "Agua", "gas", "Administracion"],
       "Atencion_Medica": ["Deducciones de nomina", "Consultas"],
       "Gastos_Varios": [],
-      "Trasferencias_Gasto": [
-        "A efectivo",
-        "A otras cuentas",
-        "A cuentas Propias"
-      ],
-      "Alimentos": [
-        "Restaurantes",
-        "Tienda de barrio",
-        "Plaza de mercado",
-        "Supermercado"
-      ],
+      "Trasferencias_Gasto": ["A efectivo", "A otras cuentas", "A cuentas Propias"],
+      "Alimentos": ["Restaurantes", "Tienda de barrio", "Plaza de mercado", "Supermercado"],
       "Inicio": ["Inicio"],
       "Trasferencia": [
         "A efectivo",
@@ -5219,38 +5192,11 @@
         "De otras cuentas"
       ],
       "Entretenimiento": ["Plataformas", "Visitas", "Salidas"],
-      "Relativos a la casa": [
-        "Telefonia",
-        "Acueducto",
-        "Internet",
-        "gas",
-        "Electrificadora",
-        "Administracion",
-        "Gas"
-      ],
-      "ingreso": [
-        "cuentas por pagar",
-        "Trasferencia",
-        "Abono",
-        "Auxilios",
-        "Intereses",
-        "mensualidad",
-        "Escalas",
-        "Cuota de alimentos"
-      ],
+      "Relativos a la casa": ["Telefonia", "Acueducto", "Internet", "gas", "Electrificadora", "Administracion", "Gas"],
+      "ingreso": ["cuentas por pagar", "Trasferencia", "Abono", "Auxilios", "Intereses", "mensualidad", "Escalas", "Cuota de alimentos"],
       "Milicia ": ["Proceso de incorporacion"],
-      "Atencion Medica": [
-        "Deducionde nomina",
-        "Deducciones de nomina",
-        "Consultas"
-      ],
-      "Ingreso": [
-        "Auxilios",
-        "Pagos",
-        "Salario",
-        "Braket",
-        "Cuota de alimentos"
-      ],
+      "Atencion Medica": ["Deducionde nomina", "Deducciones de nomina", "Consultas"],
+      "Ingreso": ["Auxilios", "Pagos", "Salario", "Braket", "Cuota de alimentos"],
       "Cuidado personal": ["Articulos de Tocador", "Articulos"],
       "Gastos Varios": ["Regalos"],
       "Transporte ": ["Gasolina"],

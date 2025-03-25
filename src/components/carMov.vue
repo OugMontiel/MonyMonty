@@ -3,18 +3,18 @@
     <h2>{{ info.fecha }}</h2>
     <p>
       <strong>Categoría:</strong>
-      {{ Object.keys(info.categoria)[0]}} -
-      {{ Object.values(info.categoria)[0]}}
+      {{ Object.keys(info.categoria)[0] }} -
+      {{ Object.values(info.categoria)[0] }}
     </p>
     <p>
       <strong>Concepto:</strong>
-      {{ Object.keys(info.concepto)[0]}} -
-      {{ Object.values(info.concepto)[0]}}
+      {{ Object.keys(info.concepto)[0] }} -
+      {{ Object.values(info.concepto)[0] }}
     </p>
     <p>
       <strong>Entidad:</strong>
-      {{ Object.keys(info.entidad)[0]}} -
-      {{ Object.values(info.entidad)[0]}}
+      {{ Object.keys(info.entidad)[0] }} -
+      {{ Object.values(info.entidad)[0] }}
     </p>
     <p>
       <strong>Ingreso/Egreso:</strong>
@@ -43,9 +43,7 @@ export default {
   methods: {
     getValor() {
       // Devuelve el ingreso o egreso basado en cuál tiene valor
-      return this.info.ingreso !== "$0,00"
-        ? this.info.ingreso
-        : this.info.egreso;
+      return this.info.ingreso !== "$0,00" ? this.info.ingreso : this.info.egreso;
     },
   },
 };

@@ -41,12 +41,10 @@ global.appRoot = path.resolve(__dirname, "..");
 app.use(express.static(path.join(global.appRoot, "dist")));
 
 // Configurar rutas
-app.use("/user", userRoutes); // Rutas para inicio de sesión local 
+app.use("/user", userRoutes); // Rutas para inicio de sesión local
 app.use("/auth", authRouter); // Rutas para inicio de sesión con Google
 // app.use('/product', isAuthenticated, productRoutes); // Rutas para inicio de sesión
-app.use("/rutaProtegida", isAuthenticated, (req, res) =>
-  res.json({ message: "Ruta protegida" })
-);
+app.use("/rutaProtegida", isAuthenticated, (req, res) => res.json({message: "Ruta protegida"}));
 
 // Servir el archivo index.html para cualquier otra ruta (React Single Page App)
 app.get("*", (req, res) => {

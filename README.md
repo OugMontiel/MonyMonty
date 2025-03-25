@@ -1,20 +1,26 @@
 # Bienvenido a MonyMonty 🌟
 
-¿Alguna vez has sentido que tus finanzas personales son un misterio indescifrable? MonyMonty está aquí para cambiar eso. Somos una plataforma innovadora que transforma la gestión financiera en una experiencia empoderadora y accesible para todos.
+¿Alguna vez has sentido que tus finanzas personales son un misterio indescifrable? MonyMonty está aquí para cambiar eso. Somos una
+plataforma innovadora que transforma la gestión financiera en una experiencia empoderadora y accesible para todos.
 
-Inspirados por la falta de educación financiera en muchas familias, nuestro objetivo es equiparte con las herramientas y conocimientos necesarios para alcanzar una salud financiera óptima. Con MonyMonty, no solo gestionas tu dinero, sino que también construyes un futuro más seguro y próspero.
+Inspirados por la falta de educación financiera en muchas familias, nuestro objetivo es equiparte con las herramientas y conocimientos
+necesarios para alcanzar una salud financiera óptima. Con MonyMonty, no solo gestionas tu dinero, sino que también construyes un futuro más
+seguro y próspero.
 
 ## ¿Por Qué MonyMonty?
 
-En un mundo donde la educación financiera es una asignatura pendiente, MonyMonty se presenta como la solución integral que necesitas. Nuestra plataforma te ofrece:
+En un mundo donde la educación financiera es una asignatura pendiente, MonyMonty se presenta como la solución integral que necesitas.
+Nuestra plataforma te ofrece:
 
 - **Educación Financiera**: Aprende a tomar decisiones informadas con técnicas y métodos que mejoran tus habilidades financieras.
-- **Control Total**: Lleva un registro detallado de tus transacciones, establece metas y controla tus inversiones con nuestro sistema intuitivo.
+- **Control Total**: Lleva un registro detallado de tus transacciones, establece metas y controla tus inversiones con nuestro sistema
+  intuitivo.
 - **Asesoramiento Personalizado**: Conéctate con mentores y expertos financieros que te guiarán en cada paso del camino.
 
 ## Únete a Nuestra Comunidad
 
-Con MonyMonty, estamos construyendo una comunidad comprometida en capacitar a las personas para alcanzar una salud financiera óptima. ¡Nos encantaría que te unas a nosotros y comiences a tomar el control de tu futuro financiero hoy mismo!
+Con MonyMonty, estamos construyendo una comunidad comprometida en capacitar a las personas para alcanzar una salud financiera óptima. ¡Nos
+encantaría que te unas a nosotros y comiences a tomar el control de tu futuro financiero hoy mismo!
 
 ## Conéctate con Nosotros
 

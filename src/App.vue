@@ -10,7 +10,8 @@
 
       <!-- menu -->
       <div>
-        <!-- <router-link to="/">Inicio</router-link> -->  <!-- Comentado ya que el incio es el clik en el logo no en 'inicio' aun que valga la rebundacia-->
+        <!-- <router-link to="/">Inicio</router-link> -->
+        <!-- Comentado ya que el incio es el clik en el logo no en 'inicio' aun que valga la rebundacia-->
         <router-link to="/dashboard">Panel de Control</router-link>
         <router-link to="/NewMov">Nuevos Movimientos</router-link>
       </div>
@@ -59,23 +60,10 @@
         </div>
         <div>
           <h4>Agenda tu cita</h4>
-          <p>
-            Si quieres ser parte de nuestra comunidad, agenda tu cita y comienza
-            a transformar tu vida financiera.
-          </p>
+          <p>Si quieres ser parte de nuestra comunidad, agenda tu cita y comienza a transformar tu vida financiera.</p>
           <form class="mt-4" @submit.prevent="subscribe">
-            <input
-              class="p-2 rounded-l-full"
-              placeholder="Tu correo electrónico"
-              type="email"
-              required
-            />
-            <button
-              class="bg-yellow-500 text-gray-900 px-4 py-2 rounded-r-full"
-              type="submit"
-            >
-              Suscribirse
-            </button>
+            <input class="p-2 rounded-l-full" placeholder="Tu correo electrónico" type="email" required />
+            <button class="bg-yellow-500 text-gray-900 px-4 py-2 rounded-r-full" type="submit">Suscribirse</button>
           </form>
         </div>
       </div>
@@ -111,9 +99,7 @@ nav {
   justify-content: space-between;
   align-items: center; /* Alinear verticalmente los elementos */
   height: 4em;
-  background-color: var(
-    --color-fondo-nav
-  ); /* Color de fondo de la barra de navegación */
+  background-color: var(--color-fondo-nav); /* Color de fondo de la barra de navegación */
   padding: 0.3em 0.4em; /* Espaciado interno */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
 }
@@ -129,14 +115,14 @@ nav router-link {
   text-decoration: none; /* Eliminar subrayado de los enlaces */
   padding: 0.5em 0.3em; /* Espaciado alrededor del texto */
   border-radius: 5px; /* Bordes redondeados */
-  transition: background-color 0.3s, color 0.3s; /* Transiciones suaves */
+  transition:
+    background-color 0.3s,
+    color 0.3s; /* Transiciones suaves */
 }
 
 nav a:hover,
 nav router-link:hover {
-  background-color: var(
-    --color-fondo-hover
-  ); /* Color de fondo al pasar el mouse */
+  background-color: var(--color-fondo-hover); /* Color de fondo al pasar el mouse */
   color: var(--color-letra-seleccion); /* Color del texto al pasar el mouse */
 }
 
@@ -147,7 +133,7 @@ nav router-link:hover {
 
 footer {
   padding: 2em 0; /* Espaciado interno del pie de página */
-  background-color: var(--color-fondo-nav ); /* Color de fondo del pie de página */
+  background-color: var(--color-fondo-nav); /* Color de fondo del pie de página */
   text-align: center; /* Centrar el texto */
 }
 

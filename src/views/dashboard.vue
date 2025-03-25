@@ -3,18 +3,11 @@
     <h1 class="dashboard-title">Panel de Transacciones</h1>
 
     <!--  Botón para alternar entre vista de tarjetas y tabla -->
-    <button @click="toggleView" class="toggle-button">
-      Cambiar a {{ vistaTabla ? "Tarjetas" : "Tabla" }}
-    </button>
+    <button @click="toggleView" class="toggle-button">Cambiar a {{ vistaTabla ? "Tarjetas" : "Tabla" }}</button>
 
     <!--  Vista en Tarjetas -->
     <section v-if="!vistaTabla" class="transacciones-container">
-      <car-mov
-        v-for="(transaccion, index) in transacciones"
-        :key="index"
-        :info="transaccion"
-        class="transaccion-card"
-      />
+      <car-mov v-for="(transaccion, index) in transacciones" :key="index" :info="transaccion" class="transaccion-card" />
     </section>
 
     <!--  Vista en Tabla -->
@@ -45,14 +38,13 @@
   </main>
 </template>
 
-
 <script>
-import { ref, onMounted } from "vue";
+import {ref, onMounted} from "vue";
 import carMov from "../components/carMov.vue";
 
 export default {
   name: "dashboard",
-  components: { carMov },
+  components: {carMov},
   setup() {
     const datos = ref([]);
     const transacciones = ref([]);
@@ -86,7 +78,7 @@ export default {
 
     onMounted(cargarDatos);
 
-    return { transacciones, vistaTabla, toggleView, formatJson  };
+    return {transacciones, vistaTabla, toggleView, formatJson};
   },
 };
 </script>
