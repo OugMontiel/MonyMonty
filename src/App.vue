@@ -10,8 +10,9 @@
 
       <!-- menu -->
       <div>
-        <router-link to="/dashboard">Dashboard</router-link>
-        <router-link to="/NewMov">New Mov</router-link>
+        <!-- <router-link to="/">Inicio</router-link> -->  <!-- Comentado ya que el incio es el clik en el logo no en 'inicio' aun que valga la rebundacia-->
+        <router-link to="/dashboard">Panel de Control</router-link>
+        <router-link to="/NewMov">Nuevos Movimientos</router-link>
       </div>
 
       <!-- inicio de sesión -->

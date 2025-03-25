@@ -78,25 +78,98 @@ export default {
 </script>
 
 <style scoped>
+/* 🔹 Estilo general */
+section {
+  max-width: 900px; /* Se centra el contenido */
+  margin: 0 auto;
+  padding: 20px;
+  text-align: justify;
+}
+
+/* 🔹 Título principal */
 .titulo.home {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
 }
 
 blockquote {
   font-style: italic;
   color: #555;
   margin: 10px 0;
+  text-align: center;
 }
 
+/* 🔹 Secciones */
 .introduction.home,
 .problem.home,
 .solution.home {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
+/* 🔹 Subtítulos */
+h2 {
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* 🔹 Párrafos */
+p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #444;
+  text-align: justify;
+}
+
+/* 🔹 Lista de características */
 ul {
-  list-style-type: disc;
-  padding-left: 20px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  background: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+ul li strong {
+  color: #000;
+  font-size: 1.1rem;
+}
+
+/* 🔹 Responsive Design */
+@media (max-width: 768px) {
+  section {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.7rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  ul li {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>
