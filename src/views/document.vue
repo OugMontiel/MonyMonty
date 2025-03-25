@@ -1,5 +1,3 @@
-<!-- Aqui ... tenemos una vista con dos columnas, la primera lateral derecha con cada uno de los elementos que contiene cada uno de los temas y a su vez sus sub temas que se tratan en este repositorio  al otro lado, cada uno del respectivo contendio de cada uno de los temas y subtemas. --> 
-
 <template>
   <div class="documentation-view">
     <div class="sidebar">
@@ -16,48 +14,54 @@
       </ul>
     </div>
     <div class="content">
-      <h2>{{ selectedTopic.title }}</h2>
-      <p>{{ selectedTopic.content }}</p>
+      <component :is="currentComponent"></component>
     </div>
   </div>
 </template>
 
 <script>
+import QueEsMonyMonty from "../components/content/QueEsMonyMonty.vue";
+import Instalacion from "../components/content/Instalacion.vue";
+import DefinicionDeCarpetas from "../components/content/DefinicionDeCarpetas.vue";
+import carpetaBackend from "../components/content/carpetaBackend.vue";
+import carpetaFrontend from "../components/content/carpetaFrontend.vue";
+
 export default {
   data() {
     return {
       topics: [
         {
           id: 1,
-          title: 'Introducción a Vue',
+          title: "MonyMonty",
           subtopics: [
-            { id: 1, title: '¿Qué es Vue?', content: 'Contenido sobre qué es Vue.' },
-            { id: 2, title: 'Instalación', content: 'Contenido sobre cómo instalar Vue.' }
-          ]
+            {id: 1, title: "¿Qué es MonyMonty?", component: QueEsMonyMonty},
+            {id: 2, title: "Instalación", component: Instalacion},
+          ],
         },
         {
           id: 2,
-          title: 'Componentes',
+          title: "Estructura de Carpetas backend",
           subtopics: [
-            { id: 3, title: 'Definición de Componentes', content: 'Contenido sobre cómo definir componentes.' },
-            { id: 4, title: 'Props', content: 'Contenido sobre cómo usar props.' }
-          ]
+            {id: 3, title: "Arbol de carpetas", component: DefinicionDeCarpetas},
+            {id: 4, title: "backend", component: carpetaBackend},
+            {id: 5, title: "frontend", component: carpetaFrontend},
+          ],
         }
       ],
-      selectedTopic: {}
+      currentComponent: null,
     };
   },
   methods: {
     selectTopic(topic) {
-      this.selectedTopic = topic;
+      this.currentComponent = topic.subtopics[0].component; // Selecciona el primer subtema por defecto
     },
     selectSubtopic(subtopic) {
-      this.selectedTopic = subtopic;
-    }
+      this.currentComponent = subtopic.component;
+    },
   },
   mounted() {
-    this.selectedTopic = this.topics[0]; // Selecciona el primer tema por defecto
-  }
+    this.currentComponent = this.topics[0].subtopics[0].component; // Selecciona el primer subtema por defecto
+  },
 };
 </script>
 
