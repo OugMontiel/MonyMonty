@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import dashboard from "../views/dashboard.vue";
+import document from "../views/document.vue";
 import NewMov from "../views/NewMov.vue";
 import home from "../views/home.vue";
 
@@ -21,6 +22,11 @@ const router = createRouter({
       name: "Vista para nuevos movimiento",
       component: NewMov,
     },
+    {
+      path: "/Document",
+      name: "Vista de la Documentacion",
+      component: document,
+    }
   ],
 });
 

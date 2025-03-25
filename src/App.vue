@@ -14,6 +14,7 @@
         <!-- Comentado ya que el incio es el clik en el logo no en 'inicio' aun que valga la rebundacia-->
         <router-link to="/dashboard">Panel de Control</router-link>
         <router-link to="/NewMov">Nuevos Movimientos</router-link>
+        <router-link to="/Document">Documentacion</router-link>
       </div>
 
       <!-- inicio de sesión -->
