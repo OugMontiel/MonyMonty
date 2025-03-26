@@ -71,15 +71,17 @@
           </div>
         </div>
 
-        <!-- Campos Egreso e Ingreso -->
-        <div class="form-group dual-input">
-          <div>
-            <label for="egreso">Egreso</label>
-            <input type="number" id="egreso" v-model="transaccion.egreso" step="0.01" placeholder="0.00" />
-          </div>
-          <div>
-            <label for="ingreso">Ingreso</label>
-            <input type="number" id="ingreso" v-model="transaccion.ingreso" step="0.01" placeholder="0.00" />
+        <!-- Campo Tipo de Transacción (Ingreso/Egreso) y Cantidad -->
+        <div class="form-group">
+          <label>Tipo y Cantidad</label>
+          <div class="input-with-display-amount">
+            <select v-model="transaccion.tipo" id="tipo" required @change="updateDisplay">
+              <option value="" disabled>Selecciona el tipo</option>
+              <option value="ingreso">Ingreso</option>
+              <option value="egreso">Egreso</option>
+            </select>
+            <div class="display-box">{{ transaccion.tipo ? transaccion.tipo.charAt(0).toUpperCase() + transaccion.tipo.slice(1) : 'No seleccionado' }}</div>
+            <input type="number" id="monto" v-model="transaccion.monto" step="0.01" placeholder="0.00" required />
           </div>
         </div>
 
@@ -123,7 +125,7 @@ export default {
     let entidades = ref([]);
     let cuentas = ref([]);
     let divisa = ref([]);
-    let mostrarMensajeExito = ref(false); // Nueva variable para el mensaje
+    let mostrarMensajeExito = ref(false);
     let transaccion = ref({
       fecha: "",
       categoria: "",
@@ -131,8 +133,8 @@ export default {
       concepto: "",
       entidad: "",
       cuenta: "",
-      egreso: 0,
-      ingreso: 0,
+      tipo: "", // Nuevo campo para "ingreso" o "egreso"
+      monto: 0, // Nuevo campo para la cantidad
       divisa: "",
     });
 
@@ -158,20 +160,20 @@ export default {
         categoria: { [transaccion.value.categoria]: transaccion.value.subCategoria },
         concepto: { [transaccion.value.concepto]: transaccion.value.descripcion },
         entidad: { [transaccion.value.entidad]: transaccion.value.cuenta },
-        ingreso: transaccion.value.ingreso,
-        egreso: transaccion.value.egreso,
         divisa: { [transaccion.value.divisa]: documento.value.divisas[transaccion.value.divisa]?.[0] },
       };
 
-      if (DatosEstructurados.ingreso === 0) delete DatosEstructurados.ingreso;
-      else if (DatosEstructurados.egreso === 0) delete DatosEstructurados.egreso;
+      // Asignar el monto al campo correspondiente según el tipo
+      if (transaccion.value.tipo === "ingreso") {
+        DatosEstructurados.ingreso = parseFloat(transaccion.value.monto);
+      } else if (transaccion.value.tipo === "egreso") {
+        DatosEstructurados.egreso = parseFloat(transaccion.value.monto);
+      }
 
       try {
         documento.value.transacciones.push(DatosEstructurados);
         console.log("Transacción agregada:", DatosEstructurados);
-        // Mostrar mensaje de éxito
         mostrarMensajeExito.value = true;
-        // Ocultar el mensaje después de 3 segundos
         setTimeout(() => {
           mostrarMensajeExito.value = false;
         }, 3000);
@@ -203,7 +205,7 @@ export default {
       entidades,
       cuentas,
       divisa,
-      mostrarMensajeExito, // Retornar la variable para usarla en el template
+      mostrarMensajeExito,
     };
   },
 };
@@ -270,6 +272,13 @@ h1 {
   align-items: center;
 }
 
+.input-with-display-amount {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
 .display-box {
   padding: 10px;
   border: 1px solid #ddd;
@@ -278,15 +287,6 @@ h1 {
   color: #495057;
   font-size: 14px;
   text-align: center;
-}
-
-.dual-input {
-  display: flex;
-  gap: 20px;
-}
-
-.dual-input > div {
-  flex: 1;
 }
 
 .submit-btn {

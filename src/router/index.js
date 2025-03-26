@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import dashboard from '../views/dashboard.vue'
+import Dashboard from '../views/Dashboard.vue'
 import NewMov from '../views/NewMov.vue'
-import home from '../views/home.vue'
+import Home from '../views/Home.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'vista inciacial', 
-      component: home,
+      name: 'vista incial', 
+      component: Home,
     },
     {
-      path: '/dashboard',
+      path: '/Dashboard',
       name: 'vista para todo el tablero ',
-      component: dashboard,
+      component: Dashboard,
     },
     {
       path: '/NewMov',
