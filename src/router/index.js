@@ -26,7 +26,7 @@ const router = createRouter({
       path: "/Document",
       name: "Vista de la Documentacion",
       component: document,
-    }
+    },
   ],
 });
 

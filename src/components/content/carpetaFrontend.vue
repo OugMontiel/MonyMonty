@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: 'EstructuraFrontend'
+  name: "EstructuraFrontend",
 };
 </script>
 

@@ -3,7 +3,8 @@
   <div class="mony-monty-description">
     <h3 class="title">¿Qué es MonyMonty?</h3>
     <p class="description">
-      Es una plataforma financiera, un gestor de finanzas con todas las herramientas y facilidades para que puedas tener un control total de tus finanzas.
+      Es una plataforma financiera, un gestor de finanzas con todas las herramientas y facilidades para que puedas tener un control total de
+      tus finanzas.
     </p>
   </div>
 </template>

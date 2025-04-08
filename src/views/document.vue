@@ -46,7 +46,7 @@ export default {
             {id: 4, title: "backend", component: carpetaBackend},
             {id: 5, title: "frontend", component: carpetaFrontend},
           ],
-        }
+        },
       ],
       currentComponent: null,
     };

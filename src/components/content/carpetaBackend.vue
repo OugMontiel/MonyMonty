@@ -51,7 +51,7 @@
 
 <script>
 export default {
-  name: 'EstructuraBackend'
+  name: "EstructuraBackend",
 };
 </script>
 
