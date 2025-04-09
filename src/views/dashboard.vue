@@ -40,7 +40,7 @@
 
 <script>
 import {ref, onMounted} from "vue";
-import carMov from "../components/carMov.vue";
+import carMov from "../components/dashBoard/cartaMovimiento.vue";
 
 export default {
   name: "dashboard",

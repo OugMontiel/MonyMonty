@@ -20,11 +20,11 @@
 </template>
 
 <script>
-import QueEsMonyMonty from "../components/content/QueEsMonyMonty.vue";
-import Instalacion from "../components/content/Instalacion.vue";
-import DefinicionDeCarpetas from "../components/content/DefinicionDeCarpetas.vue";
-import carpetaBackend from "../components/content/carpetaBackend.vue";
-import carpetaFrontend from "../components/content/carpetaFrontend.vue";
+import QueEsMonyMonty from "../components/documentacion/QueEsMonyMonty.vue";
+import Instalacion from "../components/documentacion/Instalacion.vue";
+import DefinicionDeCarpetas from "../components/documentacion/DefinicionDeCarpetas.vue";
+import carpetaBackend from "../components/documentacion/carpetaBackend.vue";
+import carpetaFrontend from "../components/documentacion/carpetaFrontend.vue";
 
 export default {
   data() {
