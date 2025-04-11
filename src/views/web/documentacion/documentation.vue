@@ -1,5 +1,5 @@
 <template>
-  <header />
+  <Header />
   <div class="documentation-view">
     <div class="sidebar">
       <h2>Temas</h2>
@@ -18,7 +18,7 @@
       <component :is="currentComponent"></component>
     </div>
   </div>
-  <footer/>
+  <Footer />
 </template>
 
 <script>
@@ -28,12 +28,12 @@ import DefinicionDeCarpetas from "@/components/documentacion/DefinicionDeCarpeta
 import carpetaBackend from "@/components/documentacion/carpetaBackend.vue";
 import carpetaFrontend from "@/components/documentacion/carpetaFrontend.vue";
 
-import footer from '@/components/web/footer.vue'
-import header from '@/components/web/header.vue'
+import Footer from "@/components/web/footer.vue";
+import Header from "@/components/web/header.vue";
 
 export default {
-  name:"vista para toda la documentacion",
-  components: {header, footer},
+  name: "vista para toda la documentacion",
+  components: {Header, Footer},
   data() {
     return {
       topics: [
