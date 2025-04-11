@@ -1,4 +1,5 @@
 <template>
+  <header />
   <div class="documentation-view">
     <div class="sidebar">
       <h2>Temas</h2>
@@ -17,6 +18,7 @@
       <component :is="currentComponent"></component>
     </div>
   </div>
+  <footer/>
 </template>
 
 <script>
@@ -26,7 +28,12 @@ import DefinicionDeCarpetas from "@/components/documentacion/DefinicionDeCarpeta
 import carpetaBackend from "@/components/documentacion/carpetaBackend.vue";
 import carpetaFrontend from "@/components/documentacion/carpetaFrontend.vue";
 
+import footer from '@/components/web/footer.vue'
+import header from '@/components/web/header.vue'
+
 export default {
+  name:"vista para toda la documentacion",
+  components: {header, footer},
   data() {
     return {
       topics: [

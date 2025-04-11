@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import dashboard from "@/views/dashboard.vue";
-import document from "@/views/documentacion/documentation.vue";
+import document from "@/views/web/documentacion/documentation.vue";
 import NewMov from "@/views/movimientos/newMovemet.vue";
 import home from "@/views/web/home.vue";
 

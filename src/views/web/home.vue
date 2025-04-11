@@ -1,5 +1,6 @@
 <template>
-  <navegation />
+  <header />
+
   <section class="titulo.home">
     <h1>MonyMonty</h1>
     <blockquote>"La riqueza consiste mucho más en disfrutar que en poseer". - Aristóteles</blockquote>
@@ -53,17 +54,17 @@
     </p>
   </section>
 
-  <header />
+  <footer />
 </template>
 
 <script>
 
-import header from '@/components/web/footer.vue'
-import navegation from '@/components/web/nav.vue'
+import footer from '@/components/web/footer.vue'
+import header from '@/components/web/header.vue'
 
 export default {
   name: "Home",
-  components: {header, navegation},
+  components: {footer, header},
 };
 </script>
 
