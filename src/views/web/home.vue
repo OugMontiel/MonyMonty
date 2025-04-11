@@ -1,4 +1,5 @@
 <template>
+  <navegation />
   <section class="titulo.home">
     <h1>MonyMonty</h1>
     <blockquote>"La riqueza consiste mucho más en disfrutar que en poseer". - Aristóteles</blockquote>
@@ -51,11 +52,18 @@
       control de tu futuro financiero hoy mismo!
     </p>
   </section>
+
+  <header />
 </template>
 
 <script>
+
+import header from '@/components/web/footer.vue'
+import navegation from '@/components/web/nav.vue'
+
 export default {
   name: "Home",
+  components: {header, navegation},
 };
 </script>
 

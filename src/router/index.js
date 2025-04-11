@@ -1,8 +1,8 @@
 import {createRouter, createWebHistory} from "vue-router";
-import dashboard from "../views/estaticas/dashboard.vue";
-import document from "../views/documentation.vue";
-import NewMov from "../views/movimientos/newMovemet.vue";
-import home from "../views/estaticas/home.vue";
+import dashboard from "@/views/dashboard.vue";
+import document from "@/views/documentacion/documentation.vue";
+import NewMov from "@/views/movimientos/newMovemet.vue";
+import home from "@/views/web/home.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
