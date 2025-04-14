@@ -2,25 +2,24 @@
   <nav>
     <!-- logo -->
     <div>
-      <router-link to="/">
+      <router-link to="/home">
         <img :src="logo" alt="Icono de la aplicación" class="app-logo" />
       </router-link>
     </div>
 
     <!-- menu -->
     <div>
-      <!-- <router-link to="/">Inicio</router-link> -->
-      <!-- Comentado ya que el incio es el clik en el logo no en 'inicio' aun que valga la rebundacia-->
-      <router-link to="/dashboard">Panel de Control</router-link>
-      <router-link to="/NewMov">Nuevos Movimientos</router-link>
-      <router-link to="/Document">Documentacion</router-link>
+      <a href="#inicio">Inicio</a>
+      <a href="#productos">Productos</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#clientes">Clientes</a>
+      <a href="#contacto">Contacto</a>
     </div>
 
     <!-- inicio de sesión -->
+
     <div>
-      <a href="/auth/google" aria-label="Iniciar sesión con Google">
-        <i class="fi fi-brands-google" alt="Google"></i>
-      </a>
+      <router-link to="/">Inicio de Sesión</router-link>
     </div>
   </nav>
 </template>
@@ -74,5 +73,23 @@ nav router-link:hover {
 .app-logo {
   max-width: auto; /* Asegura que la imagen no exceda el ancho del contenedor */
   height: 3em; /* Mantiene la proporción de la imagen */
+}
+
+/* Estilo específico para el botón de inicio de sesión */
+.login-button {
+  background-color: var(--color-fondo-boton); /* Color de fondo del botón */
+  color: var(--texto-primario); /* Color del texto del botón */
+  padding: 0.5em 1em; /* Espaciado alrededor del texto del botón */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  transition:
+    background-color 0.3s,
+    color 0.3s; /* Transiciones suaves */
+}
+
+.login-button:hover {
+  background-color: var(--color-fondo-hover); /* Color de fondo al pasar el mouse */
+  color: var(--color-letra-seleccion); /* Color del texto al pasar el mouse */
 }
 </style>

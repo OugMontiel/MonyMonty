@@ -1,12 +1,14 @@
 <template>
   <Header />
 
-  <div>
+  <section id="inicio">
     <section class="titulo.home">
       <h1>MonyMonty</h1>
       <blockquote>"La riqueza consiste mucho más en disfrutar que en poseer". - Aristóteles</blockquote>
     </section>
+  </section>
 
+  <section id="nosotros">
     <section class="introduction.home">
       <p>MonyMonty es una iniciativa que surgió debido a la falta de educación financiera dentro de mi núcleo familiar.</p>
     </section>
@@ -22,7 +24,9 @@
         financiera de nuestras comunidades y países en general.
       </p>
     </section>
+  </section>
 
+  <section id="productos">
     <section class="solution.home">
       <h2>¿Qué es MonyMonty?</h2>
 
@@ -54,7 +58,17 @@
         control de tu futuro financiero hoy mismo!
       </p>
     </section>
-  </div>
+  </section>
+
+  <section id="clientes">
+    <h2>Clientes</h2>
+    <p>Contenido de la sección Clientes.</p>
+  </section>
+
+  <section id="contacto">
+    <h2>Contacto</h2>
+    <p>Contenido de la sección Contacto.</p>
+  </section>
 
   <Footer />
 </template>

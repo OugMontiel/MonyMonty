@@ -3,13 +3,14 @@ import dashboard from "@/views/dashboard.vue";
 import document from "@/views/web/documentacion/documentation.vue";
 import NewMov from "@/views/movimientos/newMovemet.vue";
 import home from "@/views/web/home.vue";
+import login from "@/views/InicioDeSeccion/login.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // vistas estaticas inforamtivas
     {
-      path: "/",
+      path: "/home",
       name: "vista inciacial",
       component: home,
     },
@@ -26,6 +27,11 @@ const router = createRouter({
       component: dashboard,
     },
     // vistas de incio de seccion
+    {
+      path: "/",
+      name: " Vista incio de seccion",
+      component: login,
+    },
 
     // vistas de presupuesto
 
