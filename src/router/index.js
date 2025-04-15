@@ -10,7 +10,7 @@ const router = createRouter({
   routes: [
     // vistas estaticas inforamtivas
     {
-      path: "/home",
+      path: "/",
       name: "vista inciacial",
       component: home,
     },
@@ -28,7 +28,7 @@ const router = createRouter({
     },
     // vistas de incio de seccion
     {
-      path: "/",
+      path: "/login",
       name: " Vista incio de seccion",
       component: login,
     },

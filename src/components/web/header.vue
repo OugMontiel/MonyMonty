@@ -2,7 +2,7 @@
   <nav>
     <!-- logo -->
     <div>
-      <router-link to="/home">
+      <router-link to="/">
         <img :src="logo" alt="Icono de la aplicación" class="app-logo" />
       </router-link>
     </div>
@@ -19,7 +19,7 @@
     <!-- inicio de sesión -->
 
     <div>
-      <router-link to="/">Inicio de Sesión</router-link>
+      <router-link to="/login">Inicio de Sesión</router-link>
     </div>
   </nav>
 </template>
