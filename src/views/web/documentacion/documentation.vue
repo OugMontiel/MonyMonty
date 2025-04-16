@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import QueEsMonyMonty from "@/components/documentacion/QueEsMonyMonty.vue";
-import Instalacion from "@/components/documentacion/Instalacion.vue";
-import DefinicionDeCarpetas from "@/components/documentacion/DefinicionDeCarpetas.vue";
+import QueEsMonyMonty from "@/components/documentacion/queEsMonyMonty.vue";
+import Instalacion from "@/components/documentacion/instalacion.vue";
+import DefinicionDeCarpetas from "@/components/documentacion/definicionDeCarpetas.vue";
 import carpetaBackend from "@/components/documentacion/carpetaBackend.vue";
 import carpetaFrontend from "@/components/documentacion/carpetaFrontend.vue";
 

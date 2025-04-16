@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import Header from "@/components/tablero/Header.vue";
-import Sidebar from "@/components/tablero/Sidebar.vue";
-import Footer from "@/components/tablero/Footer.vue";
-import Background from "@/views/Dashboard/Dashboard.vue";
+import Header from "@/components/tablero/header.vue";
+import Sidebar from "@/components/tablero/sidebar.vue";
+import Footer from "@/components/tablero/footer.vue";
+import Background from "@/views/Dashboard/dashboard.vue";
 
 export default {
   name: "ElTablero",

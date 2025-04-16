@@ -1,10 +1,8 @@
 import {createRouter, createWebHistory} from "vue-router";
-import transacciones from "@/views/movimientos/transacciones.vue";
 import document from "@/views/web/documentacion/documentation.vue";
-import NewMov from "@/views/movimientos/newMovemet.vue";
 import home from "@/views/web/home.vue";
 import login from "@/views/InicioDeSeccion/login.vue";
-import ElTablero from "@/views/ElTablero.vue";
+import elTablero from "@/views/elTablero.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,7 +23,7 @@ const router = createRouter({
     {
       path: "/Tablero",
       name: "Vista del tablero",
-      component: ElTablero,
+      component: elTablero,
     },
     // Vistas de inicio de sesión
     {
@@ -39,17 +37,17 @@ const router = createRouter({
     // Vistas de seguimiento de presupuestos
 
     // Vistas de nuevos movimientos
-    {
-      path: "/NewMov",
-      name: "Vista para nuevos movimientos",
-      component: NewMov,
-    },
+    // {
+    //   path: "/NewMov",
+    //   name: "Vista para nuevos movimientos",
+    //   component: NewMov,
+    // },
     // Vistas de seguimiento de movimientos
-    {
-      path: "/transacciones",
-      name: "Vista para todo el tablero",
-      component: transacciones,
-    },
+    // {
+    //   path: "/transacciones",
+    //   name: "Vista para todo el tablero",
+    //   component: transacciones,
+    // },
     // Vistas de reportes
 
     // Vistas de configuración
