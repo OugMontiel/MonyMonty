@@ -103,7 +103,7 @@ export default {
   align-items: center;
   background-color: #f0f4f8; /* Color de fondo suave */
   height: 100vh;
-  font-family: 'Arial', sans-serif; /* Fuente más moderna */
+  font-family: "Arial", sans-serif; /* Fuente más moderna */
 }
 
 .login-container {
@@ -213,7 +213,7 @@ export default {
 
 .login-footer {
   text-align: center;
-  
+
   width: 100%;
   padding: 10px 0; /* Espaciado interno */
   font-size: 0.9em; /* Tamaño de fuente más pequeño */

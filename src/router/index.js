@@ -1,51 +1,58 @@
 import {createRouter, createWebHistory} from "vue-router";
-import dashboard from "@/views/dashboard.vue";
+import transacciones from "@/views/movimientos/transacciones.vue";
 import document from "@/views/web/documentacion/documentation.vue";
 import NewMov from "@/views/movimientos/newMovemet.vue";
 import home from "@/views/web/home.vue";
 import login from "@/views/InicioDeSeccion/login.vue";
+import ElTablero from "@/views/ElTablero.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // vistas estaticas inforamtivas
+    // Vistas estáticas informativas
     {
       path: "/",
-      name: "vista inciacial",
+      name: "Vista inicial",
       component: home,
     },
-    // vista estaticas Documentacion
+    // Vista estática de la documentación
     {
       path: "/Document",
-      name: "Vista de la Documentacion",
+      name: "Vista de la documentación",
       component: document,
     },
-    // vistas de inicio
+    // Vistas de inicio: El tablero
     {
-      path: "/dashboard",
-      name: "vista para todo el tablero ",
-      component: dashboard,
+      path: "/Tablero",
+      name: "Vista del tablero",
+      component: ElTablero,
     },
-    // vistas de incio de seccion
+    // Vistas de inicio de sesión
     {
       path: "/login",
-      name: " Vista incio de seccion",
+      name: "Vista de inicio de sesión",
       component: login,
     },
 
-    // vistas de presupuesto
+    // Vistas de nuevo presupuesto
 
-    // vistas de seguimiento de presupuesto
+    // Vistas de seguimiento de presupuestos
 
-    // vistas de seguimiento de movimiento
+    // Vistas de nuevos movimientos
     {
       path: "/NewMov",
-      name: "Vista para nuevos movimiento",
+      name: "Vista para nuevos movimientos",
       component: NewMov,
     },
-    // vistas de reportes
+    // Vistas de seguimiento de movimientos
+    {
+      path: "/transacciones",
+      name: "Vista para todo el tablero",
+      component: transacciones,
+    },
+    // Vistas de reportes
 
-    // vistas de configuracion
+    // Vistas de configuración
   ],
 });
 
