@@ -101,8 +101,9 @@ export default {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  background-color: red;
+  background-color: #f0f4f8; /* Color de fondo suave */
   height: 100vh;
+  font-family: 'Arial', sans-serif; /* Fuente más moderna */
 }
 
 .login-container {
@@ -111,9 +112,9 @@ export default {
   align-items: center;
   width: 90%;
   height: 80%;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: #ffffff; /* Fondo blanco */
+  border-radius: 15px; /* Bordes más redondeados */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Sombra más suave */
 }
 
 .login-login,
@@ -122,28 +123,32 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: blue;
   height: 90%;
+  padding: 20px; /* Espaciado interno */
 }
 
 .login-login {
   width: 35%;
+  background-color: #f8f9fa; /* Fondo gris claro */
+  border-radius: 15px; /* Bordes redondeados */
+  color: black; /* Texto blanco */
 }
 
 .login-info {
   width: 55%;
+  background-color: #f8f9fa; /* Fondo gris claro */
+  border-radius: 15px; /* Bordes redondeados */
 }
 
 .divider {
   height: 60vh;
   width: 1.5px;
-  background-color: black;
+  background-color: #e0e0e0; /* Color gris claro */
 }
 
 .login-form {
   height: 90%;
   width: 100%;
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -153,11 +158,53 @@ export default {
 .login-form-datos {
   display: flex;
   flex-direction: column;
+  width: 100%; /* Asegura que ocupe todo el ancho */
+}
+
+.login-form-datos div {
+  margin-bottom: 15px; /* Espaciado entre campos */
+}
+
+.login-form h2 {
+  margin: 0 0 5px; /* Espaciado para los títulos */
+  font-size: 1.2em; /* Tamaño de fuente más grande */
+}
+
+.login-form input {
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 10px; /* Espaciado interno */
+  border: 1px solid #ced4da; /* Borde gris */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 1em; /* Tamaño de fuente */
+}
+
+.login-form input:focus {
+  border-color: #007bff; /* Color de borde al enfocar */
+  outline: none; /* Sin contorno */
+}
+
+.login-form-buton {
+  margin-top: 20px; /* Espaciado superior */
+}
+
+.login-form button {
+  padding: 10px 20px; /* Espaciado interno */
+  background-color: #28a745; /* Color verde */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar */
+  font-size: 1em; /* Tamaño de fuente */
+  transition: background-color 0.3s; /* Transición suave */
+}
+
+.login-form button:hover {
+  background-color: #218838; /* Color verde más oscuro al pasar */
 }
 
 .login-info section {
   margin-bottom: 2em;
-  text-align: center;
+  text-align: left; /* Alineación a la izquierda */
 }
 
 .login-logo {
@@ -166,8 +213,10 @@ export default {
 
 .login-footer {
   text-align: center;
-
-  background: rgba(255, 255, 255, 0.5); /* Fondo blanco con opacidad */
+  
   width: 100%;
+  padding: 10px 0; /* Espaciado interno */
+  font-size: 0.9em; /* Tamaño de fuente más pequeño */
+  color: #6c757d; /* Color gris */
 }
 </style>
