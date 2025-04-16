@@ -26,6 +26,7 @@
 
 <script>
 import logo from "@/assets/img/MonyMontySinFondo3.png";
+
 export default {
   name: "Navegacion de la web",
   data() {
