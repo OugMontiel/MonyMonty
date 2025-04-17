@@ -1,8 +1,8 @@
 import {createRouter, createWebHistory} from "vue-router";
-import document from "@/views/web/documentacion/documentation.vue";
-import home from "@/views/web/home.vue";
-import login from "@/views/InicioDeSeccion/login.vue";
-import elTablero from "@/views/elTablero.vue";
+import document from "@/views/paginaDocumentacion/documentation.vue";
+import home from "@/views/paginaWeb/home.vue";
+import login from "@/views/paginaInicioDeSeccion/login.vue";
+import elTablero from "@/views/paginaDashboard/elTablero.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

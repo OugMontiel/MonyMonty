@@ -1,3 +1,36 @@
+<script>
+import logo from "@/assets/img/MonyMontySinFondo3.png";
+
+export default {
+  name: "Login",
+  data() {
+    return {
+      // variable del logo
+      logo,
+      // Datos para el inicio de sesión
+      username: "",
+      password: "",
+    };
+  },
+  methods: {
+    login() {
+      if (this.username && this.password) {
+        // Lógica para iniciar sesión
+        console.log("Usuario:", this.username);
+        console.log("Contraseña:", this.password);
+        this.redirectToDashboard();
+      } else {
+        alert("Por favor, completa todos los campos.");
+      }
+    },
+    redirectToDashboard() {
+      // Lógica para redirigir al dashboard
+      console.log("Redirigiendo al dashboard...");
+    },
+  },
+};
+</script>
+
 <template>
   <div class="login">
     <div class="login-container">
@@ -61,39 +94,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-
-export default {
-  name: "Login",
-  data() {
-    return {
-      // variable del logo
-      logo,
-      // Datos para el inicio de sesión
-      username: "",
-      password: "",
-    };
-  },
-  methods: {
-    login() {
-      if (this.username && this.password) {
-        // Lógica para iniciar sesión
-        console.log("Usuario:", this.username);
-        console.log("Contraseña:", this.password);
-        this.redirectToDashboard();
-      } else {
-        alert("Por favor, completa todos los campos.");
-      }
-    },
-    redirectToDashboard() {
-      // Lógica para redirigir al dashboard
-      console.log("Redirigiendo al dashboard...");
-    },
-  },
-};
-</script>
 
 <style scoped>
 .login {

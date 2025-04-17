@@ -1,25 +1,3 @@
-<template>
-  <Header />
-  <div class="documentation-view">
-    <div class="sidebar">
-      <h2>Temas</h2>
-      <ul>
-        <li v-for="topic in topics" :key="topic.id">
-          <a @click="selectTopic(topic)">{{ topic.title }}</a>
-          <ul>
-            <li v-for="subtopic in topic.subtopics" :key="subtopic.id">
-              <a @click="selectSubtopic(subtopic)">{{ subtopic.title }}</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div class="content">
-      <component :is="currentComponent"></component>
-    </div>
-  </div>
-  <Footer />
-</template>
 
 <script>
 import QueEsMonyMonty from "@/components/documentacion/queEsMonyMonty.vue";
@@ -71,6 +49,32 @@ export default {
   },
 };
 </script>
+
+<template>
+  <Header />
+  <div class="documentation-view">
+    <div class="sidebar">
+      <h2>Temas</h2>
+      <ul>
+        <li v-for="topic in topics" :key="topic.id">
+          <a @click="selectTopic(topic)">{{ topic.title }}</a>
+          <ul>
+            <li v-for="subtopic in topic.subtopics" :key="subtopic.id">
+              <a @click="selectSubtopic(subtopic)">{{ subtopic.title }}</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="content">
+      <component :is="currentComponent"></component>
+    </div>
+  </div>
+  <Footer />
+</template>
+
+
+
 
 <style scoped>
 .documentation-view {

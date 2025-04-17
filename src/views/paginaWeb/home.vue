@@ -1,3 +1,14 @@
+<script>
+import Header from "@/components/web/header.vue";
+import Footer from "@/components/web/footer.vue";
+
+export default {
+  name: "Home",
+  components: {Header, Footer},
+};
+</script>
+
+
 <template>
   <Header />
 
@@ -73,15 +84,6 @@
   <Footer />
 </template>
 
-<script>
-import Header from "@/components/web/header.vue";
-import Footer from "@/components/web/footer.vue";
-
-export default {
-  name: "Home",
-  components: {Header, Footer},
-};
-</script>
 
 <style scoped>
 /* 🔹 Estilo general */
