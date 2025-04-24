@@ -2,6 +2,7 @@
   "name": "webmony",
   "private": true,
   "version": "0.0.0",
+  "description": "Web de MonyMonty",
   "type": "commonjs",
   "scripts": {
     "dev": "node --watch --env-file .env server/app.js",
@@ -28,14 +29,13 @@
     "@vitejs/plugin-vue": "^5.1.4",
     "vite": "^6.1.0"
   },
-  "description": "Web MonyMOny",
   "main": "vite.config.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OugMontiel/MonyMonty.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "OugMontiel",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/OugMontiel/MonyMonty/issues"
   },
