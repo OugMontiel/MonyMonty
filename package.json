@@ -1,5 +1,5 @@
 {
-  "name": "MonyMonty",
+  "name": "monymonty",
   "private": true,
   "version": "0.0.0",
   "description": "Web de MonyMonty",
@@ -8,10 +8,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "deploy": "vite build && gh-pages -d dist",
     "format": "prettier --write ."
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.3.1",
+    "gh-pages": "^6.3.0",
     "prettier": "^3.5.3",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
@@ -29,5 +31,5 @@
   "bugs": {
     "url": "https://github.com/OugMontiel/MonyMonty/issues"
   },
-  "homepage": "https://github.com/OugMontiel/MonyMonty#readme"
+  "homepage": "https://www.monymonty.monteflor.co"
 }
