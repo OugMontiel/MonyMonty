@@ -1,5 +1,4 @@
 import {createRouter, createWebHistory} from "vue-router";
-import document from "@/views/paginaDocumentacion/documentation.vue";
 import home from "@/views/paginaWeb/home.vue";
 import login from "@/views/paginaInicioDeSeccion/login.vue";
 import elTablero from "@/views/paginaDashboard/elTablero.vue";
@@ -12,12 +11,6 @@ const router = createRouter({
       path: "/",
       name: "Vista inicial",
       component: home,
-    },
-    // Vista estática de la documentación
-    {
-      path: "/Document",
-      name: "Vista de la documentación",
-      component: document,
     },
     // Vistas de inicio: El tablero
     {
@@ -32,7 +25,7 @@ const router = createRouter({
       component: login,
     },
 
-    // Vistas de nuevo presupuesto
+    // Vistas de nu evo presupuesto
 
     // Vistas de seguimiento de presupuestos
 

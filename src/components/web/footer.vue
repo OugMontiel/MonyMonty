@@ -1,3 +1,15 @@
+<script>
+export default {
+  name: "Pie de página -- Web",
+  methods: {
+    subscribe() {
+      // Lógica para manejar la suscripción
+      alert("Gracias por suscribirte!");
+    },
+  },
+};
+</script>
+
 <template>
   <!-- pie de página -->
   <footer>
@@ -43,17 +55,6 @@
     <p>&copy; 2025 MonyMonty</p>
   </footer>
 </template>
-<script>
-export default {
-  name: "Pie de página -- Web",
-  methods: {
-    subscribe() {
-      // Lógica para manejar la suscripción
-      alert("Gracias por suscribirte!");
-    },
-  },
-};
-</script>
 
 <style>
 footer {
