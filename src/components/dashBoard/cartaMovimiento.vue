@@ -1,3 +1,25 @@
+
+<script>
+export default {
+  name: "CarMov",
+  props: {
+    info: {
+      type: Object,
+      required: true,
+    },
+  },
+  mounted() {
+    console.log("Datos de la transacción:", this.info); // Verificar que los datos se reciban correctamente
+  },
+  methods: {
+    getValor() {
+      // Devuelve el ingreso o egreso basado en cuál tiene valor
+      return this.info.ingreso !== "$0,00" ? this.info.ingreso : this.info.egreso;
+    },
+  },
+};
+</script>
+
 <template>
   <div class="card">
     <h2>{{ info.fecha }}</h2>
@@ -28,26 +50,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "CarMov",
-  props: {
-    info: {
-      type: Object,
-      required: true,
-    },
-  },
-  mounted() {
-    console.log("Datos de la transacción:", this.info); // Verificar que los datos se reciban correctamente
-  },
-  methods: {
-    getValor() {
-      // Devuelve el ingreso o egreso basado en cuál tiene valor
-      return this.info.ingreso !== "$0,00" ? this.info.ingreso : this.info.egreso;
-    },
-  },
-};
-</script>
 
 <style>
 /* Móvil Vertical (Regla General) */

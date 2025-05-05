@@ -1,25 +1,3 @@
-<template>
-  <div>
-    <div class="bottom-nav" :class="{hidden: isHidden}" @mouseenter="showNav" @mouseleave="startHideTimer">
-      <nav>
-        <button
-          v-for="(section, index) in sections"
-          :key="index"
-          :class="{active: activeSection === section.name}"
-          @click="setActiveSection(section.name)"
-          :aria-label="section.name"
-        >
-          {{ section.label }}
-        </button>
-      </nav>
-    </div>
-
-    <div class="alt-nav" v-if="isHidden" @mouseenter="showNav">
-      <span>Mostrar Navegación</span>
-    </div>
-  </div>
-</template>
-
 <script>
 export default {
   name: "barra inferior de navegación entre vistas de tablero",
@@ -55,6 +33,29 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div>
+    <div class="bottom-nav" :class="{hidden: isHidden}" @mouseenter="showNav" @mouseleave="startHideTimer">
+      <nav>
+        <button
+          v-for="(section, index) in sections"
+          :key="index"
+          :class="{active: activeSection === section.name}"
+          @click="setActiveSection(section.name)"
+          :aria-label="section.name"
+        >
+          {{ section.label }}
+        </button>
+      </nav>
+    </div>
+
+    <div class="alt-nav" v-if="isHidden" @mouseenter="showNav">
+      <span>Mostrar Navegación</span>
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .bottom-nav {

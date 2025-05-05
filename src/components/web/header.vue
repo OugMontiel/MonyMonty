@@ -1,4 +1,3 @@
-
 <script>
 import logo from "@/assets/img/MonyMontySinFondo3.png";
 
