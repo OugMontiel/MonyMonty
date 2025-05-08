@@ -69,7 +69,7 @@ export default {
 
 .form-section {
   padding-top: 20px;
-  background-color: #d7d7d7;  
+  background-color: #e0e0e0;  
 }
 
 /* Card principal */

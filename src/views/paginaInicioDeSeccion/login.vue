@@ -41,7 +41,7 @@ export default {
   <div class="login">
     <div class="login-container">
       <!-- Sección derecha -->
-      <div class="login-login">
+      <div class="login-card">
         <div class="login-form">
 
           <div class="login-form-logo">
@@ -77,28 +77,30 @@ export default {
         <section>
           <box-icon name="home"></box-icon>
 
-          <h2>¿Qué es nuestra aplicación?</h2>
-          <p>Una innovadora solución SaaS para gestionar tus finanzas personales de manera eficiente y sencilla.</p>
+          <h2 class="info-h2">¿Qué es nuestra aplicación?</h2>
+          <p class="info-p">Una innovadora solución SaaS para gestionar tus finanzas personales de manera eficiente y
+            sencilla.</p>
         </section>
 
         <section>
           <box-icon name="home"></box-icon>
-          <h2>Eslogan</h2>
-          <p>"Tu camino hacia la libertad financiera comienza aquí."</p>
+          <h2 class="info-h2">Eslogan</h2>
+          <p class="info-p">"Tu camino hacia la libertad financiera comienza aquí."</p>
         </section>
 
         <section>
           <box-icon name="home"></box-icon>
-          <h2>Características destacadas</h2>
+          <h2 class="info-h2">Características destacadas</h2>
           <ul>
-            <li><strong>Asesorías personalizadas:</strong> Recibe orientación adaptada a tus necesidades financieras.
+            <li class="info-li"><strong>Asesorías personalizadas:</strong> Recibe orientación adaptada a tus necesidades
+              financieras.
             </li>
-            <li><strong>Asesorías grupales:</strong> Aprende y comparte experiencias con otros usuarios en sesiones
-              interactivas.</li>
-            <li>
-              <strong>Gestión basada en teorías económicas modernas:</strong> Utilizamos enfoques actualizados para
-              maximizar tu ahorro e
-              inversión.
+            <li class="info-li"><strong>Asesorías grupales:</strong> Aprende y comparte experiencias con otros usuarios
+              en sesiones interactivas.
+            </li>
+            <li class="info-li"><strong>Gestión basada en teorías económicas modernas:</strong> Utilizamos enfoques
+              actualizados para
+              maximizar tu ahorro einversión.
             </li>
           </ul>
         </section>
@@ -138,7 +140,7 @@ export default {
   max-width: 150px;
 }
 
-.login-login,
+.login-card,
 .login-info {
   display: flex;
   flex-direction: column;
@@ -148,7 +150,7 @@ export default {
   padding: 20px;
 }
 
-.login-login {
+.login-card {
   width: 35%;
   background-color: #f8f9fa;
   border-radius: 15px;
@@ -268,7 +270,74 @@ export default {
 }
 
 /* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {}
+@media (max-width: 575.98px) {
+
+
+  .login-container {
+    flex-direction: column;
+    width: 90%;
+    height: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .login-card,
+  .login-info {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+
+  .login-form {
+    width: 100%;
+  }
+
+  .login-form input {
+    font-size: 14px;
+  }
+
+  .login-button,
+  .create-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .divider-buton {
+    width: 50%;
+    height: 5px;
+    margin: 15px 0;
+    background-color: #e0e0e0;
+  }
+
+  .divider {
+    width: 100%;
+    height: 2px;
+    margin: 15px 0;
+    background-color: #e0e0e0;
+  }
+
+  .login-info section {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .login-info h2,
+  .info-p,
+  .info-li {
+    font-size: 12px;
+  }
+
+
+  .login-logo {
+    max-width: 120px;
+  }
+
+  .login-footer {
+    font-size: 12px;
+    padding: 5px;
+  }
+}
+
 
 /* Pequeño: móviles medianos y grandes (sm) */
 @media (min-width: 576px) and (max-width: 767.98px) {}
