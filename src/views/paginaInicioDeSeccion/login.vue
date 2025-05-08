@@ -31,7 +31,7 @@ export default {
       this.$router.push('/recuperarCuenta');
     },
     irACrearCuenta() {
-      this.$router.push('/registrarCuenta');
+      this.$router.push('/crearCuenta');
     },
   },
 };
@@ -188,10 +188,12 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
+
 }
 
-.login-form-datos div {
+.login-input {
   margin-bottom: 15px;
+  margin: 5px 0;
 }
 
 .login-form h2 {

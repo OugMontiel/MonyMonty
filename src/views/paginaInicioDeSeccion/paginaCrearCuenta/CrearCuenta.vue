@@ -1,179 +1,225 @@
 <script>
+
+import logo from "@/assets/img/MonyMontySinFondo3.png";
+import Footer from "@/components/web/footer.vue";
+
+
+
 export default {
-  name: "CrearCuenta",
+  name: "RegisterForm",
+  data() {
+    return {
+      logo,
+
+      nombre: "",
+      apellido: "",
+      dia: "",
+      mes: "",
+      año: "",
+      genero: "",
+      email: "",
+      contraseña: "",
+    };
+  },
   methods: {
-    cancelar() {
-      console.log("Cancelar presionado");
+    irALogin() {
+      this.$router.push("/");
     },
-    buscarCuenta() {
-      console.log("Buscar presionado");
-    },
-    iniciarSesion() {
-      console.log("Redirigir a login...");
-    },
-    registrarCuenta() {
-      console.log("Redirigir a registro...");
-    }
-  }
+  },
 };
 </script>
 
 <template>
-  <div class="pagina-recuperar">
-    <!-- NAV -->
-    <nav class="barra-nav">
-      <div class="logo">facebook</div>
-      <div class="form-login">
-        <input type="text" placeholder="Correo o teléfono" />
-        <input type="password" placeholder="Contraseña" />
-        <button class="btn-azul" @click="iniciarSesion">Iniciar sesión</button>
-        <a class="registro-link" href="#" @click.prevent="registrarCuenta">Registrar cuenta</a>
+  <div class="form-container">
+    <div class="logo-section">
+    <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
+  </div>
+    <div class="card">
+      <div class="card-text">
+        <h2 class="card-h2">Crea una cuenta</h2>
+        <p>Es rápido y fácil.</p>
       </div>
-    </nav>
-
-    <!-- FORMULARIO PRINCIPAL -->
-    <div class="recuperar-cuenta-card">
-      <h2>Recupera tu cuenta</h2>
-      <p>Ingresa tu correo electrónico o número de celular para buscar tu cuenta.</p>
-
-      <input
-        type="text"
-        placeholder="Correo electrónico o número de celular"
-        class="input-text"
-      />
-
-      <div class="acciones">
-        <button class="btn-cancelar" @click="cancelar">Cancelar</button>
-        <button class="btn-buscar" @click="buscarCuenta">Buscar</button>
+      
+      <div class="row">
+        <input type="text" placeholder="Nombre" v-model="nombre" />
+        <input type="text" placeholder="Apellido" v-model="apellido" />
       </div>
+
+      <label>Fecha de nacimiento</label>
+      <div class="row">
+        <select v-model="dia">
+          <option v-for="n in 31" :key="n" :value="n">{{ n }}</option>
+        </select>
+        <select v-model="mes">
+          <option value="enero">enero</option>
+          <option value="febrero">febrero</option>
+          <option value="marzo">marzo</option>
+          <option value="abril">abril</option>
+          <option value="mayo">mayo</option>
+          <option value="junio">junio</option>
+          <option value="julio">julio</option>
+          <option value="agosto">agosto</option>
+          <option value="septiembre">septiembre</option>
+          <option value="octubre">octubre</option>
+          <option value="noviembre">noviembre</option>
+          <option value="diciembre">diciembre</option>
+        </select>
+        <select v-model="año">
+          <option v-for="n in 100" :key="n" :value="2025 - n">{{ 2025 - n }}</option>
+        </select>
+      </div>
+
+      <label>Género</label>
+      <div class="genero-container">
+        <label class="genero-opcion">
+          <input type="radio" value="Mujer" v-model="genero" />
+          <span>Mujer</span>
+        </label>
+        <label class="genero-opcion">
+          <input type="radio" value="Hombre" v-model="genero" />
+          <span>Hombre</span>
+        </label>
+      </div>
+
+      <input type="email" placeholder="Correo electrónico" v-model="email"  class=""/>
+      <input type="password" placeholder="Contraseña nueva" v-model="contraseña" />
+
+      <p class="text-small">Al hacer clic en "Registrarte", aceptas nuestras Condiciones, la Política de privacidad y...
+      </p>
+
+      <button class="register-button">Registrarte</button>
+
+      <p @click="irALogin" class="forgot-login">¿Ya tienes una cuenta?</p>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Estructura general */
-.pagina-recuperar {
-  background-color: #f0f2f5;
-  min-height: 100vh;
+.form-container {
   font-family: Arial, sans-serif;
-}
-
-/* Barra de navegación */
-.barra-nav {
-  background-color: #ffffff;
-  padding: 0.5em 1em;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  margin-top: 30px;
 }
 
-.logo {
-  font-size: 1.6em;
+
+.logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.logo-icon {
+  width: 150px;
+  height: auto;
+}
+.card {
+  width: 400px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+}
+.card-text{
+  align-items: center;
+}
+
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccd0d5;
+  border-radius: 6px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.text-small {
+  font-size: 12px;
+  color: #606770;
+  margin-bottom: 10px;
+}
+
+.genero-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.genero-opcion {
+  position: relative;
+  border: 1px solid #ccd0d5;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  background-color: #fff;
+  transition: border-color 0.3s;
+}
+
+.genero-opcion input[type="radio"] {
+  margin-right: 8px;
+  accent-color: #1877f2; /* color del círculo seleccionado */
+}
+
+.genero-opcion input[type="radio"]:checked + span {
   font-weight: bold;
-  color: #1877f2;
 }
 
-.form-login {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
+.genero-opcion:hover {
+  border-color: #1877f2;
 }
 
-.form-login input {
-  padding: 0.4em;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-.btn-azul {
-  background-color: #1877f2;
+.register-button {
+  background-color: #42b72a;
   color: white;
-  border: none;
-  padding: 0.4em 1em;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
   font-weight: bold;
-  border-radius: 4px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
+  margin: 15px 0;
 }
 
-.btn-azul:hover {
-  background-color: #166fe5;
-}
-
-.registro-link {
-  font-size: 0.9em;
+.login-link {
+  text-align: center;
   color: #1877f2;
-  text-decoration: none;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.registro-link:hover {
+.forgot-login {
+  color: #1877f2;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.forgot-login:hover {
   text-decoration: underline;
 }
 
-/* Card principal */
-.recuperar-cuenta-card {
-  max-width: 400px;
-  margin: 80px auto;
-  background: #fff;
-  padding: 1.5em;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.recuperar-cuenta-card h2 {
-  font-size: 1.2em;
-  margin-bottom: 0.5em;
-}
-
-.recuperar-cuenta-card p {
-  font-size: 0.95em;
-  color: #555;
-  margin-bottom: 1em;
-}
-
-.input-text {
-  width: 100%;
-  padding: 0.7em;
-  margin-bottom: 1em;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95em;
-}
-
-.acciones {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5em;
-}
-
-.btn-cancelar {
-  background-color: #e4e6eb;
-  color: #050505;
-  border: none;
-  padding: 0.5em 1.2em;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-buscar {
-  background-color: #1877f2;
-  color: white;
-  border: none;
-  padding: 0.5em 1.2em;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-cancelar:hover {
-  background-color: #d8dadf;
-}
-
-.btn-buscar:hover {
-  background-color: #166fe5;
-}
 </style>

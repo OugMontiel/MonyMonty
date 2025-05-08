@@ -58,18 +58,18 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px; 
+  margin-top: 50px;
   margin-bottom: 20px;
 }
 
 .logo-icon {
-  width: 150px; 
+  width: 150px;
   height: auto;
 }
 
 .form-section {
   padding-top: 20px;
-  background-color: #e0e0e0;  
+  background-color: #e0e0e0;
 }
 
 /* Card principal */
@@ -80,7 +80,7 @@ export default {
   padding: 1.5em;
   border: 1px solid #c5c1c1;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgb(95, 77, 77);
 }
 
 .text-h2 {
@@ -118,10 +118,10 @@ export default {
 }
 
 .btn-cancelar {
-  background-color: #e4e6eb;  
+  background-color: #e4e6eb;
   color: #050505;
   border: none;
-  padding: 15px 25px;
+  padding: 10px 30px;
   border-radius: 6px;
   border: 1px solid #9b9b9b;
   font-weight: bold;
@@ -136,7 +136,7 @@ export default {
   background-color: #1877f2;
   color: white;
   border: none;
-  padding: 15px 30px;
+  padding: 10px 30px;
   border-radius: 6px;
   border: 1px solid #1666cf;
   font-weight: bold;
@@ -165,35 +165,35 @@ export default {
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
 
-.card {
-  max-width: 270px;
-  margin: 30px auto;
-  background-color: #f3f3f3;
-  padding: 1.5em;
-  border: 1px solid #c5c1c1;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-.footer-p {
-  font-style: italic;
-  font-size: 15px;
-  color: #333;
-}
+  .card {
+    max-width: 270px;
+    margin: 30px auto;
+    background-color: #f3f3f3;
+    padding: 1.5em;
+    border: 1px solid #c5c1c1;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
 
-.btn-cancelar {
-  padding: 10px 15px;
-}
-.btn-buscar {
-  padding: 10px 20px;
-}
+  .footer-p {
+    font-style: italic;
+    font-size: 15px;
+    color: #333;
+  }
+
+  .btn-cancelar {
+    padding: 10px 15px;
+  }
+
+  .btn-buscar {
+    padding: 10px 20px;
+  }
 
 
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-
-}
+@media (min-width: 576px) and (max-width: 767.98px) {}
 
 /* Mediano: tablets (md) */
 @media (min-width: 768px) and (max-width: 991.98px) {}
