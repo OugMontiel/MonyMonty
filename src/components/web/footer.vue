@@ -25,33 +25,33 @@ export default {
   <footer>
     <h3>¡Sé parte de esta transformación!</h3>
     <div class="pie">
-      <div>
-        <h4>Contacta</h4>
-        <p>Síguenos en redes sociales</p>
-        
-        <div class="login-form-logo">
-          <a href="https://facebook.com" aria-label="Facebook">
-            <img :src="facebook" alt="Icono de la aplicación" class="icon-network" />
-          </a>
+      <div class="network">
+        <h4 class="network-h4">Contacta</h4>
+        <p class="network-p">Síguenos en redes sociales</p>
+        <div class="network-card">
+          <div class="icon-network">
+            <a href="https://facebook.com" aria-label="Facebook">
+              <img :src="facebook" alt="Icono de la aplicación" class="network-icon" />
+            </a>
+          </div>
+          <div class="icon-network">
+            <a href="https://twitter.com" aria-label="Twitter">
+              <img :src="git" alt="Icono de la aplicación" class="network-icon" />
+            </a>
 
-        </div>
-        <div class="login-form-logo">
-          <a href="https://twitter.com" aria-label="Twitter">
-            <img :src="git" alt="Icono de la aplicación" class="icon-network" />
-          </a>
-
-        </div>
-        <div class="login-form-logo">
-          <a href="https://instagram.com" aria-label="Instagram">
-            <img :src="instagram" alt="Icono de la aplicación" class="icon-network" />
-          </a>
-
+          </div>
+          <div class="icon-network">
+            <a href="https://instagram.com" aria-label="Instagram">
+              <img :src="instagram" alt="Icono de la aplicación" class="network-icon" />
+            </a>
+          </div>
         </div>
       </div>
 
-      <div>
-        <h4>Páginas</h4>
-        <p>Puedes encontrar más de nosotros en:</p>
+      <div class="paginas">
+        <h4 class="paginas-h4">Páginas</h4>
+        <p class="paginas-p">Puedes encontrar más de nosotros en:</p>
+
         <ul>
           <li>
             <router-link to="/dashboard">Dashboard</router-link>
@@ -61,12 +61,14 @@ export default {
           </li>
         </ul>
       </div>
-      <div>
-        <h4>Agenda tu cita</h4>
-        <p>Si quieres ser parte de nuestra comunidad, agenda tu cita y comienza a transformar tu vida financiera.</p>
-        <form class="mt-4" @submit.prevent="subscribe">
+
+      <div class="agenda">
+        <h4 class="agenda-h4">Agenda tu cita</h4>
+        <p class="agenda-p">Si quieres ser parte de nuestra comunidad, agenda tu cita y comienza a transformar tu vida financiera.</p>
+        
+        <form class="agenda-formulario" @submit.prevent="subscribe">
           <input class="p-2 rounded-l-full" placeholder="Tu correo electrónico" type="email" required />
-          <button class="bg-yellow-500 text-gray-900 px-4 py-2 rounded-r-full" type="submit">Suscribirse</button>
+          <button class="btn-suscribirse" type="submit">Suscribirse</button>
         </form>
       </div>
     </div>
@@ -78,54 +80,108 @@ export default {
 <style>
 footer {
   padding: 2em 0;
-  /* Espaciado interno del pie de página */
   background-color: var(--color-fondo-nav);
-  /* Color de fondo del pie de página */
   text-align: center;
-  /* Centrar el texto */
 }
 
 .pie {
   display: flex;
   justify-content: space-around;
-  /* Espaciado entre las secciones del pie de página */
   margin: 2em 0;
-  /* Margen superior e inferior */
 }
 
 .pie div {
   max-width: 300px;
-  /* Limitar el ancho de cada sección */
 }
 
 .pie h4 {
   margin-bottom: 0.5em;
-  /* Espaciado inferior para los encabezados */
 }
 
 .pie p {
   margin: 0.5em 0;
-  /* Espaciado vertical para los párrafos */
 }
 
 footer form {
   display: flex;
-  /* Usar flexbox para el formulario */
   justify-content: center;
-  /* Centrar el contenido del formulario */
 }
 
 footer input {
   flex: 1;
-  /* Permitir que el input ocupe el espacio disponible */
 }
 
 footer button {
   margin-left: 0.5em;
-  /* Espaciado entre el input y el botón */
 }
+
+.network-card {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .icon-network {
   width: 30px;
 }
+
+
+.btn-suscribirse {
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid #1666cf;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Extra pequeño: móviles pequeños (xs) */
+@media (max-width: 575.98px) {
+  
+.pie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.network-h2{
+  font-size: 8px;
+}
+
+.network-p{
+  font-size: 11px;
+}
+
+.icon-network {
+  width: 15px;
+}
+
+.paginas-p{
+  font-size: 11px;
+}
+
+.agenda-p{
+  font-size: 11px;
+}
+}
+
+/* Pequeño: móviles medianos y grandes (sm) */
+@media (min-width: 576px) and (max-width: 767.98px) {}
+
+/* Mediano: tablets (md) */
+@media (min-width: 768px) and (max-width: 991.98px) {}
+
+/* Grande: laptops (lg) */
+@media (min-width: 992px) and (max-width: 1199.98px) {}
+
+/* Extra grande: pantallas grandes (xl) */
+@media (min-width: 1200px) and (max-width: 1399.98px) {}
+
+/* XXL: monitores muy grandes */
+@media (min-width: 1400px) {}
 </style>
