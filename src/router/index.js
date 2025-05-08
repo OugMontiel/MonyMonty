@@ -3,7 +3,7 @@ import home from "@/views/paginaWeb/home.vue";
 import login from "@/views/paginaInicioDeSeccion/login.vue";
 import elTablero from "@/views/paginaDashboard/elTablero.vue";
 import crearCuentaNueva from "../views/paginaInicioDeSeccion/paginaCrearCuenta/CrearCuenta.vue";
-import recuperarCuenta from "../views/paginaInicioDeSeccion/paginaRecuperarCuenta/RecuperarCuentar.vue";
+import recuperarCuentaCliente from "../views/paginaInicioDeSeccion/paginaRecuperarCuenta/RecuperarCuenta.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,14 +27,14 @@ const router = createRouter({
       component: login,
     },
     {
-      path: "/crearNuevaCuenta",
+      path: "/registrarCuenta",
       name: "Vista de Crear Cuenta",
       component: crearCuentaNueva,
     },
     {
       path: "/recuperarCuenta",
       name: "Vista de Crear Cuenta",
-      component: recuperarCuenta,
+      component: recuperarCuentaCliente,
     },
 
   ],

@@ -1,6 +1,16 @@
 <script>
+import facebook from "@/assets/img/icon-facebook.svg";
+import git from "@/assets/img/icon-git.svg";
+import instagram from "@/assets/img/icon-instagram.svg";
+
 export default {
   name: "Pie de página -- Web",
+  data() {
+    return {
+      facebook, git, instagram
+
+    };
+  },
   methods: {
     subscribe() {
       // Lógica para manejar la suscripción
@@ -18,18 +28,27 @@ export default {
       <div>
         <h4>Contacta</h4>
         <p>Síguenos en redes sociales</p>
-        <div class="flex justify-center space-x-4 mt-4">
+        
+        <div class="login-form-logo">
           <a href="https://facebook.com" aria-label="Facebook">
-            <i class="fab fa-facebook-f"></i>
+            <img :src="facebook" alt="Icono de la aplicación" class="icon-network" />
           </a>
+
+        </div>
+        <div class="login-form-logo">
           <a href="https://twitter.com" aria-label="Twitter">
-            <i class="fab fa-twitter"></i>
+            <img :src="git" alt="Icono de la aplicación" class="icon-network" />
           </a>
+
+        </div>
+        <div class="login-form-logo">
           <a href="https://instagram.com" aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
+            <img :src="instagram" alt="Icono de la aplicación" class="icon-network" />
           </a>
+
         </div>
       </div>
+
       <div>
         <h4>Páginas</h4>
         <p>Puedes encontrar más de nosotros en:</p>
@@ -58,39 +77,55 @@ export default {
 
 <style>
 footer {
-  padding: 2em 0; /* Espaciado interno del pie de página */
-  background-color: var(--color-fondo-nav); /* Color de fondo del pie de página */
-  text-align: center; /* Centrar el texto */
+  padding: 2em 0;
+  /* Espaciado interno del pie de página */
+  background-color: var(--color-fondo-nav);
+  /* Color de fondo del pie de página */
+  text-align: center;
+  /* Centrar el texto */
 }
 
 .pie {
   display: flex;
-  justify-content: space-around; /* Espaciado entre las secciones del pie de página */
-  margin: 2em 0; /* Margen superior e inferior */
+  justify-content: space-around;
+  /* Espaciado entre las secciones del pie de página */
+  margin: 2em 0;
+  /* Margen superior e inferior */
 }
 
 .pie div {
-  max-width: 300px; /* Limitar el ancho de cada sección */
+  max-width: 300px;
+  /* Limitar el ancho de cada sección */
 }
 
 .pie h4 {
-  margin-bottom: 0.5em; /* Espaciado inferior para los encabezados */
+  margin-bottom: 0.5em;
+  /* Espaciado inferior para los encabezados */
 }
 
 .pie p {
-  margin: 0.5em 0; /* Espaciado vertical para los párrafos */
+  margin: 0.5em 0;
+  /* Espaciado vertical para los párrafos */
 }
 
 footer form {
-  display: flex; /* Usar flexbox para el formulario */
-  justify-content: center; /* Centrar el contenido del formulario */
+  display: flex;
+  /* Usar flexbox para el formulario */
+  justify-content: center;
+  /* Centrar el contenido del formulario */
 }
 
 footer input {
-  flex: 1; /* Permitir que el input ocupe el espacio disponible */
+  flex: 1;
+  /* Permitir que el input ocupe el espacio disponible */
 }
 
 footer button {
-  margin-left: 0.5em; /* Espaciado entre el input y el botón */
+  margin-left: 0.5em;
+  /* Espaciado entre el input y el botón */
+}
+
+.icon-network {
+  width: 30px;
 }
 </style>

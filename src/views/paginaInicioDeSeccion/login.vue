@@ -27,11 +27,11 @@ export default {
       // Lógica para redirigir al dashboard
       console.log("Redirigiendo al dashboard...");
     },
-    irARecuperarCuenta(){
+    irARecuperarCuenta() {
       this.$router.push('/recuperarCuenta');
     },
-    irACrearCuenta(){
-      this.$router.push('/crearNuevaCuenta');
+    irACrearCuenta() {
+      this.$router.push('/registrarCuenta');
     },
   },
 };
@@ -43,30 +43,26 @@ export default {
       <!-- Sección derecha -->
       <div class="login-login">
         <div class="login-form">
+
           <div class="login-form-logo">
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
+
           <div class="login-form-datos">
-            <input
-            type="text"
-            v-model="emailOrPhone"
-            placeholder="Correo electrónico o número de teléfono"
-            class="login-input"
-          />
-          <input
-            type="password"
-            v-model="password"
-            placeholder="Contraseña"
-            class="login-input"
-          />
+            <input type="text" v-model="emailOrPhone" placeholder="Correo electrónico" class="login-input" />
+            <input type="password" v-model="password" placeholder="Contraseña" class="login-input" />
           </div>
+
           <button @click="iniciarSesion" class="login-button">
             Iniciar sesión
           </button>
+
           <p @click="irARecuperarCuenta" class="forgot-password">
             ¿Olvidaste tu contraseña?
           </p>
-          <hr />
+
+          <div class="divider-buton"></div>
+
           <button @click="irACrearCuenta" class="create-button">
             Crear cuenta nueva
           </button>
@@ -77,6 +73,7 @@ export default {
 
       <!-- Sección izquierda -->
       <div class="login-info">
+
         <section>
           <box-icon name="home"></box-icon>
 
@@ -108,7 +105,7 @@ export default {
       </div>
     </div>
 
-    <!-- mensaje de pie de paguina -->
+    <!-- mensaje de pie de pagina -->
     <div class="login-footer">
       <p>"El dinero es un terrible amo pero un excelente sirviente." - P.T. Barnum</p>
     </div>
@@ -137,6 +134,10 @@ export default {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
+.login-logo {
+  max-width: 150px;
+}
+
 .login-login,
 .login-info {
   display: flex;
@@ -160,9 +161,15 @@ export default {
   border-radius: 15px;
 }
 
+.divider-buton {
+  width: 100%;
+  height: 2px;
+  background-color: #e0e0e0;
+}
+
 .divider {
   height: 60vh;
-  width: 1.5px;
+  width: 2px;
   background-color: #e0e0e0;
 }
 
@@ -219,6 +226,7 @@ export default {
 .login-button:hover {
   background-color: #166fe5;
 }
+
 .forgot-password {
   color: #1877f2;
   font-size: 14px;
@@ -245,56 +253,35 @@ export default {
 .create-button:hover {
   background-color: #36a420;
 }
+
 .login-info section {
   margin-bottom: 2em;
   text-align: left;
-  /* Alineación a la izquierda */
-}
-
-.login-logo {
-  max-width: 150px;
-  /* Ajusta el tamaño del logo según sea necesario */
 }
 
 .login-footer {
   text-align: center;
-
   width: 100%;
   padding: 10px 0;
-  /* Espaciado interno */
   font-size: 0.9em;
-  /* Tamaño de fuente más pequeño */
   color: #6c757d;
-  /* Color gris */
 }
 
 /* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {
-  /* Estilos para móviles pequeños */
-}
+@media (max-width: 575.98px) {}
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-  /* Estilos para móviles medianos/grandes */
-}
+@media (min-width: 576px) and (max-width: 767.98px) {}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  /* Estilos para tablets */
-}
+@media (min-width: 768px) and (max-width: 991.98px) {}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  /* Estilos para laptops */
-}
+@media (min-width: 992px) and (max-width: 1199.98px) {}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
-  /* Estilos para pantallas grandes */
-}
+@media (min-width: 1200px) and (max-width: 1399.98px) {}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-  /* Estilos para pantallas muy grandes */
-}
+@media (min-width: 1400px) {}
 </style>

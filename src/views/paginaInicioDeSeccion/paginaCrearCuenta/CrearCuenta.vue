@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: "RecuperarCuenta",
+  name: "CrearCuenta",
   methods: {
     cancelar() {
       console.log("Cancelar presionado");
