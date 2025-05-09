@@ -18,7 +18,7 @@ const router = createRouter({
     },
     // Vistas de inicio: El tablero
     {
-      path: "/Tablero",
+      path: "/tablero",
       name: "Vista del tablero",
       component: elTablero,
     },

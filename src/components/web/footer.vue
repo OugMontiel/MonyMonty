@@ -26,7 +26,7 @@ export default {
     <h3>¡Sé parte de esta transformación!</h3>
     <div class="pie">
       <div class="network">
-        <h4 class="network-h4">Contacta</h4>
+        <h4 class="network-h4">Contactanos</h4>
         <p class="network-p">Síguenos en redes sociales</p>
         <div class="network-card">
           <div class="icon-network">

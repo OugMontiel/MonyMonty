@@ -25,7 +25,8 @@ export default {
     },
     redirectToDashboard() {
       // Lógica para redirigir al dashboard
-      console.log("Redirigiendo al dashboard...");
+      alert("Redirigiendo al dashboard...");
+      this.$router.push('/tablero');
     },
     irARecuperarCuenta() {
       this.$router.push('/recuperarCuenta');
@@ -33,6 +34,7 @@ export default {
     irACrearCuenta() {
       this.$router.push('/crearCuenta');
     },
+  
   },
 };
 </script>
@@ -53,7 +55,7 @@ export default {
             <input type="password" v-model="password" placeholder="Contraseña" class="login-input" />
           </div>
 
-          <button @click="iniciarSesion" class="login-button">
+          <button @click="login" class="login-button">
             Iniciar sesión
           </button>
 
