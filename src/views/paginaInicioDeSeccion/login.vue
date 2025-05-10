@@ -34,6 +34,10 @@ export default {
     irACrearCuenta() {
       this.$router.push('/crearCuenta');
     },
+
+    irATablero() {
+      this.$router.push('/tablero');
+    },
   
   },
 };
@@ -67,6 +71,9 @@ export default {
 
           <button @click="irACrearCuenta" class="create-button">
             Crear cuenta nueva
+          </button>
+          <button @click="irATablero" class="create-button">
+            tablero prueba 
           </button>
         </div>
       </div>
