@@ -34,10 +34,6 @@ export default {
     irACrearCuenta() {
       this.$router.push("/crearCuenta");
     },
-
-    irATablero() {
-      this.$router.push("/tablero");
-    },
   },
 };
 </script>
@@ -53,7 +49,7 @@ export default {
           </div>
 
           <div class="login-form-datos">
-            <input type="text" v-model="emailOrPhone" placeholder="Correo electrónico" class="login-input" />
+            <input type="email" v-model="emailOrPhone" placeholder="Correo electrónico" class="login-input" />
             <input type="password" v-model="password" placeholder="Contraseña" class="login-input" />
           </div>
 
@@ -63,8 +59,8 @@ export default {
 
           <div class="divider-buton"></div>
 
-          <button @click="irACrearCuenta" class="create-button">Crear cuenta nueva</button>
-          <button @click="irATablero" class="create-button">tablero prueba</button>
+          <button @click="irACrearCuenta" class="login-button">Crear cuenta nueva</button>
+          <button @click="redirectToDashboard" class="login-button">tablero prueba</button>
         </div>
       </div>
 
@@ -115,24 +111,26 @@ export default {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  background-color: #f0f4f8;
+  background: var(--color-fondo);
+  color: var(--texto-principal);
   height: 100vh;
-  font-family: "Arial", sans-serif;
 }
 
 .login-container {
+  flex: 1;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  width: 70%;
-  height: 60%;
-  background: #ffffff;
+  margin: 3rem 5rem;
+  background: var(--color-fondo);
   border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px var(--color-fondo-shadow);
 }
 
-.login-logo {
-  max-width: 150px;
+.divider {
+  height: 80%;
+  width: 2px;
+  background-color: var(--color-fondo-linea);
 }
 
 .login-card,
@@ -140,39 +138,22 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   height: 90%;
-  padding: 20px;
+  padding: 1rem;
+  background-color: var(--color-fondo-login);
+  border-radius: 15px;
 }
 
 .login-card {
   width: 35%;
-  background-color: #f8f9fa;
-  border-radius: 15px;
-  color: black;
 }
 
 .login-info {
   width: 55%;
-  background-color: #f8f9fa;
-  border-radius: 15px;
-}
-
-.divider-buton {
-  width: 100%;
-  height: 2px;
-  background-color: #e0e0e0;
-}
-
-.divider {
-  height: 60vh;
-  width: 2px;
-  background-color: #e0e0e0;
 }
 
 .login-form {
-  height: 90%;
-  width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -185,71 +166,52 @@ export default {
   width: 100%;
 }
 
-.login-input {
-  margin-bottom: 15px;
-  margin: 5px 0;
-}
-
-.login-form h2 {
-  margin: 0 0 5px;
-  font-size: 1.2em;
-}
-
 .login-form input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ced4da;
-  border-radius: 5px;
+  padding: .6rem;
+  border: 1px solid var(--color-fondo-input);
+  border-radius: .6em;
   font-size: 1em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-form input:focus {
-  border-color: #007bff;
+  border: .5px solid var(--color-fondo-input-activo);
+  box-shadow: 0 0 3px var(--color-fondo-input-activo);
   outline: none;
+}
+
+.login-logo {
+  max-width: 150px;
+}
+
+.divider-buton {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-fondo-linea);
 }
 
 .login-button {
   width: 100%;
-  background-color: #1877f2;
-  color: white;
-  border: none;
-  padding: 10px;
+  background-color: var(--color-fondo-button);
+  color: var(--texto-primario-Blanco);
+  padding: .6rem;
   font-weight: bold;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 10px;
+  font-size: 1.2em;
+  border-radius: .6rem;
 }
 
 .login-button:hover {
-  background-color: #166fe5;
+  background-color: var(--color-fondo-button-activo);
 }
 
 .forgot-password {
-  color: #1877f2;
-  font-size: 14px;
+  color: var(--texto-primario-azul);
+  font-size: 1em;
   cursor: pointer;
-  margin-bottom: 10px;
 }
 
 .forgot-password:hover {
-  text-decoration: underline;
-}
-
-.create-button {
-  width: 100%;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px;
-  font-weight: bold;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.create-button:hover {
-  background-color: #36a420;
+  text-decoration: none;
 }
 
 .login-info section {
@@ -259,10 +221,9 @@ export default {
 
 .login-footer {
   text-align: center;
-  width: 100%;
-  padding: 10px 0;
+  padding: 1rem 0;
   font-size: 0.9em;
-  color: #6c757d;
+  color: var(--texto-segundario);
 }
 
 /* Extra pequeño: móviles pequeños (xs) */
@@ -326,8 +287,7 @@ export default {
   }
 
   .login-footer {
-    font-size: 12px;
-    padding: 5px;
+    font-size: 0.7em;
   }
 }
 
