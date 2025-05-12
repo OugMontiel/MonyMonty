@@ -1,4 +1,3 @@
-
 <script>
 export default {
   name: "CarMov",
@@ -49,7 +48,6 @@ export default {
     </p>
   </div>
 </template>
-
 
 <style>
 /* Móvil Vertical (Regla General) */

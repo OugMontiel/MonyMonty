@@ -10,15 +10,15 @@ export default {
       logo,
     };
   },
-  components: { Footer },
+  components: {Footer},
   methods: {
     cancelar() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
     buscarCuenta() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
-  }
+  },
 };
 </script>
 
@@ -48,8 +48,6 @@ export default {
 
     <Footer />
   </div>
-
-
 </template>
 
 <style scoped>
@@ -164,7 +162,6 @@ export default {
 
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-
   .card {
     max-width: 270px;
     margin: 30px auto;
@@ -188,22 +185,25 @@ export default {
   .btn-buscar {
     padding: 10px 20px;
   }
-
-
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>

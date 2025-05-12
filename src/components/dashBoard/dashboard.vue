@@ -1,40 +1,39 @@
 <script>
-import Chart from 'chart.js/auto';
+import Chart from "chart.js/auto";
 
 export default {
-
   name: "Dashboard",
   data() {
     return {
       ingresos: [
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 550 },
-        { nombre: 'Sueldo', valor: 200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 55 },
-        { nombre: 'Sueldo', valor: 1200 },
-        { nombre: 'Porlote', valor: 550 },
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 550},
+        {nombre: "Sueldo", valor: 200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 55},
+        {nombre: "Sueldo", valor: 1200},
+        {nombre: "Porlote", valor: 550},
       ],
       gastos: [
-        { nombre: 'Manilla', valor: -10 },
-        { nombre: 'Colchon', valor: -500 },
-        { nombre: 'Manilla', valor: -100 },
-        { nombre: 'Colchon', valor: -200 },
-        { nombre: 'Manilla', valor: -10 },
-        { nombre: 'Colchon', valor: -200 },
+        {nombre: "Manilla", valor: -10},
+        {nombre: "Colchon", valor: -500},
+        {nombre: "Manilla", valor: -100},
+        {nombre: "Colchon", valor: -200},
+        {nombre: "Manilla", valor: -10},
+        {nombre: "Colchon", valor: -200},
       ],
     };
   },
@@ -44,32 +43,33 @@ export default {
     },
   },
   mounted() {
-    this.renderChart(this.$refs.chartIngresos, this.ingresos, 'rgb(0, 200, 0)');
-    this.renderChart(this.$refs.chartGastos, this.gastos, 'rgb(200, 0, 0)');
+    this.renderChart(this.$refs.chartIngresos, this.ingresos, "rgb(0, 200, 0)");
+    this.renderChart(this.$refs.chartGastos, this.gastos, "rgb(200, 0, 0)");
   },
   methods: {
     renderChart(canvas, data, color) {
       new Chart(canvas, {
-        type: 'doughnut',
+        type: "doughnut",
         data: {
-          labels: data.map(i => i.nombre),
-          datasets: [{
-            data: data.map(i => Math.abs(i.valor)),
-            backgroundColor: data.map(() => color),
-          }],
+          labels: data.map((i) => i.nombre),
+          datasets: [
+            {
+              data: data.map((i) => Math.abs(i.valor)),
+              backgroundColor: data.map(() => color),
+            },
+          ],
         },
         options: {
           responsive: true,
           plugins: {
-            legend: { display: false }
-          }
-        }
+            legend: {display: false},
+          },
+        },
       });
     },
   },
 };
 </script>
-
 
 <template>
   <div class="dashboard">
@@ -77,15 +77,13 @@ export default {
     <p>Bienvenido al panel de control</p>
   </div>
   <div class="dashboard">
-
     <div class="panel-ingresos">
       <h2 class="ingresos-h2">Ingresos</h2>
       <div class="chart-container">
         <canvas ref="chartIngresos"></canvas>
       </div>
       <div class="tarjetas-ingresos">
-        <div class="ingresos-positivo" v-for="item in movimientos.filter(i => i.valor >= 0).slice(-5)"
-          :key="item.nombre">
+        <div class="ingresos-positivo" v-for="item in movimientos.filter((i) => i.valor >= 0).slice(-5)" :key="item.nombre">
           <p class="ingresos-nombre">{{ item.nombre }}</p>
           <p class="ingresos-valor">+{{ item.valor }}</p>
         </div>
@@ -95,10 +93,14 @@ export default {
     <div class="panel-movimientos">
       <h2 class="movimientos-h2">Movimientos</h2>
       <ul class="tarjetas-movimientos">
-        <li v-for="item in movimientos.slice(-5)" :key="item.nombre" class="tarjeta-movimientos"
-          :class="item.valor >= 0 ? 'movimientos-positivo' : 'movimientos-negativo'">
+        <li
+          v-for="item in movimientos.slice(-5)"
+          :key="item.nombre"
+          class="tarjeta-movimientos"
+          :class="item.valor >= 0 ? 'movimientos-positivo' : 'movimientos-negativo'"
+        >
           <p class="movimientos-nombre">{{ item.nombre }}</p>
-          <p class="movimientos-valor">{{ item.valor >= 0 ? '+' : '' }}{{ item.valor }}</p>
+          <p class="movimientos-valor">{{ item.valor >= 0 ? "+" : "" }}{{ item.valor }}</p>
         </li>
       </ul>
     </div>
@@ -109,8 +111,7 @@ export default {
         <canvas ref="chartGastos"></canvas>
       </div>
       <div class="tarjetas-gastos">
-        <div class="gastos-negativo" v-for="item in movimientos.filter(i => i.valor < 0).slice(-5)"
-          :key="item.nombre">
+        <div class="gastos-negativo" v-for="item in movimientos.filter((i) => i.valor < 0).slice(-5)" :key="item.nombre">
           <p class="gastos-nombre">{{ item.nombre }}</p>
           <p class="gastos-valor">{{ item.valor }}</p>
         </div>
@@ -118,7 +119,6 @@ export default {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .dashboard {
@@ -178,9 +178,7 @@ export default {
   color: green;
 }
 
-
 /* Panel para movimientos */
-
 
 .panel-movimientos {
   width: 30%;
@@ -211,7 +209,7 @@ export default {
 
 .tarjeta-movimientos:hover {
   transform: scale(1.02);
-} 
+}
 
 .movimientos-nombre {
   font-weight: bold;
@@ -233,7 +231,6 @@ export default {
 }
 
 /* Panel para gastos */
-
 
 .panel-gastos {
   width: 30%;
@@ -281,5 +278,4 @@ export default {
   margin: 0;
   color: red;
 }
-
 </style>

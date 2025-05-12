@@ -56,7 +56,6 @@ export default {
   </div>
 </template>
 
-
 <style scoped>
 .bottom-nav {
   position: fixed;

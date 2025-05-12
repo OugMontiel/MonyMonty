@@ -11,7 +11,6 @@ export default {
   </div>
 </template>
 
-
 <style scoped>
 .sidebar {
   width: 250px;
