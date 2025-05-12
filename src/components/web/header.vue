@@ -1,3 +1,16 @@
+<script>
+import logo from "@/assets/img/MonyMontySinFondo3.png";
+
+export default {
+  name: "Navegacion de la web",
+  data() {
+    return {
+      logo,
+    };
+  },
+};
+</script>
+
 <template>
   <nav>
     <!-- logo -->
@@ -23,19 +36,6 @@
     </div>
   </nav>
 </template>
-
-<script>
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-
-export default {
-  name: "Navegacion de la web",
-  data() {
-    return {
-      logo,
-    };
-  },
-};
-</script>
 
 <style>
 /* Estilos para tu aplicación */
