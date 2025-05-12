@@ -38,7 +38,6 @@ const router = createRouter({
       name: "Vista de Recuperar Cuenta",
       component: recuperarCuentaCliente,
     },
-
   ],
 });
 

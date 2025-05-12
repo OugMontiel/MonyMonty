@@ -26,19 +26,18 @@ export default {
     redirectToDashboard() {
       // Lógica para redirigir al dashboard
       alert("Redirigiendo al dashboard...");
-      this.$router.push('/tablero');
+      this.$router.push("/tablero");
     },
     irARecuperarCuenta() {
-      this.$router.push('/recuperarCuenta');
+      this.$router.push("/recuperarCuenta");
     },
     irACrearCuenta() {
-      this.$router.push('/crearCuenta');
+      this.$router.push("/crearCuenta");
     },
 
     irATablero() {
-      this.$router.push('/tablero');
+      this.$router.push("/tablero");
     },
-  
   },
 };
 </script>
@@ -49,7 +48,6 @@ export default {
       <!-- Sección derecha -->
       <div class="login-card">
         <div class="login-form">
-
           <div class="login-form-logo">
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
@@ -59,22 +57,14 @@ export default {
             <input type="password" v-model="password" placeholder="Contraseña" class="login-input" />
           </div>
 
-          <button @click="login" class="login-button">
-            Iniciar sesión
-          </button>
+          <button @click="login" class="login-button">Iniciar sesión</button>
 
-          <p @click="irARecuperarCuenta" class="forgot-password">
-            ¿Olvidaste tu contraseña?
-          </p>
+          <p @click="irARecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
 
           <div class="divider-buton"></div>
 
-          <button @click="irACrearCuenta" class="create-button">
-            Crear cuenta nueva
-          </button>
-          <button @click="irATablero" class="create-button">
-            tablero prueba 
-          </button>
+          <button @click="irACrearCuenta" class="create-button">Crear cuenta nueva</button>
+          <button @click="irATablero" class="create-button">tablero prueba</button>
         </div>
       </div>
 
@@ -82,13 +72,11 @@ export default {
 
       <!-- Sección izquierda -->
       <div class="login-info">
-
         <section>
           <box-icon name="home"></box-icon>
 
           <h2 class="info-h2">¿Qué es nuestra aplicación?</h2>
-          <p class="info-p">Una innovadora solución SaaS para gestionar tus finanzas personales de manera eficiente y
-            sencilla.</p>
+          <p class="info-p">Una innovadora solución SaaS para gestionar tus finanzas personales de manera eficiente y sencilla.</p>
         </section>
 
         <section>
@@ -101,15 +89,13 @@ export default {
           <box-icon name="home"></box-icon>
           <h2 class="info-h2">Características destacadas</h2>
           <ul>
-            <li class="info-li"><strong>Asesorías personalizadas:</strong> Recibe orientación adaptada a tus necesidades
-              financieras.
+            <li class="info-li"><strong>Asesorías personalizadas:</strong> Recibe orientación adaptada a tus necesidades financieras.</li>
+            <li class="info-li">
+              <strong>Asesorías grupales:</strong> Aprende y comparte experiencias con otros usuarios en sesiones interactivas.
             </li>
-            <li class="info-li"><strong>Asesorías grupales:</strong> Aprende y comparte experiencias con otros usuarios
-              en sesiones interactivas.
-            </li>
-            <li class="info-li"><strong>Gestión basada en teorías económicas modernas:</strong> Utilizamos enfoques
-              actualizados para
-              maximizar tu ahorro einversión.
+            <li class="info-li">
+              <strong>Gestión basada en teorías económicas modernas:</strong> Utilizamos enfoques actualizados para maximizar tu ahorro
+              einversión.
             </li>
           </ul>
         </section>
@@ -197,7 +183,6 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-
 }
 
 .login-input {
@@ -282,8 +267,6 @@ export default {
 
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-
-
   .login-container {
     flex-direction: column;
     width: 90%;
@@ -338,7 +321,6 @@ export default {
     font-size: 12px;
   }
 
-
   .login-logo {
     max-width: 120px;
   }
@@ -349,19 +331,23 @@ export default {
   }
 }
 
-
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>

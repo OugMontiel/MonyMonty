@@ -7,8 +7,9 @@ export default {
   name: "Pie de página -- Web",
   data() {
     return {
-      facebook, git, instagram
-
+      facebook,
+      git,
+      instagram,
     };
   },
   methods: {
@@ -38,7 +39,6 @@ export default {
             <a href="https://twitter.com" aria-label="Twitter">
               <img :src="git" alt="Icono de la aplicación" class="network-icon" />
             </a>
-
           </div>
           <div class="icon-network">
             <a href="https://instagram.com" aria-label="Instagram">
@@ -65,7 +65,7 @@ export default {
       <div class="agenda">
         <h4 class="agenda-h4">Agenda tu cita</h4>
         <p class="agenda-p">Si quieres ser parte de nuestra comunidad, agenda tu cita y comienza a transformar tu vida financiera.</p>
-        
+
         <form class="agenda-formulario" @submit.prevent="subscribe">
           <input class="p-2 rounded-l-full" placeholder="Tu correo electrónico" type="email" required />
           <button class="btn-suscribirse" type="submit">Suscribirse</button>
@@ -122,11 +122,9 @@ footer button {
   align-items: center;
 }
 
-
 .icon-network {
   width: 30px;
 }
-
 
 .btn-suscribirse {
   background-color: #1877f2;
@@ -141,47 +139,51 @@ footer button {
 
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-  
-.pie {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
+  .pie {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
 
-.network-h2{
-  font-size: 8px;
-}
+  .network-h2 {
+    font-size: 8px;
+  }
 
-.network-p{
-  font-size: 11px;
-}
+  .network-p {
+    font-size: 11px;
+  }
 
-.icon-network {
-  width: 15px;
-}
+  .icon-network {
+    width: 15px;
+  }
 
-.paginas-p{
-  font-size: 11px;
-}
+  .paginas-p {
+    font-size: 11px;
+  }
 
-.agenda-p{
-  font-size: 11px;
-}
+  .agenda-p {
+    font-size: 11px;
+  }
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>

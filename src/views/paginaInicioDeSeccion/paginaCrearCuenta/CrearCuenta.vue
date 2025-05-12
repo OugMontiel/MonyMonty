@@ -1,17 +1,24 @@
 <script>
-
 import logo from "@/assets/img/MonyMontySinFondo3.png";
 import Footer from "@/components/web/footer.vue";
-
-
 
 export default {
   name: "RegisterForm",
   data() {
     const hoy = new Date();
     const meses = [
-      "enero", "febrero", "marzo", "abril", "mayo", "junio",
-      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
     ];
     return {
       logo,
@@ -26,9 +33,8 @@ export default {
       contraseña: "",
     };
   },
-  components: { Footer },
+  components: {Footer},
   methods: {
-
     irALogin() {
       this.$router.push("/");
     },
@@ -46,19 +52,25 @@ export default {
       const mesActual = hoy.getMonth();
       const diaActual = hoy.getDate();
 
-      if (
-        edad > 18 ||
-        (edad === 18 &&
-          (mesActual > mes || (mesActual === mes && diaActual >= dia)))
-      ) {
+      if (edad > 18 || (edad === 18 && (mesActual > mes || (mesActual === mes && diaActual >= dia)))) {
         return true;
       }
       return false;
     },
     obtenerIndiceMes(mesNombre) {
       const meses = [
-        "enero", "febrero", "marzo", "abril", "mayo", "junio",
-        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
       ];
       const index = meses.indexOf(mesNombre.toLowerCase());
       return index >= 0 ? index : null;
@@ -75,12 +87,8 @@ export default {
     irACondiciones() {
       alert("Condiciones");
     },
-
   },
 };
-
-
-
 </script>
 
 <template>
@@ -139,17 +147,17 @@ export default {
         <input type="password" placeholder="Contraseña" v-model="contraseña" />
       </div>
 
-      <p class="text-small">Al hacer clic en "Registrarte", aceptas nuestras <span class="text-condicionesypoliticas"
-          @click="irACondiciones">Condiciones</span> , la <span class="text-condicionesypoliticas"
-          @click="irAPrivacidad">Política de privacidad</span>. Es posible que te enviemos notificaciones
-        por SMS, que puedes desactivar cuando quieras.
+      <p class="text-small">
+        Al hacer clic en "Registrarte", aceptas nuestras
+        <span class="text-condicionesypoliticas" @click="irACondiciones">Condiciones</span> , la
+        <span class="text-condicionesypoliticas" @click="irAPrivacidad">Política de privacidad</span>. Es posible que te enviemos
+        notificaciones por SMS, que puedes desactivar cuando quieras.
       </p>
 
       <button @click="irARegistarse" class="register-button">Registrarte</button>
 
       <p @click="irALogin" class="forgot-login">¿Ya tienes una cuenta?</p>
     </div>
-
   </div>
   <Footer />
 </template>
@@ -164,7 +172,6 @@ export default {
   margin-top: 30px;
   margin-bottom: 30px;
 }
-
 
 .logo-section {
   display: flex;
@@ -192,7 +199,6 @@ export default {
 .card-text {
   align-items: center;
 }
-
 
 .row {
   display: flex;
@@ -231,7 +237,6 @@ label {
   margin-top: 10px;
 }
 
-
 .genero-opcion {
   position: relative;
   border: 1px solid #ccd0d5;
@@ -250,7 +255,7 @@ label {
   accent-color: #1877f2;
 }
 
-.genero-opcion input[type="radio"]:checked+span {
+.genero-opcion input[type="radio"]:checked + span {
   font-weight: bold;
 }
 
@@ -310,10 +315,8 @@ label {
   text-decoration: underline;
 }
 
-
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-
   .card {
     max-width: 270px;
     margin: 30px auto;
@@ -353,28 +356,30 @@ label {
     text-decoration: underline;
   }
 
-
-
   .footer-p {
     font-style: italic;
     font-size: 15px;
     color: #333;
   }
-
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>
