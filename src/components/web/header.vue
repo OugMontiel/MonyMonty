@@ -8,6 +8,12 @@ export default {
       logo,
     };
   },
+   methods: {
+    dirigirAInicio() {
+      this.$router.push('/');
+    },
+
+  }
 };
 </script>
 
@@ -15,9 +21,7 @@ export default {
   <nav>
     <!-- logo -->
     <div>
-      <router-link to="/">
-        <img :src="logo" alt="Icono de la aplicación" class="app-logo" />
-      </router-link>
+        <img :src="logo" alt="Icono de la aplicación" class="app-logo"  @click="irAInicio" />
     </div>
 
     <!-- menu -->

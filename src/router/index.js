@@ -1,11 +1,10 @@
 import {createRouter, createWebHistory} from "vue-router";
 
-import home from "@/views/paginaWeb/home.vue";
-import login from "@/views/paginaInicioDeSeccion/login.vue";
-import elTablero from "@/views/paginaDashboard/elTablero.vue";
+import login from "@/features/auth/views/loginView.vue";
+import elTablero from "@/views/paginaDashboard/elTableroView.vue";
 
-import crearCuentaNueva from "../views/paginaInicioDeSeccion/paginaCrearCuenta/CrearCuenta.vue";
-import recuperarCuentaCliente from "../views/paginaInicioDeSeccion/paginaRecuperarCuenta/RecuperarCuenta.vue";
+import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
+import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

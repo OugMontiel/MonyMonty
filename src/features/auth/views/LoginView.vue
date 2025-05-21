@@ -1,15 +1,31 @@
 <script>
 import logo from "@/assets/img/MonyMontySinFondo3.png";
 
+import HeaderView from "@/features/auth/components/header.vue";
+import InfoView from "@/features/auth/components/infoLogin.vue";
+
+import CustomButton from "@/features/auth/components/CustomButton.vue";
+
+
 export default {
   name: "Login",
+  components: {
+    HeaderView,
+    InfoView,
+    CustomButton,
+  },
   data() {
     return {
       // variable del logo
       logo,
+
+      // Variable para Mostrar error
+      showError: false,
+
       // Datos para el inicio de sesión
       username: "",
       password: "",
+
     };
   },
   methods: {
@@ -20,23 +36,22 @@ export default {
         console.log("Contraseña:", this.password);
         this.redirectToDashboard();
       } else {
-        alert("Por favor, completa todos los campos.");
+        this.showError = true;
       }
+    },
+    hideError() {
+      this.showError = false;
     },
     redirectToDashboard() {
       // Lógica para redirigir al dashboard
       alert("Redirigiendo al dashboard...");
       this.$router.push("/tablero");
     },
-    irARecuperarCuenta() {
+    redirectToRecuperarCuenta() {
       this.$router.push("/recuperarCuenta");
     },
-    irACrearCuenta() {
+    redirectToCrearCuenta() {
       this.$router.push("/crearCuenta");
-    },
-
-    irATablero() {
-      this.$router.push("/tablero");
     },
   },
 };
@@ -44,80 +59,70 @@ export default {
 
 <template>
   <div class="login">
+    <HeaderView />
     <div class="login-container">
       <!-- Sección derecha -->
       <div class="login-card">
         <div class="login-form">
-          <div class="login-form-logo">
+          <div>
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
 
           <div class="login-form-datos">
-            <input type="text" v-model="emailOrPhone" placeholder="Correo electrónico" class="login-input" />
-            <input type="password" v-model="password" placeholder="Contraseña" class="login-input" />
+            <div class="input-group">
+              <input type="email" v-model="username" placeholder=" " id="email" class="login-input"
+                @focus="hideError" />
+              <label for="email">Correo electrónico</label>
+            </div>
+
+            <div class="input-group">
+              <input type="password" v-model="password" placeholder=" " id="password" class="login-input"
+                @focus="hideError" />
+              <label for="password">Contraseña</label>
+            </div>
+
+            <p v-if="showError" class="login-error">Por favor, completa todos los campos.</p>
           </div>
 
-          <button @click="login" class="login-button">Iniciar sesión</button>
+          <CustomButton label="Iniciar Sesion" :customClick="login" background="var(--color-fondo-button-blue)"
+            text-color="var(--texto-primario-Blanco)" />
 
-          <p @click="irARecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
+          <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
 
           <div class="divider-buton"></div>
 
-          <button @click="irACrearCuenta" class="create-button">Crear cuenta nueva</button>
-          <button @click="irATablero" class="create-button">tablero prueba</button>
+          <CustomButton label="Crear cuenta nueva" :to="'/crearCuenta'" background="var(--color-fondo-button-green)"
+            text-color="var(--texto-primario-Blanco)" />
+
+          <CustomButton label="tablero prueba" :customClick="redirectToDashboard"
+            background="var(--color-fondo-button-green)" text-color="var(--texto-primario-Blanco)" />
         </div>
       </div>
 
       <div class="divider"></div>
 
       <!-- Sección izquierda -->
-      <div class="login-info">
-        <section>
-          <box-icon name="home"></box-icon>
-
-          <h2 class="info-h2">¿Qué es nuestra aplicación?</h2>
-          <p class="info-p">Una innovadora solución SaaS para gestionar tus finanzas personales de manera eficiente y sencilla.</p>
-        </section>
-
-        <section>
-          <box-icon name="home"></box-icon>
-          <h2 class="info-h2">Eslogan</h2>
-          <p class="info-p">"Tu camino hacia la libertad financiera comienza aquí."</p>
-        </section>
-
-        <section>
-          <box-icon name="home"></box-icon>
-          <h2 class="info-h2">Características destacadas</h2>
-          <ul>
-            <li class="info-li"><strong>Asesorías personalizadas:</strong> Recibe orientación adaptada a tus necesidades financieras.</li>
-            <li class="info-li">
-              <strong>Asesorías grupales:</strong> Aprende y comparte experiencias con otros usuarios en sesiones interactivas.
-            </li>
-            <li class="info-li">
-              <strong>Gestión basada en teorías económicas modernas:</strong> Utilizamos enfoques actualizados para maximizar tu ahorro
-              einversión.
-            </li>
-          </ul>
-        </section>
-      </div>
+      <InfoView />
     </div>
 
     <!-- mensaje de pie de pagina -->
-    <div class="login-footer">
+    <div class="login-mesaje">
       <p>"El dinero es un terrible amo pero un excelente sirviente." - P.T. Barnum</p>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* estilo general */
+
 .login {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  background-color: #f0f4f8;
+  background-color: var(--color-fondo-login);
   height: 100vh;
-  font-family: "Arial", sans-serif;
+  font-family: sans-serif;
 }
 
 .login-container {
@@ -126,48 +131,28 @@ export default {
   align-items: center;
   width: 70%;
   height: 60%;
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  margin: auto;
+  background: var(--color-fondo-login);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 30px var(--color-fondo-shadow);
 }
+
+/* Sección derecha */
 
 .login-logo {
-  max-width: 150px;
+  max-width: 9rem;
 }
 
-.login-card,
-.login-info {
+.login-card {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 90%;
-  padding: 20px;
-}
-
-.login-card {
   width: 35%;
-  background-color: #f8f9fa;
-  border-radius: 15px;
-  color: black;
-}
-
-.login-info {
-  width: 55%;
-  background-color: #f8f9fa;
-  border-radius: 15px;
-}
-
-.divider-buton {
-  width: 100%;
-  height: 2px;
-  background-color: #e0e0e0;
-}
-
-.divider {
-  height: 60vh;
-  width: 2px;
-  background-color: #e0e0e0;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  background: var(--color-fondo-login);
 }
 
 .login-form {
@@ -185,66 +170,86 @@ export default {
   width: 100%;
 }
 
-.login-input {
-  margin-bottom: 15px;
-  margin: 5px 0;
+.input-group {
+  position: relative;
+  margin: 1rem 0;
 }
 
-.login-form h2 {
-  margin: 0 0 5px;
-  font-size: 1.2em;
-}
-
-.login-form input {
+.input-group input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ced4da;
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--color-border-input);
   border-radius: 5px;
-  font-size: 1em;
+  outline: none;
 }
 
-.login-form input:focus {
-  border-color: #007bff;
-  outline: none;
+.input-group label {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.5rem;
+  color: #ff0000;
+  font-size: 1rem;
+  pointer-events: none;
+  transition: 0.2s ease all;
+  background: var(--color-fondo-login);
+  padding: 0 0.25rem;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -0.5rem;
+  left: 0.4rem;
+  font-size: 0.75rem;
+  color: red;
+}
+
+
+.login-error {
+  color: red;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .login-button {
   width: 100%;
-  background-color: #1877f2;
-  color: white;
+  background: var(--color-fondo-button);
+  color: var(--texto-primario-Blanco);
   border: none;
-  padding: 10px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
   font-weight: bold;
-  font-size: 16px;
-  border-radius: 4px;
+  font-size: var(--font-size-botones);
+  border-radius: var(--border-radius-botones);
   cursor: pointer;
-  margin-bottom: 10px;
 }
 
 .login-button:hover {
-  background-color: #166fe5;
+  background: var(--color-fondo-button-activo);
 }
 
 .forgot-password {
-  color: #1877f2;
-  font-size: 14px;
+  color: var(--texto-primario-azul);
+  font-size: var(--font-size-botones);
   cursor: pointer;
   margin-bottom: 10px;
 }
 
 .forgot-password:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--texto-primario-azul-hover);
 }
 
 .create-button {
   width: 100%;
   background-color: #28a745;
-  color: white;
+  color: var(--texto-primario-Blanco);
   border: none;
   padding: 10px;
   font-weight: bold;
-  font-size: 16px;
-  border-radius: 4px;
+  font-size: var(--font-size-botones);
+  border-radius: var(--border-radius-botones);
   cursor: pointer;
 }
 
@@ -252,12 +257,8 @@ export default {
   background-color: #36a420;
 }
 
-.login-info section {
-  margin-bottom: 2em;
-  text-align: left;
-}
 
-.login-footer {
+.login-mesaje {
   text-align: center;
   width: 100%;
   padding: 10px 0;
@@ -265,13 +266,14 @@ export default {
   color: #6c757d;
 }
 
+
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
   .login-container {
     flex-direction: column;
     width: 90%;
     height: auto;
-    margin-top: 30px;
+    margin-top: 6rem;
     margin-bottom: 30px;
   }
 
@@ -327,27 +329,23 @@ export default {
 
   .login-footer {
     font-size: 12px;
+    margin: auto;
     padding: 5px;
   }
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-}
+@media (min-width: 576px) and (max-width: 767.98px) {}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-}
+@media (min-width: 768px) and (max-width: 991.98px) {}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-}
+@media (min-width: 992px) and (max-width: 1199.98px) {}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
-}
+@media (min-width: 1200px) and (max-width: 1399.98px) {}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-}
+@media (min-width: 1400px) {}
 </style>

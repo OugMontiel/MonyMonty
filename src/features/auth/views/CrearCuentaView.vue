@@ -31,9 +31,20 @@ export default {
       genero: "",
       email: "",
       contraseña: "",
+      showRules: false,
     };
   },
-  components: {Footer},
+  computed: {
+    rules() {
+      return {
+        length: this.contraseña.length >= 8,
+        uppercase: /[A-Z]/.test(this.contraseña),
+        number: /\d/.test(this.contraseña),
+        symbol: /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(this.contraseña),
+      };
+    },
+  },
+  components: { Footer },
   methods: {
     irALogin() {
       this.$router.push("/");
@@ -113,21 +124,23 @@ export default {
           <option v-for="n in 31" :key="n" :value="n">{{ n }}</option>
         </select>
         <select v-model="mes">
-          <option value="enero">enero</option>
-          <option value="febrero">febrero</option>
-          <option value="marzo">marzo</option>
-          <option value="abril">abril</option>
-          <option value="mayo">mayo</option>
-          <option value="junio">junio</option>
-          <option value="julio">julio</option>
-          <option value="agosto">agosto</option>
-          <option value="septiembre">septiembre</option>
-          <option value="octubre">octubre</option>
-          <option value="noviembre">noviembre</option>
-          <option value="diciembre">diciembre</option>
+          <option value="enero">Enero</option>
+          <option value="febrero">Febrero</option>
+          <option value="marzo">Marzo</option>
+          <option value="abril">Abril</option>
+          <option value="mayo">Mayo</option>
+          <option value="junio">Junio</option>
+          <option value="julio">Julio</option>
+          <option value="agosto">Agosto</option>
+          <option value="septiembre">Septiembre</option>
+          <option value="octubre">Octubre</option>
+          <option value="noviembre">Noviembre</option>
+          <option value="diciembre">Diciembre</option>
         </select>
         <select v-model="año">
-          <option v-for="n in 100" :key="n" :value="2025 - n">{{ 2025 - n }}</option>
+          <option v-for="n in 100" :key="n" :value="new Date().getFullYear() - n">
+            {{ new Date().getFullYear() - n }}
+          </option>
         </select>
       </div>
 
@@ -144,17 +157,29 @@ export default {
       </div>
       <div class="correo-container">
         <input type="email" placeholder="Correo electrónico" v-model="email" class="" />
-        <input type="password" placeholder="Contraseña" v-model="contraseña" />
+        <input type="password" v-model="contraseña" placeholder="Ingresa tu contraseña" class="password-input"
+          @focus="showRules = true" @blur="showRules = false" />
+        <!-- Alerta flotante de reglas -->
+        <div v-if="showRules" class="rules-alert">
+          <p :class="rules.length ? 'valid' : 'invalid'">✔ Mínimo 8 caracteres</p>
+          <p :class="rules.uppercase ? 'valid' : 'invalid'">✔ Una letra mayúscula</p>
+          <p :class="rules.number ? 'valid' : 'invalid'">✔ Un número</p>
+          <p :class="rules.symbol ? 'valid' : 'invalid'">✔ Un símbolo ($#%&...)</p>
+        </div>
+      </div>
+      <div class="password-container">
+
       </div>
 
       <p class="text-small">
         Al hacer clic en "Registrarte", aceptas nuestras
         <span class="text-condicionesypoliticas" @click="irACondiciones">Condiciones</span> , la
-        <span class="text-condicionesypoliticas" @click="irAPrivacidad">Política de privacidad</span>. Es posible que te enviemos
+        <span class="text-condicionesypoliticas" @click="irAPrivacidad">Política de privacidad</span>. Es posible que te
+        enviemos
         notificaciones por SMS, que puedes desactivar cuando quieras.
       </p>
 
-      <button @click="irARegistarse" class="register-button">Registrarte</button>
+      <button type="submit" @click="irARegistarse" class="register-button">Registrarte</button>
 
       <p @click="irALogin" class="forgot-login">¿Ya tienes una cuenta?</p>
     </div>
@@ -163,6 +188,22 @@ export default {
 </template>
 
 <style scoped>
+/* ---Logo--- */
+
+.logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 50px;
+}
+
+.logo-icon {
+  width: 150px;
+  height: auto;
+}
+
+/* ---Ajuste General--- */
+
 .form-container {
   font-family: Arial, sans-serif;
   display: flex;
@@ -173,21 +214,9 @@ export default {
   margin-bottom: 30px;
 }
 
-.logo-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
-  margin-bottom: 20px;
-}
-
-.logo-icon {
-  width: 150px;
-  height: auto;
-}
 
 .card {
-  width: 400px;
+  width: 22%;
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
@@ -196,10 +225,12 @@ export default {
   align-items: center;
 }
 
+/* ---Logo--- */
 .card-text {
   align-items: center;
 }
 
+/* ---Nombre y apellido--- */
 .row {
   display: flex;
   gap: 10px;
@@ -255,7 +286,7 @@ label {
   accent-color: #1877f2;
 }
 
-.genero-opcion input[type="radio"]:checked + span {
+.genero-opcion input[type="radio"]:checked+span {
   font-weight: bold;
 }
 
@@ -315,6 +346,48 @@ label {
   text-decoration: underline;
 }
 
+
+.password-container {
+  display: flex;
+  gap: 15px;
+  align-items: start;
+}
+
+.password-input {
+  padding: 8px;
+  font-size: 16px;
+  width: 220px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.rules-alert {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 280px;
+  margin-top: 10px;
+  padding: 12px;
+  background-color: #fff8dc;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.rules-alert p {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.valid {
+  color: green;
+  font-weight: bold;
+}
+
+.invalid {
+  color: red;
+}
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
   .card {
@@ -364,22 +437,17 @@ label {
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-}
+@media (min-width: 576px) and (max-width: 767.98px) {}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-}
+@media (min-width: 768px) and (max-width: 991.98px) {}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-}
+@media (min-width: 992px) and (max-width: 1199.98px) {}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
-}
+@media (min-width: 1200px) and (max-width: 1399.98px) {}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-}
+@media (min-width: 1400px) {}
 </style>

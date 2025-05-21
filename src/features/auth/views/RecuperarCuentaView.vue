@@ -32,7 +32,7 @@ export default {
       <h2 class="text-h2">Recupera tu cuenta</h2>
       <p class="text-p">Ingresa tu correo electrónico para buscar tu cuenta.</p>
 
-      <input type="text" placeholder="Correo electrónico" class="input-text" />
+      <input type="email" placeholder="Correo electrónico" class="input-text" />
 
       <div class="divider"></div>
 
@@ -41,6 +41,7 @@ export default {
         <button class="btn-buscar" @click="buscarCuenta">Buscar</button>
       </div>
     </div>
+
     <!-- mensaje de pie de pagina -->
     <div class="form-footer">
       <p class="footer-p">"El dinero es un terrible amo pero un excelente sirviente." - P.T. Barnum</p>
@@ -51,123 +52,131 @@ export default {
 </template>
 
 <style scoped>
+
 /* Estructura general */
 .logo-section {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
-  margin-bottom: 20px;
+  padding: 1rem;
+  background: var(--color-fondo-nav);
 }
 
 .logo-icon {
-  width: 150px;
+  width: 8rem;
   height: auto;
 }
 
 .form-section {
-  padding-top: 20px;
-  background-color: #e0e0e0;
+  padding: 1rem;
+  background: var(--color-fondo);
 }
 
 /* Card principal */
 .card {
-  max-width: 500px;
-  margin: 40px auto;
-  background-color: #f3f3f3;
+  display: flex;
+  flex-direction: column;
+  max-width: 30%;
+  height: 80%;
+  margin: 7rem auto;
+  background: var(--color-fondo-login);
   padding: 1.5em;
-  border: 1px solid #c5c1c1;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgb(95, 77, 77);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-card);
+  box-shadow: 0 0.5rem 2rem var(--color-fondo-shadow);
 }
 
 .text-h2 {
-  font-size: 1.2em;
+  font-size: var(--font-size-titulo);
   margin-bottom: 0.5em;
 }
 
 .text-p {
-  font-size: 0.95em;
-  color: #555;
+  font-size: var(--font-size-text);
+  color: var(--texto-segundario);
   margin-bottom: 1em;
 }
 
 .input-text {
   width: 100%;
   padding: 0.7em;
-  margin-bottom: 1em;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95em;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-botones);
+  font-size: var(--font-size-input);
 }
+
+.input-text:focus {
+  outline: none;
+  border: 2px solid var(--color-fondo-input-activo);
+}
+
 
 .divider {
   width: 100%;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 15px 0;
+  height: 0.1rem;
+  background: var(--color-fondo-linea);
+  margin: 1rem 0;
 }
 
 .acciones {
   display: flex;
   justify-content: flex-end;
   gap: 0.5em;
-  margin: 15px 0;
+  margin: 1rem 0;
 }
 
 .btn-cancelar {
-  background-color: #e4e6eb;
-  color: #050505;
+  background: var(--color-fondo-input);
+  color: var(--texto-primario);
   border: none;
   padding: 10px 30px;
-  border-radius: 6px;
-  border: 1px solid #9b9b9b;
+  border-radius: var(--border-radius-botones);
+  border: 1px solid var(--color-border);
   font-weight: bold;
+  font-size: var(--font-size-botones);
   cursor: pointer;
 }
 
 .btn-cancelar:hover {
-  background-color: #d8dadf;
+  background: var(--color-fondo-input-activo);
 }
 
 .btn-buscar {
-  background-color: #1877f2;
-  color: white;
+  background: var(--color-fondo-button);
+  color: var(--texto-primario-Blanco);
   border: none;
-  padding: 10px 30px;
-  border-radius: 6px;
-  border: 1px solid #1666cf;
+  padding: 0.8rem 2rem;
+  border-radius: var(--border-radius-botones);
+  border: 1px solid var(--color-fondo-button);
   font-weight: bold;
+  font-size: var(--font-size-botones);
   cursor: pointer;
 }
 
 .btn-buscar:hover {
-  background-color: #166fe5;
+  background: var(--color-fondo-button-activo);
 }
 
 .form-footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  padding-bottom: 40px;
+  padding: 2rem;
   text-align: center;
 }
 
 .footer-p {
-  font-style: italic;
-  font-size: 20px;
-  color: #333;
+  font-style: var(--font-family-base);
+  font-size: var(--font-size-text);
+  color: var(--texto-segundario);
 }
 
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
   .card {
-    max-width: 270px;
     margin: 30px auto;
-    background-color: #f3f3f3;
     padding: 1.5em;
-    border: 1px solid #c5c1c1;
+    border: 1px solid var(--color-border);
     border-radius: 2px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }

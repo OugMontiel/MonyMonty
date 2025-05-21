@@ -1,30 +1,30 @@
 <script>
-import Header from "@/components/dashBoard/tablero/header.vue";
-import Sidebar from "@/components/dashBoard/tablero/sidebar.vue";
-import Footer from "@/components/dashBoard/tablero/footer.vue";
-import Background from "@/components/dashBoard/dashboard.vue";
+import HeaderView from "@/features/dashBoard/components/tablero/header.vue";
+import SidebarView from "@/features/dashBoard/components/tablero/sidebar.vue";
+import FooterView from "@/features/dashBoard/components/tablero/footer.vue";
+import BackgroundView from "@/features/dashBoard/components/dashBoardMovimiento/dashboardView.vue";
 
 export default {
   name: "ElTablero",
   components: {
-    Header,
-    Sidebar,
-    Footer,
-    Background,
+    HeaderView,
+    SidebarView,
+    FooterView,
+    BackgroundView,
   },
 };
 </script>
 
 <template>
   <div class="el-tablero">
-    <Header />
+    <HeaderView />
     <div class="main-layout">
-      <Sidebar />
+      <SidebarView />
       <div class="content">
-        <Background />
+        <BackgroundView />
       </div>
     </div>
-    <Footer />
+    <FooterView />
   </div>
 </template>
 
