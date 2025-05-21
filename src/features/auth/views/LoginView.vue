@@ -188,11 +188,11 @@ export default {
   position: absolute;
   top: 0.8rem;
   left: 0.5rem;
-  color: #ff0000;
+  color: var(--texto-primario);
   font-size: 1rem;
   pointer-events: none;
   transition: 0.2s ease all;
-  background: var(--color-fondo-login);
+  
   padding: 0 0.25rem;
 }
 
@@ -201,7 +201,8 @@ export default {
   top: -0.5rem;
   left: 0.4rem;
   font-size: 0.75rem;
-  color: red;
+  color: var(--texto-primario);
+  background: var(--color-fondo-login);
 }
 
 
