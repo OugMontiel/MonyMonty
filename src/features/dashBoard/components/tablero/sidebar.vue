@@ -5,17 +5,164 @@ export default {
 </script>
 
 <template>
-  <div class="sidebar">
-    <h1>Sidebar</h1>
-    <!-- Add your sidebar content here -->
+  <div class="container">
+    <div class="navigation">
+      <ul>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+            <span class="title">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="people-outline"></ion-icon>
+            </span>
+            <span class="title">Customers</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+            </span>
+            <span class="title">Messages</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="help-outline"></ion-icon>
+            </span>
+            <span class="title">Help</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="settings-outline"></ion-icon>
+            </span>
+            <span class="title">Settings</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="lock-closed-outline"></ion-icon>
+            </span>
+            <span class="title">Password</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="icon">
+              <ion-icon name="log-out-outline"></ion-icon>
+            </span>
+            <span class="title">Sign out</span>
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.sidebar {
-  width: 250px;
-  background-color: #f4f4f4;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+.container {
+  width: 15%;
 }
+
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--color-acento);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.navigation ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.navigation ul li {
+  border-radius: 0 30px 30px 0;
+  background: 0.3s ease;
+}
+
+.navigation ul li:nth-child(1) {
+  margin-bottom: 40px;
+  pointer-events: none;
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+  background-color: black;
+}
+
+.navigation ul li a {
+  display: flex;
+  position: relative;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+  color: red;
+}
+
+.navigation ul li a .icon {
+  font-size: 1.75rem;
+  width: 40px;
+  text-align: center;
+}
+
+.navigation ul li a .title {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Curvas en hover */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before,
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+  top: -50px;
+  box-shadow: 35px 35px 0 10px black;
+}
+
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+  bottom: -50px;
+  box-shadow: 35px -35px 0 10px black;
+}
+
 </style>

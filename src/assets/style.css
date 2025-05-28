@@ -9,6 +9,13 @@
 
   --font-family-base: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
+  
+  --color-acento: #F25C2F;              /* Principal: botones, enlaces, énfasis */
+  --color-acento-suave: #FF9B73;        /* Hover o elementos suaves */
+  --color-oscuro: #2F2F2F;              /* Texto principal y navbar */
+  --color-claro: #F9F9F9;               /* Fondo general */
+  --color-neutro: #CCCCCC;              /* Bordes, desactivados, secundarios */
+
   /* Tamaños de letras*/
   /* Pantalla completa */
   --font-size-titulo: 2rem; /*Tamaño de letra del los titulos*/

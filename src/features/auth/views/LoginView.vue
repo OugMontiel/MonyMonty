@@ -192,7 +192,6 @@ export default {
   font-size: 1rem;
   pointer-events: none;
   transition: 0.2s ease all;
-  
   padding: 0 0.25rem;
 }
 
@@ -204,7 +203,6 @@ export default {
   color: var(--texto-primario);
   background: var(--color-fondo-login);
 }
-
 
 .login-error {
   color: red;
