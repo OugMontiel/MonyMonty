@@ -1,10 +1,27 @@
+<script>
+import logo from "@/assets/img/MonyMontySinFondo3.png";
+
+export default {
+  name: "Navegacion de la web",
+  data() {
+    return {
+      logo,
+    };
+  },
+   methods: {
+    dirigirAInicio() {
+      this.$router.push('/');
+    },
+
+  }
+};
+</script>
+
 <template>
   <nav>
     <!-- logo -->
     <div>
-      <router-link to="/">
-        <img :src="logo" alt="Icono de la aplicación" class="app-logo" />
-      </router-link>
+        <img :src="logo" alt="Icono de la aplicación" class="app-logo"  @click="irAInicio" />
     </div>
 
     <!-- menu -->
@@ -23,19 +40,6 @@
     </div>
   </nav>
 </template>
-
-<script>
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-
-export default {
-  name: "Navegacion de la web",
-  data() {
-    return {
-      logo,
-    };
-  },
-};
-</script>
 
 <style>
 /* Estilos para tu aplicación */

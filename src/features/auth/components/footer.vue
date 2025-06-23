@@ -13,10 +13,16 @@ export default {
     };
   },
   methods: {
-    subscribe() {
+    dirigirseASubscribe() {
       // Lógica para manejar la suscripción
       alert("Gracias por suscribirte!");
     },
+    dirigirseADashboard() {
+      this.$router.push('dashboard');
+    },
+    dirigirseANewMovi() {
+      this.$router.push('dashboard');
+    }
   },
 };
 </script>
@@ -54,10 +60,10 @@ export default {
 
         <ul>
           <li>
-            <router-link to="/dashboard">Dashboard</router-link>
+            <p @Click="dirigirseADashboard()" > Dashboard</p>
           </li>
           <li>
-            <router-link to="/NewMov">New Mov</router-link>
+            <p @Click="dirigirseANewMovi()" > New Mov</p>
           </li>
         </ul>
       </div>
@@ -68,7 +74,7 @@ export default {
 
         <form class="agenda-formulario" @submit.prevent="subscribe">
           <input class="p-2 rounded-l-full" placeholder="Tu correo electrónico" type="email" required />
-          <button class="btn-suscribirse" type="submit">Suscribirse</button>
+          <button class="btn-suscribirse" type="submit" @Click="dirigirseASubscribe()">Suscribirse</button>
         </form>
       </div>
     </div>

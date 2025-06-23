@@ -3,16 +3,61 @@
 
 :root {
   /* Tipografía y legibilidad */
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+ 
   line-height: 1.5;
   font-weight: 400;
 
+  --font-family-base: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  
+  --color-acento: #F25C2F;              /* Principal: botones, enlaces, énfasis */
+  --color-acento-suave: #FF9B73;        /* Hover o elementos suaves */
+  --color-oscuro: #2F2F2F;              /* Texto principal y navbar */
+  --color-claro: #F9F9F9;               /* Fondo general */
+  --color-neutro: #CCCCCC;              /* Bordes, desactivados, secundarios */
+
+  /* Tamaños de letras*/
+  /* Pantalla completa */
+  --font-size-titulo: 2rem; /*Tamaño de letra del los titulos*/
+  --font-size-botones: 1.2rem; /* Tamaño de letra de los botones*/
+  --font-size-text: 1.1rem;
+  --font-size-input: 1.1rem; /*Tamaño de letra de los inputs*/
+  
+  --border-radius-botones: 0.2rem; /*Tamaño del borde de los botones*/
+  --border-radius-card: 0.5rem; /*Tamaño del borde de los botones*/
+
   /* Colores del tema claro */
   --color-fondo: #ffffff; /* Color de fondo principal */
-  --texto-primario: #000000; /* Color de texto principal */
-  --color-letra-seleccion: #ffcc00; /* Color de texto seleccionado */
   --color-fondo-nav: #f0f0f0; /* Color de fondo de la barra de navegación */
   --color-fondo-hover: #e0e0e0; /* Color de fondo al pasar el mouse */
+
+  --color-fondo-linea: #e0e0e0; /* Color de línea de separación */  
+  --color-fondo-shadow: #0000001a; /* Color de sombra del fondo */
+
+  --color-fondo-login: #f8f9fa; /* Color de fondo de la sección de inicio de sesión */
+  --color-fondo-login-hover: #ffffff; /* Color de fondo de la sección de inicio de sesión */
+
+  --color-fondo-input: #eff4f8; /* Color de fondo de los campos de entrada */
+  --color-fondo-input-activo: #e5e8eb; /* Color de fondo de los campos de entrada */
+
+  --color-border-input: #ced4da; /* Color del border de los input */
+  --color-border-input-activo: #0454aa; /* Color del border de los input activo */
+
+  --color-border: #9b9b9b; /* Color de fondo de los campos de entrada */
+
+  --color-fondo-button-blue: #1877f2; /* Color de fondo de los botones */
+  --color-fondo-button-blue-activo: #2f6bba; /* Color de fondo de los botones en hover */
+
+  --color-fondo-button-green: #28a745; /* Color de fondo de los botones */
+  --color-fondo-button-green-activo: #36a420; /* Color de fondo de los botones en hover */
+
+
+  --texto-primario: #000000; /* Color de texto principal */
+  --texto-segundario: #6c757d; /* Color de texto secundario */
+  --texto-primario-Blanco: #ffffff; /* Color de texto primario en blanco */
+  --texto-primario-azul: #1877f2; /* Color de texto primario en azul */
+  --texto-primario-azul-hover: #156bdc; /* Color de texto primario en azul */
+  --color-letra-seleccion: #ffae00; /* Color de texto seleccionado */
 
   /* Propiedades de texto */
   font-synthesis: none; /* Desactivar síntesis de fuentes */
