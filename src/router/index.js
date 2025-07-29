@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 
-import login from "@/features/auth/views/loginView.vue";
+import login from "@/features/auth/views/LoginView.vue";
 import elTablero from "@/views/paginaDashboard/elTableroView.vue";
 
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
@@ -20,6 +20,7 @@ const router = createRouter({
       path: "/tablero",
       name: "Vista del tablero",
       component: elTablero,
+      meta: { requieresAuth: true},
     },
     // Vistas de inicio de sesión
     {
@@ -38,6 +39,20 @@ const router = createRouter({
       component: recuperarCuentaCliente,
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+
+  // Si la ruta requiere autenticación y no hay token
+  if (to.meta.requiresAuth && !token) {
+    next({ path: "/login" }); // redirige al login
+  } else if ((to.path === "/login" || to.path === "/") && token) {
+    // Si ya está autenticado y va al login o raíz, lo mandas al tablero
+    next({ path: "/tablero" });
+  } else {
+    next(); // permite continuar
+  }
 });
 
 export default router;

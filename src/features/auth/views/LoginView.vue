@@ -1,4 +1,6 @@
 <script>
+import api from "@/services/axios"; 
+
 import logo from "@/assets/img/MonyMontySinFondo3.png";
 
 import HeaderView from "@/features/auth/components/header.vue";
@@ -29,12 +31,29 @@ export default {
     };
   },
   methods: {
-    login() {
+    async login() {
       if (this.username && this.password) {
         // Lógica para iniciar sesión
-        console.log("Usuario:", this.username);
-        console.log("Contraseña:", this.password);
-        this.redirectToDashboard();
+        try {
+          const response = await api.post('http://localhost:3000/auth/login', {
+            email: this.username,
+            password: this.password
+          });
+
+          if (response.data.token) {
+            localStorage.setItem('token', response.data.token);
+            // Redirige al Dashboard
+            this.redirectToDashboard();
+          }else {
+            alert("credenciales Invalidasaa")
+          } 
+        } catch (error) {
+          console.log("ERROR COMPLETO:", error.response);
+           alert(
+            error.response?.data?.mensaje ||
+              "Error al iniciar sesión. Verifica tus datos."
+            );
+        }
       } else {
         this.showError = true;
       }
@@ -48,6 +67,7 @@ export default {
       this.$router.push("/tablero");
     },
     redirectToRecuperarCuenta() {
+      // Logica para redirigir a la interfaz de recuperar cuenta
       this.$router.push("/recuperarCuenta");
     },
     redirectToCrearCuenta() {
@@ -93,9 +113,6 @@ export default {
 
           <CustomButton label="Crear cuenta nueva" :to="'/crearCuenta'" background="var(--color-fondo-button-green)"
             text-color="var(--texto-primario-Blanco)" />
-
-          <CustomButton label="tablero prueba" :customClick="redirectToDashboard"
-            background="var(--color-fondo-button-green)" text-color="var(--texto-primario-Blanco)" />
         </div>
       </div>
 
@@ -129,7 +146,7 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  width: 70%;
+  width: 65%;
   height: 60%;
   margin: auto;
   background: var(--color-fondo-login);
@@ -149,8 +166,8 @@ export default {
   justify-content: center;
   align-items: center;
   height: 90%;
-  width: 35%;
-  padding: 0.5rem;
+  width: 30%;
+  padding: 0.2rem;
   border-radius: 0.2rem;
   background: var(--color-fondo-login);
 }
@@ -195,8 +212,8 @@ export default {
   padding: 0 0.25rem;
 }
 
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
   top: -0.5rem;
   left: 0.4rem;
   font-size: 0.75rem;
@@ -340,7 +357,30 @@ export default {
 @media (min-width: 768px) and (max-width: 991.98px) {}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .login-container {
+    width: 85%;
+    height: 60%;
+  }
+
+  .login-card {
+    margin: 1rem;
+    /* Más espacio alrededor */
+    width: 45%;
+    /* Un poco más ancho */
+    padding: 1rem;
+    /* Interior más aireado */
+  }
+
+  .login-form {
+    max-width: 100%;
+  }
+
+  .login-logo {
+    max-width: 12rem;
+    /* Logo más grande */
+  }
+}
 
 /* Extra grande: pantallas grandes (xl) */
 @media (min-width: 1200px) and (max-width: 1399.98px) {}
