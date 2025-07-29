@@ -42,17 +42,13 @@ export default {
 
           if (response.data.token) {
             localStorage.setItem('token', response.data.token);
-            // Redirige al Dashboard
+            // Redirige al Dashboard de la aplicación
             this.redirectToDashboard();
           }else {
-            alert("credenciales Invalidasaa")
+            this.showErrorCuenta = true;
           } 
         } catch (error) {
-          console.log("ERROR COMPLETO:", error.response);
-           alert(
-            error.response?.data?.mensaje ||
-              "Error al iniciar sesión. Verifica tus datos."
-            );
+           this.showErrorCuenta = true;
         }
       } else {
         this.showError = true;
@@ -63,7 +59,6 @@ export default {
     },
     redirectToDashboard() {
       // Lógica para redirigir al dashboard
-      alert("Redirigiendo al dashboard...");
       this.$router.push("/tablero");
     },
     redirectToRecuperarCuenta() {
@@ -71,6 +66,7 @@ export default {
       this.$router.push("/recuperarCuenta");
     },
     redirectToCrearCuenta() {
+      // Lógica para redirigir a la interfaz de crear cuenta
       this.$router.push("/crearCuenta");
     },
   },
@@ -101,7 +97,8 @@ export default {
               <label for="password">Contraseña</label>
             </div>
 
-            <p v-if="showError" class="login-error">Por favor, completa todos los campos.</p>
+            <p v-if="showError" class="login-error">Por favor, completa todos los campos.</p>0
+            <p v-if="showErrorCuenta" class="login-error">Error al iniciar sesión. Verifica tus datos.</p>
           </div>
 
           <CustomButton label="Iniciar Sesion" :customClick="login" background="var(--color-fondo-button-blue)"

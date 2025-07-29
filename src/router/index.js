@@ -1,7 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 
 import login from "@/features/auth/views/LoginView.vue";
-import elTablero from "@/views/paginaDashboard/elTableroView.vue";
+import elTablero from "@/features/dashBoard/views/elTableroView.vue";
 
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
