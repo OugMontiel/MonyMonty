@@ -10,7 +10,6 @@ import CustomButton from "@/features/auth/components/CustomButton.vue";
 export default {
   name: "Login",
   components: {
-    HeaderView,
     InfoView,
     CustomButton,
   },
@@ -59,7 +58,6 @@ export default {
 
 <template>
   <div class="login">
-    <HeaderView />
     <div class="login-container">
       <!-- Sección derecha -->
       <div class="login-card">

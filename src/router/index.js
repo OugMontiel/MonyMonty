@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: "/login",
       name: "Vista de inicio de sesión",
-      component: login,
+      redirect: "/",
     },
     {
       path: "/crearCuenta",
