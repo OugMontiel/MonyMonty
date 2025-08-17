@@ -1,7 +1,14 @@
 <script>
+import { onMounted } from "vue"
+import { user, cargarUsuario } from "@/features/dashBoard/logic/user.js";
+
 export default {
   name: "Header",
 };
+onMounted(() => {
+  cargarUsuario()
+  console.log(user.value)
+})
 </script>
 
 <template>
@@ -15,8 +22,8 @@ export default {
     <div class="headerRight">
       <div class="profileBox">
         <div class="profileText">
-          <h3 class="profileName">Nombre del Personaje</h3>
-          <p class="profileStatus">Plan Premium</p>
+          <h3 class="profileName">{{ user.nombre }}</h3>
+          <p class="profileStatus">{{ user.plan }}</p>
         </div>
         <div class="profileImage"></div>
       </div>
