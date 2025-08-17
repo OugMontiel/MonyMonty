@@ -1,7 +1,11 @@
-<script>
-export default {
-  name: "Header",
-};
+<script setup>
+import { onMounted } from "vue"
+import { user, cargarUsuario } from "@/features/dashBoard/logic/user.js";
+
+onMounted(() => {
+  cargarUsuario()
+  console.log('user', user.value)
+})
 </script>
 
 <template>
@@ -13,13 +17,14 @@ export default {
       <h1>Centro</h1>
     </div>
     <div class="headerRight">
-      <div class="profileBox">
+      <div class="profileBox" v-if="user">
         <div class="profileText">
-          <h3 class="profileName">Nombre del Personaje</h3>
-          <p class="profileStatus">Plan Premium</p>
+          <h3 class="profileName">{{ user.nombre }}</h3>
+          <p class="profileStatus">{{ user.plan }}</p>
         </div>
         <div class="profileImage"></div>
       </div>
+      <div v-else class="loading">Cargando...</div>
     </div>
   </header>
 </template>
