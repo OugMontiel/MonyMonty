@@ -5,7 +5,7 @@ const user = ref(null)
 
 async function cargarUsuario() {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/me`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
