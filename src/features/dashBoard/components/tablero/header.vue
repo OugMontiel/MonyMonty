@@ -4,7 +4,7 @@ import { user, cargarUsuario } from "@/features/dashBoard/logic/user.js";
 
 onMounted(() => {
   cargarUsuario()
-  console.log(user.value)
+  console.log('user', user.value)
 })
 </script>
 
