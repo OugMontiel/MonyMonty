@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-import { useAuth } from "@/router/useAuth";
+import { useAuth } from "@/features/auth/logic/useAuth.js";
 
 import login from "@/features/auth/views/LoginView.vue";
 import elTablero from "@/views/paginaDashboard/elTableroView.vue";
