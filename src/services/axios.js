@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api", // Ajusta si cambia el puerto o path
+  baseURL: "http://localhost:3000/api", // Ajustar si se cambia el puerto o path
   headers: {
     "Content-Type": "application/json",
   },
