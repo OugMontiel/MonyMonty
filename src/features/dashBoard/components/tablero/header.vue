@@ -1,6 +1,11 @@
 <script>
+import Perfil from "@/features/dashBoard/components/perfilusuario/perfilUser.vue"; 
+
 export default {
   name: "Header",
+  components: {
+    Perfil,
+  },
 };
 </script>
 
@@ -13,13 +18,7 @@ export default {
       <h1>Centro</h1>
     </div>
     <div class="headerRight">
-      <div class="profileBox">
-        <div class="profileText">
-          <h3 class="profileName">Nombre del Personaje</h3>
-          <p class="profileStatus">Plan Premium</p>
-        </div>
-        <div class="profileImage"></div>
-      </div>
+      <Perfil />
     </div>
   </header>
 </template>
@@ -40,27 +39,8 @@ export default {
 .headerRight {
   text-align: right; /* Alinea el texto a la derecha */
 }
-
-.profileBox {
-  display: flex;
-  flex-direction: row;
-  justify-content: right;
-}
-
-.profileImage {
-  width: 3em; /* Ancho del círculo */
-  height: 3em; /* Alto del círculo */
-  border-radius: 50%; /* Círculo */
-  border: 5px solid #ddd; /* Borde interno en rem */
-}
-
-.profileName {
-  font-size: 1.2rem; /* Tamaño de fuente relativo */
-}
-
-.profileStatus {
-  font-size: 0.9rem; /* Tamaño de fuente más pequeño */
-  color: #888; /* Color gris para el estado */
+.headerLeft {
+  text-align: left; /* Alinea el texto a la izquierda */
 }
 
 /* Extra pequeño: móviles pequeños (xs) */

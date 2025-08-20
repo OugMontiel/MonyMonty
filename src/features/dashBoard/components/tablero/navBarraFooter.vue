@@ -1,22 +1,34 @@
 <script>
+
+import Ingresos from "@/features/dashBoard/views/ingresosView.vue";
+import Gastos from "@/features/dashBoard/views/gastosView.vue";
+import Resumen from "@/features/dashBoard/views/resumenView.vue";
+import Presupuesto from "@/features/dashBoard/views/presupuestoView.vue";
+
 export default {
   name: "barra inferior de navegación entre vistas de tablero",
+  components: {
+    Ingresos,
+    Gastos,
+    Presupuesto,
+    Resumen,
+  },
   data() {
     return {
       sections: [
-        {name: "ingresos", label: "Ingresos"},
-        {name: "gastos", label: "Gastos"},
-        {name: "presupuesto", label: "Presupuesto"},
-        {name: "resumen", label: "Resumen"},
+        { name: "ingresos", label: "Ingresos" },
+        { name: "gastos", label: "Gastos" },
+        { name: "presupuesto", label: "Presupuesto" },
+        { name: "resumen", label: "Resumen" },
       ],
-      activeSection: null,
+      //activeSection: "ingresos",
       isHidden: false,
       hideTimer: null,
     };
   },
   methods: {
     setActiveSection(section) {
-      this.activeSection = section;
+      this.$emit("cambiar-seccion", section);
     },
     startHideTimer() {
       this.hideTimer = setTimeout(() => {
@@ -36,15 +48,10 @@ export default {
 
 <template>
   <div>
-    <div class="bottom-nav" :class="{hidden: isHidden}" @mouseenter="showNav" @mouseleave="startHideTimer">
+    <div class="bottom-nav" :class="{ hidden: isHidden }" @mouseenter="showNav" @mouseleave="startHideTimer">
       <nav>
-        <button
-          v-for="(section, index) in sections"
-          :key="index"
-          :class="{active: activeSection === section.name}"
-          @click="setActiveSection(section.name)"
-          :aria-label="section.name"
-        >
+        <button v-for="(section, index) in sections" :key="index" :class="{ active: activeSection === section.name }"
+          @click="setActiveSection(section.name)" :aria-label="section.name">
           {{ section.label }}
         </button>
       </nav>
@@ -128,10 +135,12 @@ export default {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
   }
+
   50% {
     box-shadow: 0 0 20px rgba(0, 123, 255, 0.8);
   }

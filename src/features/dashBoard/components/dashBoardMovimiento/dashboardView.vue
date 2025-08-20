@@ -5,36 +5,7 @@ export default {
   name: "Dashboard",
   data() {
     return {
-      ingresos: [
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 550},
-        {nombre: "Sueldo", valor: 200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 550},
-      ],
-      gastos: [
-        {nombre: "Manilla", valor: -10},
-        {nombre: "Colchon", valor: -500},
-        {nombre: "Manilla", valor: -100},
-        {nombre: "Colchon", valor: -200},
-        {nombre: "Manilla", valor: -10},
-        {nombre: "Colchon", valor: -200},
-      ],
+     
     };
   },
   computed: {
@@ -72,52 +43,7 @@ export default {
 </script>
 
 <template>
-  <div class="dashboard">
-    <h1>Dashboard</h1>
-    <p>Bienvenido al panel de control</p>
-  </div>
-  <div class="dashboard">
-    <div class="panel-ingresos">
-      <h2 class="ingresos-h2">Ingresos</h2>
-      <div class="chart-container">
-        <canvas ref="chartIngresos"></canvas>
-      </div>
-      <div class="tarjetas-ingresos">
-        <div class="ingresos-positivo" v-for="item in movimientos.filter((i) => i.valor >= 0).slice(-5)" :key="item.nombre">
-          <p class="ingresos-nombre">{{ item.nombre }}</p>
-          <p class="ingresos-valor">+{{ item.valor }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel-movimientos">
-      <h2 class="movimientos-h2">Movimientos</h2>
-      <ul class="tarjetas-movimientos">
-        <li
-          v-for="item in movimientos.slice(-5)"
-          :key="item.nombre"
-          class="tarjeta-movimientos"
-          :class="item.valor >= 0 ? 'movimientos-positivo' : 'movimientos-negativo'"
-        >
-          <p class="movimientos-nombre">{{ item.nombre }}</p>
-          <p class="movimientos-valor">{{ item.valor >= 0 ? "+" : "" }}{{ item.valor }}</p>
-        </li>
-      </ul>
-    </div>
-
-    <div class="panel-gastos">
-      <h2 class="gastos-h2">Gastos</h2>
-      <div class="chart-container">
-        <canvas ref="chartGastos"></canvas>
-      </div>
-      <div class="tarjetas-gastos">
-        <div class="gastos-negativo" v-for="item in movimientos.filter((i) => i.valor < 0).slice(-5)" :key="item.nombre">
-          <p class="gastos-nombre">{{ item.nombre }}</p>
-          <p class="gastos-valor">{{ item.valor }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 </template>
 
 <style scoped>
