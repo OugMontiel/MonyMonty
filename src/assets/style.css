@@ -82,6 +82,13 @@
   box-sizing: border-box; /* Incluir padding y borde en el tamaño total */
 }
 
+html,
+body,
+#app {
+  height: 100%;
+  
+}
+
 /* Estilos para imágenes */
 img {
   width: 100%; /* Ancho completo */
