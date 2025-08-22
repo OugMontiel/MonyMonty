@@ -113,7 +113,7 @@ export default {
       if (this.isAuthenticated) {
         this.$router.push("/tablero");
       } else {
-        this.$router.push("/login");
+        this.$router.push("/");
       }
     },
 

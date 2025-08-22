@@ -14,30 +14,21 @@ const router = createRouter({
      *  Rutas públicas
      * 
      * */ 
-
-    // Vistas login
     {
       path: "/",
-      name: "Vista inicial",
+      name: "Login",
       component: login,
-      meta: { requiresAuth: false },
-    },
-    // Vistas de inicio de sesión
-    {
-      path: "/login",
-      name: "Vista de inicio de sesión",
-      redirect: "/",
       meta: { requiresAuth: false },
     },
     {
       path: "/crearCuenta",
-      name: "Vista de Crear Cuenta",
+      name: "CrearCuenta",
       component: crearCuentaNueva,
       meta: { requiresAuth: false },
     },
     {
       path: "/recuperarCuenta",
-      name: "Vista de Recuperar Cuenta",
+      name: "RecuperarCuenta",
       component: recuperarCuentaCliente,
       meta: { requiresAuth: false },
     },
@@ -55,8 +46,9 @@ const router = createRouter({
     // Vistas de inicio: El tablero
     {
       path: "/tablero",
-      name: "Vista del tablero",
+      name: "HomeTablero",
       component: elTablero,
+      meta: { requiresAuth: true },
     },
   ],
 });
