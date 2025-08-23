@@ -12,9 +12,9 @@ import Divider from "primevue/divider";
 import Message from "primevue/message";
 import {Form} from "@primevue/forms";
 import Card from "primevue/card";
-import ProgressSpinner from 'primevue/progressspinner'
-import Avatar from 'primevue/avatar'
-import Badge from 'primevue/badge'
+import ProgressSpinner from "primevue/progressspinner";
+import Avatar from "primevue/avatar";
+import Badge from "primevue/badge";
 
 const app = createApp(App);
 
@@ -23,8 +23,8 @@ app.use(PrimeVue, {
   theme: {
     preset: Aura,
     options: {
-      darkModeSelector: 'system',
-    }
+      darkModeSelector: "system",
+    },
   },
 });
 

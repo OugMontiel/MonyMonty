@@ -18,11 +18,11 @@ export default {
       alert("Gracias por suscribirte!");
     },
     dirigirseADashboard() {
-      this.$router.push('dashboard');
+      this.$router.push("dashboard");
     },
     dirigirseANewMovi() {
-      this.$router.push('dashboard');
-    }
+      this.$router.push("dashboard");
+    },
   },
 };
 </script>
@@ -60,10 +60,10 @@ export default {
 
         <ul>
           <li>
-            <p @Click="dirigirseADashboard()" > Dashboard</p>
+            <p @Click="dirigirseADashboard()">Dashboard</p>
           </li>
           <li>
-            <p @Click="dirigirseANewMovi()" > New Mov</p>
+            <p @Click="dirigirseANewMovi()">New Mov</p>
           </li>
         </ul>
       </div>

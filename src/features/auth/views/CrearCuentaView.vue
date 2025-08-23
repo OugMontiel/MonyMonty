@@ -44,7 +44,7 @@ export default {
       };
     },
   },
-  components: { Footer },
+  components: {Footer},
   methods: {
     irALogin() {
       this.$router.push("/");
@@ -157,8 +157,14 @@ export default {
       </div>
       <div class="correo-container">
         <input type="email" placeholder="Correo electrónico" v-model="email" class="" />
-        <input type="password" v-model="contraseña" placeholder="Ingresa tu contraseña" class="password-input"
-          @focus="showRules = true" @blur="showRules = false" />
+        <input
+          type="password"
+          v-model="contraseña"
+          placeholder="Ingresa tu contraseña"
+          class="password-input"
+          @focus="showRules = true"
+          @blur="showRules = false"
+        />
         <!-- Alerta flotante de reglas -->
         <div v-if="showRules" class="rules-alert">
           <p :class="rules.length ? 'valid' : 'invalid'">✔ Mínimo 8 caracteres</p>
@@ -167,15 +173,12 @@ export default {
           <p :class="rules.symbol ? 'valid' : 'invalid'">✔ Un símbolo ($#%&...)</p>
         </div>
       </div>
-      <div class="password-container">
-
-      </div>
+      <div class="password-container"></div>
 
       <p class="text-small">
         Al hacer clic en "Registrarte", aceptas nuestras
         <span class="text-condicionesypoliticas" @click="irACondiciones">Condiciones</span> , la
-        <span class="text-condicionesypoliticas" @click="irAPrivacidad">Política de privacidad</span>. Es posible que te
-        enviemos
+        <span class="text-condicionesypoliticas" @click="irAPrivacidad">Política de privacidad</span>. Es posible que te enviemos
         notificaciones por SMS, que puedes desactivar cuando quieras.
       </p>
 
@@ -213,7 +216,6 @@ export default {
   margin-top: 30px;
   margin-bottom: 30px;
 }
-
 
 .card {
   width: 22%;
@@ -286,7 +288,7 @@ label {
   accent-color: #1877f2;
 }
 
-.genero-opcion input[type="radio"]:checked+span {
+.genero-opcion input[type="radio"]:checked + span {
   font-weight: bold;
 }
 
@@ -345,7 +347,6 @@ label {
 .forgot-login:hover {
   text-decoration: underline;
 }
-
 
 .password-container {
   display: flex;
@@ -437,17 +438,22 @@ label {
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>
