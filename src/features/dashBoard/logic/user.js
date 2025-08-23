@@ -4,7 +4,6 @@ import { ref } from "vue"
 const user = ref(null)
 
 async function cargarUsuario() {
-  console.log('cargarUsuario called', `Bearer ${localStorage.getItem("token")}`)
   try {
     const token = localStorage.getItem("token")
     if (!token) {

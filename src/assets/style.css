@@ -77,7 +77,6 @@
 
 /* Estilos globales */
 * {
-  padding: 0; /* Eliminar padding por defecto */
   margin: 0; /* Eliminar margen por defecto */
   border: 0; /* Eliminar borde por defecto */
   box-sizing: border-box; /* Incluir padding y borde en el tamaño total */
