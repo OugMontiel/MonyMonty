@@ -2,12 +2,12 @@
 export default {
   name: "CustomButton",
   props: {
-    label: { type: String, required: true },
-    to: { type: String, default: null }, // ruta opcional
-    background: { type: String, default: "#28a745" },
-    textColor: { type: String, default: "#ffffff" },
-    fullWidth: { type: Boolean, default: true },
-    customClick: { type: Function, default: null },
+    label: {type: String, required: true},
+    to: {type: String, default: null}, // ruta opcional
+    background: {type: String, default: "#28a745"},
+    textColor: {type: String, default: "#ffffff"},
+    fullWidth: {type: Boolean, default: true},
+    customClick: {type: Function, default: null},
   },
   methods: {
     handleClick() {

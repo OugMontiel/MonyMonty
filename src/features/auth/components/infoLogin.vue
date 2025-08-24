@@ -11,16 +11,15 @@ export default {
       <box-icon name="bulb" type="solid" color="#ffcc00" size="md"></box-icon>
       <h2 class="info__title">¿Qué es nuestra aplicación?</h2>
       <p class="info__text">
-        Una innovadora solución <strong>SaaS</strong> para gestionar tus finanzas personales de forma <strong>eficiente</strong> y <strong>sencilla</strong>.
+        Una innovadora solución <strong>SaaS</strong> para gestionar tus finanzas personales de forma <strong>eficiente</strong> y
+        <strong>sencilla</strong>.
       </p>
     </section>
 
     <!-- Eslogan (sin título) -->
     <section class="info__section">
       <box-icon name="rocket" type="solid" color="#ff9900" size="md"></box-icon>
-      <p class="info__eslogan">
-        "Tu camino hacia la <span>libertad financiera</span> comienza aquí."
-      </p>
+      <p class="info__eslogan">"Tu camino hacia la <span>libertad financiera</span> comienza aquí."</p>
     </section>
 
     <!-- Características destacadas -->
@@ -42,7 +41,7 @@ export default {
   max-width: 720px;
   padding: 2rem;
   color: var(--texto-primario);
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   animation: fadeIn 0.8s ease-in;
 }
 
@@ -92,7 +91,9 @@ export default {
 .info__item {
   margin-bottom: 0.5rem;
   line-height: 1.5;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
 .info__item:hover {
@@ -111,24 +112,27 @@ export default {
   }
 }
 
-
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>

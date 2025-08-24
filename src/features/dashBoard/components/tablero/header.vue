@@ -1,100 +1,130 @@
 <script setup>
-import { onMounted } from "vue"
-import { user, cargarUsuario } from "@/features/dashBoard/logic/user.js";
+import {onMounted, ref, computed, watch} from "vue";
+import {user, cargarUsuario} from "@/features/dashBoard/logic/user.js";
 
-onMounted(() => {
-  cargarUsuario()
-  console.log('user', user.value)
-})
+// Estados reactivos para mejor control
+const isLoading = ref(false);
+const error = ref(null);
+
+// Computed para verificar si tenemos datos del usuario
+const hasUserData = computed(() => {
+  return user.value && Object.keys(user.value).length > 0;
+});
+
+const carga = async () => {
+  try {
+    isLoading.value = true;
+    error.value = null;
+
+    await cargarUsuario();
+  } catch (err) {
+    error.value = err.message || "Error desconocido al cargar usuario";
+    console.error("❌ Error al cargar usuario:", {
+      error: err, // Evitar imprimir el objeto por Seguridad
+      message: err.message, // Evitar imprimir el objeto por Seguridad
+      stack: err.stack, // Evitar imprimir el objeto por Seguridad
+      timestamp: new Date().toLocaleString(),
+    });
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const getBadgeSeverity = (plan) => {
+  if (!plan) return "secondary";
+
+  const planLower = plan.toLowerCase();
+  if (planLower.includes("premium") || planLower.includes("pro")) return "success";
+  if (planLower.includes("básico") || planLower.includes("free")) return "info";
+  if (planLower.includes("empresarial")) return "warning";
+  return "secondary";
+};
+
+// Watcher para monitorear cambios en el usuario
+watch(
+  user,
+  (newUser, oldUser) => {
+    console.log("👀 Usuario cambió:", {
+      anterior: oldUser,
+      nuevo: newUser,
+      timestamp: new Date().toLocaleString(),
+    });
+  },
+  {deep: true}
+);
+
+const debugUserInfo = () => {
+  console.group("🔍 Información de Debug del Usuario");
+  console.log("Valor actual de user:", user.value);
+  console.log("Tipo de user:", typeof user.value);
+  console.log("Es array?:", Array.isArray(user.value));
+  console.log("Es null?:", user.value === null);
+  console.log("Es undefined?:", user.value === undefined);
+  console.log("Tiene datos?:", hasUserData.value);
+
+  if (user.value && typeof user.value === "object") {
+    console.log("Propiedades del usuario:", Object.keys(user.value));
+    console.log("Valores del usuario:", Object.values(user.value));
+    console.table(user.value);
+  }
+
+  console.log("Estados del componente:", {
+    isLoading: isLoading.value,
+    error: error.value,
+    hasUserData: hasUserData.value,
+  });
+  console.groupEnd();
+};
+
+onMounted(async () => {
+  console.log("🏗️ Componente montado, iniciando carga de usuario...");
+
+  await carga();
+
+  debugUserInfo();
+});
 </script>
 
 <template>
-  <header class="header">
-    <div class="headerLeft">
-      <!-- <h2>Izquierda</h2> -->
+  <header class="flex justify-between items-center px-4 py-2 min-h-[70px] sm:px-5 lg:px-6 xl:px-8">
+    <div class="flex-1">
+      <!-- <h1>Mony monty</h1> -->
     </div>
-    <div class="headerCenter">
-      <h1>Centro</h1>
+
+    <div class="flex-1 text-center">
+      <h1 class="text-xl sm:text-2xl font-semibold text-gray-800">Centro</h1>
     </div>
-    <div class="headerRight">
-      <div class="profileBox" v-if="user">
-        <div class="profileText">
-          <h3 class="profileName">{{ user.nombre }}</h3>
-          <p class="profileStatus">{{ user.plan }}</p>
-        </div>
-        <div class="profileImage"></div>
+
+    <div class="flex-1 flex justify-end items-center">
+      <!-- Loading state con PrimeVue ProgressSpinner -->
+      <div v-if="isLoading" class="flex items-center gap-3 text-gray-500">
+        <ProgressSpinner size="30px" stroke-width="4" />
+        <span class="text-sm hidden md:inline">Cargando usuario...</span>
       </div>
-      <div v-else class="loading">Cargando...</div>
+
+      <!-- Error state con PrimeVue Message -->
+      <div v-else-if="error" class="max-w-xs">
+        <Message severity="error" :closable="false"> Error al cargar usuario: {{ error }} </Message>
+      </div>
+
+      <!-- User profile con PrimeVue Avatar y Badge -->
+      <div v-else-if="user" class="flex items-center gap-4 sm:flex-col-reverse sm:gap-2 md:flex-row md:gap-4">
+        <div class="text-right flex flex-col gap-1 sm:text-center md:text-right">
+          <h3 class="text-lg font-semibold text-gray-800 m-0 sm:text-base">{{ user.nombre || "Usuario" }}</h3>
+          <Badge
+            :value="user.plan || 'Plan no disponible'"
+            :severity="getBadgeSeverity(user.plan)"
+            class="self-end sm:self-center md:self-end"
+          />
+        </div>
+        <Avatar :label="user.nombre[0]" :image="user.avatar" icon="pi pi-user" size="large" shape="circle" class="mr-2" />
+      </div>
+
+      <!-- Empty state -->
+      <div v-else class="flex items-center gap-2 text-gray-500 text-sm">
+        <i class="pi pi-user text-2xl"></i>
+        <span>No hay usuario</span>
+      </div>
     </div>
   </header>
 </template>
-
-<style scoped>
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f5f5f5;
-}
-
-.headerCenter {
-  flex: 1; /* Cada sección ocupa el mismo espacio */
-  text-align: center; /* Centra el texto en cada sección */
-}
-
-.headerRight {
-  text-align: right; /* Alinea el texto a la derecha */
-}
-
-.profileBox {
-  display: flex;
-  flex-direction: row;
-  justify-content: right;
-}
-
-.profileImage {
-  width: 3em; /* Ancho del círculo */
-  height: 3em; /* Alto del círculo */
-  border-radius: 50%; /* Círculo */
-  border: 5px solid #ddd; /* Borde interno en rem */
-}
-
-.profileName {
-  font-size: 1.2rem; /* Tamaño de fuente relativo */
-}
-
-.profileStatus {
-  font-size: 0.9rem; /* Tamaño de fuente más pequeño */
-  color: #888; /* Color gris para el estado */
-}
-
-/* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {
-  /* Estilos para móviles pequeños */
-}
-
-/* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-  /* Estilos para móviles medianos/grandes */
-}
-
-/* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  /* Estilos para tablets */
-}
-
-/* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  /* Estilos para laptops */
-}
-
-/* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
-  /* Estilos para pantallas grandes */
-}
-
-/* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-  /* Estilos para pantallas muy grandes */
-}
-</style>
