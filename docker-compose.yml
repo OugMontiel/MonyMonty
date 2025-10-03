@@ -9,8 +9,6 @@ services:
     # Solo exponer, no publicar (el proxy manager se encarga)
     expose:
       - "80"
-    ports:
-      - "8090:80"
     
     # Conectar a la red del proxy
     networks:
