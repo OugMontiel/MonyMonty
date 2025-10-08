@@ -52,7 +52,6 @@ export default {
 </template>
 
 <style scoped>
-
 /* Estructura general */
 .logo-section {
   display: flex;
@@ -109,7 +108,6 @@ export default {
   outline: none;
   border: 2px solid var(--color-fondo-input-activo);
 }
-
 
 .divider {
   width: 100%;

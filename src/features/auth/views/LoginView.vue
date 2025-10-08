@@ -1,18 +1,23 @@
 <script>
+import {useAuth} from "../logic/useAuth.js";
 import logo from "@/assets/img/MonyMontySinFondo3.png";
-
-import HeaderView from "@/features/auth/components/header.vue";
 import InfoView from "@/features/auth/components/infoLogin.vue";
-
 import CustomButton from "@/features/auth/components/CustomButton.vue";
-
 
 export default {
   name: "Login",
   components: {
-    HeaderView,
     InfoView,
     CustomButton,
+  },
+  setup() {
+    const {login, loading, isAuthenticated} = useAuth();
+
+    return {
+      login,
+      loading,
+      isAuthenticated,
+    };
   },
   data() {
     return {
@@ -20,46 +25,114 @@ export default {
       logo,
 
       // Variable para Mostrar error
-      showError: false,
+      showErrorFlag: false,
+      errorMessage: "",
 
       // Datos para el inicio de sesión
       username: "",
       password: "",
-
     };
   },
   methods: {
-    login() {
-      if (this.username && this.password) {
-        // Lógica para iniciar sesión
-        console.log("Usuario:", this.username);
-        console.log("Contraseña:", this.password);
-        this.redirectToDashboard();
-      } else {
-        this.showError = true;
+    // Validar campos
+    validateFields() {
+      if (!this.username.trim()) {
+        this.showError("Por favor, ingresa tu correo electrónico.");
+        return false;
+      }
+
+      if (!this.isValidEmail(this.username)) {
+        this.showError("Por favor, ingresa un correo electrónico válido.");
+        return false;
+      }
+
+      if (!this.password.trim()) {
+        this.showError("Por favor, ingresa tu contraseña.");
+        return false;
+      }
+
+      if (this.password.length < 6) {
+        this.showError("La contraseña debe tener al menos 6 caracteres.");
+        return false;
+      }
+
+      return true;
+    },
+
+    // Validar formato de email
+    isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    },
+
+    // Manejo del login
+    async handleLogin() {
+      if (!this.validateFields()) {
+        return;
+      }
+
+      const credentials = {
+        email: this.username.trim(),
+        password: this.password,
+      };
+
+      try {
+        const result = await this.login(credentials);
+
+        if (result.success) {
+          // Login exitoso, redirigir
+          this.$router.push("/tablero");
+        } else {
+          // Mostrar error del servidor
+          this.showError(result.error || "Error en el inicio de sesión");
+        }
+      } catch (error) {
+        this.showError("Error de conexión. Inténtalo de nuevo.");
       }
     },
+
+    // Mostrar error
+    showError(message) {
+      this.errorMessage = message;
+      this.showErrorFlag = true;
+
+      // Auto-ocultar error después de 5 segundos
+      setTimeout(() => {
+        this.hideError();
+      }, 5000);
+    },
+
+    // Ocultar error
     hideError() {
-      this.showError = false;
+      this.showErrorFlag = false;
+      this.errorMessage = "";
     },
+
+    // Redirecciones
     redirectToDashboard() {
-      // Lógica para redirigir al dashboard
-      alert("Redirigiendo al dashboard...");
-      this.$router.push("/tablero");
+      if (this.isAuthenticated) {
+        this.$router.push("/tablero");
+      } else {
+        this.$router.push("/");
+      }
     },
+
     redirectToRecuperarCuenta() {
       this.$router.push("/recuperarCuenta");
     },
-    redirectToCrearCuenta() {
-      this.$router.push("/crearCuenta");
-    },
+  },
+
+  // Verificar si ya está autenticado al montar el componente
+  async mounted() {
+    if (this.isAuthenticated) {
+      this.$router.push("/tablero");
+    }
   },
 };
 </script>
 
 <template>
   <div class="login">
-    <HeaderView />
     <div class="login-container">
       <!-- Sección derecha -->
       <div class="login-card">
@@ -70,32 +143,65 @@ export default {
 
           <div class="login-form-datos">
             <div class="input-group">
-              <input type="email" v-model="username" placeholder=" " id="email" class="login-input"
-                @focus="hideError" />
+              <input
+                type="email"
+                v-model="username"
+                placeholder=" "
+                id="email"
+                class="login-input"
+                :disabled="loading"
+                @focus="hideError"
+              />
               <label for="email">Correo electrónico</label>
             </div>
 
             <div class="input-group">
-              <input type="password" v-model="password" placeholder=" " id="password" class="login-input"
-                @focus="hideError" />
+              <input
+                type="password"
+                v-model="password"
+                placeholder=" "
+                id="password"
+                class="login-input"
+                :disabled="loading"
+                @focus="hideError"
+                @keyup.enter="handleLogin"
+              />
               <label for="password">Contraseña</label>
             </div>
 
-            <p v-if="showError" class="login-error">Por favor, completa todos los campos.</p>
+            <!-- Mostrar errores -->
+            <p v-if="showError" class="login-error">{{ errorMessage }}</p>
           </div>
 
-          <CustomButton label="Iniciar Sesion" :customClick="login" background="var(--color-fondo-button-blue)"
-            text-color="var(--texto-primario-Blanco)" />
+          <!-- Botón de login con estado de carga -->
+          <CustomButton
+            :label="loading ? 'Iniciando sesión...' : 'Iniciar Sesión'"
+            :customClick="handleLogin"
+            :disabled="loading"
+            background="var(--color-fondo-button-blue)"
+            text-color="var(--texto-primario-Blanco)"
+          />
 
           <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
 
           <div class="divider-buton"></div>
 
-          <CustomButton label="Crear cuenta nueva" :to="'/crearCuenta'" background="var(--color-fondo-button-green)"
-            text-color="var(--texto-primario-Blanco)" />
+          <CustomButton
+            label="Crear cuenta nueva"
+            :to="'/crearCuenta'"
+            :disabled="loading"
+            background="var(--color-fondo-button-green)"
+            text-color="var(--texto-primario-Blanco)"
+          />
 
-          <CustomButton label="tablero prueba" :customClick="redirectToDashboard"
-            background="var(--color-fondo-button-green)" text-color="var(--texto-primario-Blanco)" />
+          <!-- Botón de prueba (remover en producción) -->
+          <CustomButton
+            label="tablero prueba"
+            :customClick="redirectToDashboard"
+            :disabled="loading"
+            background="var(--color-fondo-button-green)"
+            text-color="var(--texto-primario-Blanco)"
+          />
         </div>
       </div>
 
@@ -114,7 +220,6 @@ export default {
 
 <style scoped>
 /* estilo general */
-
 .login {
   display: flex;
   flex-direction: column;
@@ -138,7 +243,6 @@ export default {
 }
 
 /* Sección derecha */
-
 .login-logo {
   max-width: 9rem;
 }
@@ -182,6 +286,12 @@ export default {
   border: 1px solid var(--color-border-input);
   border-radius: 5px;
   outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .input-group label {
@@ -205,26 +315,13 @@ export default {
 }
 
 .login-error {
-  color: red;
+  color: #dc3545;
   font-size: 0.9rem;
   margin-bottom: 1rem;
-}
-
-.login-button {
-  width: 100%;
-  background: var(--color-fondo-button);
-  color: var(--texto-primario-Blanco);
-  border: none;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
-  font-size: var(--font-size-botones);
-  border-radius: var(--border-radius-botones);
-  cursor: pointer;
-}
-
-.login-button:hover {
-  background: var(--color-fondo-button-activo);
+  padding: 0.5rem;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid #dc3545;
+  border-radius: 0.25rem;
 }
 
 .forgot-password {
@@ -232,6 +329,7 @@ export default {
   font-size: var(--font-size-botones);
   cursor: pointer;
   margin-bottom: 10px;
+  transition: all 0.2s ease;
 }
 
 .forgot-password:hover {
@@ -240,22 +338,18 @@ export default {
   color: var(--texto-primario-azul-hover);
 }
 
-.create-button {
-  width: 100%;
-  background-color: #28a745;
-  color: var(--texto-primario-Blanco);
-  border: none;
-  padding: 10px;
-  font-weight: bold;
-  font-size: var(--font-size-botones);
-  border-radius: var(--border-radius-botones);
-  cursor: pointer;
+.divider-buton {
+  width: 50%;
+  height: 5px;
+  margin: 15px 0;
+  background-color: #e0e0e0;
 }
 
-.create-button:hover {
-  background-color: #36a420;
+.divider {
+  width: 2px;
+  height: 80%;
+  background-color: #e0e0e0;
 }
-
 
 .login-mesaje {
   text-align: center;
@@ -265,8 +359,7 @@ export default {
   color: #6c757d;
 }
 
-
-/* Extra pequeño: móviles pequeños (xs) */
+/* Responsive Design */
 @media (max-width: 575.98px) {
   .login-container {
     flex-direction: column;
@@ -276,8 +369,7 @@ export default {
     margin-bottom: 30px;
   }
 
-  .login-card,
-  .login-info {
+  .login-card {
     width: 100%;
     height: auto;
     padding: 10px;
@@ -289,12 +381,6 @@ export default {
 
   .login-form input {
     font-size: 14px;
-  }
-
-  .login-button,
-  .create-button {
-    font-size: 14px;
-    padding: 8px;
   }
 
   .divider-buton {
@@ -311,40 +397,28 @@ export default {
     background-color: #e0e0e0;
   }
 
-  .login-info section {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
-  .login-info h2,
-  .info-p,
-  .info-li {
-    font-size: 12px;
-  }
-
   .login-logo {
     max-width: 120px;
-  }
-
-  .login-footer {
-    font-size: 12px;
-    margin: auto;
-    padding: 5px;
   }
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>

@@ -143,7 +143,7 @@ export default {
 .navigation ul li.hovered a::before,
 .navigation ul li:hover a::after,
 .navigation ul li.hovered a::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   width: 50px;
@@ -164,5 +164,4 @@ export default {
   bottom: -50px;
   box-shadow: 35px -35px 0 10px black;
 }
-
 </style>
