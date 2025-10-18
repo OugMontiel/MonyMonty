@@ -3,8 +3,8 @@
  * ============================================================
  * Autor: Diego Alejandro Montiel Flórez
  * Proyecto: MonyMonty
- * Descripción: Este código es propiedad intelectual de 
- * Diego Alejandro Montiel Flórez. Su uso, copia o distribución 
+ * Descripción: Este código es propiedad intelectual de
+ * Diego Alejandro Montiel Flórez. Su uso, copia o distribución
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
@@ -142,15 +142,17 @@ export default {
 
 <template>
   <div class="login">
-    <div class="login-container">
-      <!-- Sección derecha -->
-      <div class="login-card">
-        <div class="login-form">
+    <!-- Mostrar errores -->
+    <p v-if="showError" class="login-error">{{ errorMessage }}</p>
+    <!-- Error .. se muestra apesar de que no esta -->
+    <div class="contentCentrado">
+      <div class="login-container">
+        <!-- Sección derecha -->
+        <div class="login-card">
           <div>
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
-
-          <div class="login-form-datos">
+          <div class="login-form">
             <div class="input-group">
               <input
                 type="email"
@@ -177,30 +179,27 @@ export default {
               />
               <label for="password">Contraseña</label>
             </div>
-
-            <!-- Mostrar errores -->
-            <p v-if="showError" class="login-error">{{ errorMessage }}</p>
           </div>
 
-          <!-- Botón de login con estado de carga -->
-          <CustomButton
-            :label="loading ? 'Iniciando sesión...' : 'Iniciar Sesión'"
-            :customClick="handleLogin"
-            :disabled="loading"
-            background="var(--color-fondo-button-blue)"
-            text-color="var(--texto-primario-Blanco)"
-          />
-
-          <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
-
-          <div class="divider-buton"></div>
+          <div class="login-button">
+            <!-- Botón de login con estado de carga -->
+            <CustomButton
+              :label="loading ? 'Iniciando sesión...' : 'Iniciar Sesión'"
+              :customClick="handleLogin"
+              :disabled="loading"
+              background="var(--color-fondo-button-blue)"
+              text-color="var(--texto-primario-Blanco)"
+            />
+            <!-- División -->
+            <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
+          </div>
         </div>
+
+        <!-- División -->
+
+        <!-- Sección izquierda -->
+        <InfoView />
       </div>
-
-      <div class="divider"></div>
-
-      <!-- Sección izquierda -->
-      <InfoView />
     </div>
 
     <!-- mensaje de pie de pagina -->
@@ -219,16 +218,18 @@ export default {
   align-items: center;
   background-color: var(--color-fondo-login);
   height: 100vh;
-  font-family: sans-serif;
+}
+
+.contentCentrado {
+  flex: 1; /* ocupa todo el espacio disponible entre header y footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-container {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
-  width: 70%;
-  height: 60%;
-  margin: auto;
   background: var(--color-fondo-login);
   border-radius: 0.5rem;
   box-shadow: 0 8px 30px var(--color-fondo-shadow);
@@ -242,39 +243,27 @@ export default {
 .login-card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  height: 90%;
-  width: 35%;
-  padding: 0.5rem;
-  border-radius: 0.2rem;
-  background: var(--color-fondo-login);
+  padding: 1rem;
 }
 
 .login-form {
-  height: 90%;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-}
-
-.login-form-datos {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  gap: 1em;
 }
 
 .input-group {
-  position: relative;
-  margin: 1rem 0;
+  position: relative; 
 }
 
 .input-group input {
-  width: 100%;
   padding: 1rem 0.5rem 0.5rem 0.5rem;
-  font-size: 1rem;
+  color: var(--texto-primario);
+  font-size: var(--font-size-input);
   border: 1px solid var(--color-border-input);
   border-radius: 5px;
   outline: none;
@@ -291,7 +280,7 @@ export default {
   top: 0.8rem;
   left: 0.5rem;
   color: var(--texto-primario);
-  font-size: 1rem;
+  font-size: var(--font-size-text);
   pointer-events: none;
   transition: 0.2s ease all;
   padding: 0 0.25rem;
@@ -304,6 +293,13 @@ export default {
   font-size: 0.75rem;
   color: var(--texto-primario);
   background: var(--color-fondo-login);
+}
+
+.login-button{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .login-error {
@@ -330,25 +326,12 @@ export default {
   color: var(--texto-primario-azul-hover);
 }
 
-.divider-buton {
-  width: 50%;
-  height: 5px;
-  margin: 15px 0;
-  background-color: #e0e0e0;
-}
-
-.divider {
-  width: 2px;
-  height: 80%;
-  background-color: #e0e0e0;
-}
-
 .login-mesaje {
   text-align: center;
   width: 100%;
   padding: 10px 0;
-  font-size: 0.9em;
-  color: #6c757d;
+  font-size: var(--font-size-text);
+  color: var(--color-oscuro);
 }
 
 /* Responsive Design */
@@ -373,13 +356,6 @@ export default {
 
   .login-form input {
     font-size: 14px;
-  }
-
-  .divider-buton {
-    width: 50%;
-    height: 5px;
-    margin: 15px 0;
-    background-color: #e0e0e0;
   }
 
   .divider {
