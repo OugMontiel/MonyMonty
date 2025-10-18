@@ -1,4 +1,13 @@
 <script>
+/**
+ * ============================================================
+ * Autor: Diego Alejandro Montiel Flórez
+ * Proyecto: MonyMonty
+ * Descripción: Este código es propiedad intelectual de 
+ * Diego Alejandro Montiel Flórez. Su uso, copia o distribución 
+ * sin autorización está estrictamente prohibido.
+ * ============================================================
+ */
 import {useAuth} from "../logic/useAuth.js";
 import logo from "@/assets/img/MonyMontySinFondo3.png";
 import InfoView from "@/features/auth/components/infoLogin.vue";
@@ -185,23 +194,6 @@ export default {
           <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
 
           <div class="divider-buton"></div>
-
-          <CustomButton
-            label="Crear cuenta nueva"
-            :to="'/crearCuenta'"
-            :disabled="loading"
-            background="var(--color-fondo-button-green)"
-            text-color="var(--texto-primario-Blanco)"
-          />
-
-          <!-- Botón de prueba (remover en producción) -->
-          <CustomButton
-            label="tablero prueba"
-            :customClick="redirectToDashboard"
-            :disabled="loading"
-            background="var(--color-fondo-button-green)"
-            text-color="var(--texto-primario-Blanco)"
-          />
         </div>
       </div>
 
