@@ -10,7 +10,7 @@ async function cargarUsuario() {
       throw new Error("No hay token de autenticación");
     }
 
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/me`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}user/me`, {
       withCredentials: true,
       headers: {
         Authorization: `Bearer ${token}`,

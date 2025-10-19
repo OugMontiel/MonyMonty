@@ -1,21 +1,26 @@
 <script>
+import {useAuth} from "@/features/auth/logic/useAuth.js";
 export default {
   name: "Sidebar",
+  setup() {
+    const {logout} = useAuth();
+    return {
+      logout,
+    };
+  },
 };
 </script>
 
 <template>
   <div class="container">
     <div class="navigation">
+      <div class="header">
+        <span class="icon">
+          <ion-icon name="home-outline"></ion-icon>
+        </span>
+        <span class="title">Dashboard</span>
+      </div>
       <ul>
-        <li>
-          <a href="#">
-            <span class="icon">
-              <ion-icon name="home-outline"></ion-icon>
-            </span>
-            <span class="title">Dashboard</span>
-          </a>
-        </li>
         <li>
           <a href="#">
             <span class="icon">
@@ -57,7 +62,7 @@ export default {
           </a>
         </li>
         <li>
-          <a href="#">
+          <a href="#" @click.prevent="logout">
             <span class="icon">
               <ion-icon name="log-out-outline"></ion-icon>
             </span>
@@ -73,7 +78,6 @@ export default {
 .container {
   width: 15%;
 }
-
 .navigation {
   position: fixed;
   top: 0;
@@ -87,6 +91,25 @@ export default {
   flex-direction: column;
 }
 
+.navigation .header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.navigation .header .icon {
+  font-size: 1.75rem;
+  width: 40px;
+  text-align: center;
+}
+
+.navigation .header .title {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
 .navigation ul {
   list-style: none;
   padding: 0;
@@ -96,12 +119,7 @@ export default {
 
 .navigation ul li {
   border-radius: 0 30px 30px 0;
-  background: 0.3s ease;
-}
-
-.navigation ul li:nth-child(1) {
-  margin-bottom: 40px;
-  pointer-events: none;
+  transition: background 0.3s ease;
 }
 
 .navigation ul li:hover,
@@ -118,6 +136,7 @@ export default {
   transition: color 0.3s ease;
   width: 100%;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .navigation ul li:hover a,
