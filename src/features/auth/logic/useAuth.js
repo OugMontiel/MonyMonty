@@ -12,7 +12,7 @@ export function useAuth() {
   async function checkAuth() {
     loading.value = true;
     try {
-      const response = await axios.get(`${API_URL}/auth/check`, {
+      const response = await axios.get(`${API_URL}auth/check`, {
         withCredentials: true,
       });
 
@@ -33,7 +33,7 @@ export function useAuth() {
   async function login(credentials) {
     loading.value = true;
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, credentials, {
+      const response = await axios.post(`${API_URL}auth/login`, credentials, {
         withCredentials: true,
       });
 
@@ -56,7 +56,7 @@ export function useAuth() {
     loading.value = true;
     try {
       await axios.post(
-        `${API_URL}/auth/logout`,
+        `${API_URL}auth/logout`,
         {},
         {
           withCredentials: true,
