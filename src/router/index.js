@@ -57,7 +57,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const {checkAuth, isAuthenticated} = useAuth();
 
-  // Verificar si la ruta necesita autenticación (por defecto sí)
+  // Verificar si la ruta necesita autenticación (por defeczto sí)
   const requiresAuth = to.meta.requiresAuth !== false;
 
   if (requiresAuth) {
