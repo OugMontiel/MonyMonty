@@ -17,7 +17,7 @@ export function useAuth() {
       });
 
       if (response.status === 200) {
-        isAuthenticated.value = true;
+        isAuthenticated.value = response.data.authenticated;
         return true;
       }
     } catch (error) {
@@ -55,7 +55,7 @@ export function useAuth() {
   async function logout() {
     loading.value = true;
     try {
-      await axios.post(
+      await axios.get(
         `${API_URL}auth/logout`,
         {},
         {
