@@ -92,7 +92,7 @@ export default {
 
 .text-p {
   font-size: var(--font-size-text);
-  color: var(--texto-segundario);
+  color: var(--texto-secundario);
   margin-bottom: 1em;
 }
 
@@ -166,7 +166,7 @@ export default {
 .footer-p {
   font-style: var(--font-family-base);
   font-size: var(--font-size-text);
-  color: var(--texto-segundario);
+  color: var(--texto-secundario);
 }
 
 /* Extra pequeño: móviles pequeños (xs) */

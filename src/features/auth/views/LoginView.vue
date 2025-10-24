@@ -129,6 +129,9 @@ export default {
     redirectToRecuperarCuenta() {
       this.$router.push("/recuperarCuenta");
     },
+    redirectToCrearCuenta() {
+      this.$router.push("/crearCuenta");
+    },
   },
 
   // Verificar si ya está autenticado al montar el componente
@@ -190,6 +193,16 @@ export default {
               background="var(--color-fondo-button-blue)"
               text-color="var(--texto-primario-Blanco)"
             />
+
+            <!-- Botón de crear cuenta -->
+            <CustomButton
+              label="Crear Cuenta"
+              :customClick="redirectToCrearCuenta"
+              :disabled="loading"
+              background="var(--color-fondo-button-green)"
+              text-color="var(--texto-primario-Blanco)"
+            />
+
             <!-- División -->
             <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
           </div>
