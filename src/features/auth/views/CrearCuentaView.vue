@@ -45,13 +45,18 @@ export default {
 
     const errors = reactive({});
 
+    const generos = [
+      {label: "Mujer", value: "Mujer", icon: "pi pi-venus"},
+      {label: "Hombre", value: "Hombre", icon: "pi pi-mars"},
+    ];
+
     const isMujerSelected = computed(() => form.genero === "Mujer");
 
     const selectGenero = (genero) => {
       form.genero = genero;
     };
 
-    return {logo, form, isMujerSelected, selectGenero, errors};
+    return {logo, form, isMujerSelected, selectGenero, errors, generos};
   },
   methods: {
     async handleSubmit() {
@@ -96,41 +101,44 @@ export default {
         <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
       </div>
       <div class="user-section">
-        <div>
-          <label>Nombre</label>
-          <input type="text" placeholder="Nombre" v-model.trim="form.nombre" />
-        </div>
-        <div>
-          <label>Apellido</label>
-          <input type="text" placeholder="Apellido" v-model.trim="form.apellido" />
-        </div>
+        <FloatLabel variant="on">
+          <InputText id="nombre" v-model.trim="form.nombre" />
+          <label for="nombre">Nombre</label>
+        </FloatLabel>
+
+        <FloatLabel variant="on">
+          <InputText id="apellido" v-model.trim="form.apellido" />
+          <label for="apellido">Apellido</label>
+        </FloatLabel>
       </div>
 
       <div class="nacimiento-section">
-        <label>Fecha de nacimiento</label>
-        <input type="date" v-model="form.fechaNacimiento" :max="new Date().toISOString().split('T')[0]" />
+        <FloatLabel variant="on">
+          <DatePicker id="fechaNacimiento" v-model="form.fechaNacimiento" :max-date="new Date()" date-format="yy-mm-dd" show-icon />
+          <label for="fechaNacimiento">Fecha de nacimiento</label>
+        </FloatLabel>
       </div>
 
       <div class="genero-section">
         <label>Género</label>
-        <div class="genero-toggle">
-          <input type="radio" id="mujer" value="Mujer" v-model="form.genero" name="genero" />
-          <label for="mujer" :class="{active: form.genero === 'Mujer'}">
-            <Icon icon="mdi:gender-female" />
-          </label>
-
-          <input type="radio" id="hombre" value="Hombre" v-model="form.genero" name="genero" />
-          <label for="hombre" :class="{active: form.genero === 'Hombre'}">
-            <Icon icon="mdi:gender-male" />
-          </label>
-
-          <span class="deslizante" :class="{'slide-right': form.genero === 'Hombre'}"></span>
-        </div>
+        <SelectButton v-model="form.genero" :options="generos" optionLabel="label" optionValue="value" allowEmpty="false">
+          <template #option="slotProps">
+            <i :class="slotProps.option.icon" class="mr-2"></i>
+            {{ slotProps.option.label }}
+          </template>
+        </SelectButton>
       </div>
 
       <div class="correo-container">
-        <input type="email" placeholder="Correo electrónico" v-model.trim="form.email" />
-        <input type="password" placeholder="Ingresa tu contraseña" v-model="form.contraseña" />
+        <FloatLabel variant="on">
+          <InputText id="email" type="email" v-model.trim="form.email" />
+          <label for="email">Correo electrónico</label>
+        </FloatLabel>
+
+        <FloatLabel variant="on">
+          <InputText id="password" type="password" v-model="form.contraseña" />
+          <label for="password">Contraseña</label>
+        </FloatLabel>
       </div>
 
       <p class="text-small">
@@ -317,7 +325,6 @@ export default {
 .register-button:hover {
   border: 0.5px #1877f2 solid;
 }
-
 
 .text-condicionesypoliticas {
   color: #1877f2;

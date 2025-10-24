@@ -7,6 +7,8 @@ import Aura from "@primeuix/themes/aura";
 
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
+import FloatLabel from 'primevue/floatlabel';
+import DatePicker from 'primevue/datepicker';
 import Password from "primevue/password";
 import Divider from "primevue/divider";
 import Message from "primevue/message";
@@ -30,6 +32,8 @@ app.use(PrimeVue, {
 
 app.component("Button", Button);
 app.component("InputText", InputText);
+app.component("FloatLabel", FloatLabel);
+app.component("DatePicker", DatePicker);
 app.component("Password", Password);
 app.component("Divider", Divider);
 app.component("Card", Card);
