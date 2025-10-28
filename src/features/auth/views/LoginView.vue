@@ -8,11 +8,14 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
+import {useToast} from "primevue/usetoast";
+import { ref } from 'vue';
+
 import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
 import CustomButton from "../components/CustomButton.vue";
-import {useToast} from "primevue/usetoast";
+
 
 export default {
   name: "Login",
@@ -46,8 +49,8 @@ export default {
       // variable del logo
       logo,
       // Datos para el inicio de sesión
-      username: "",
-      password: "",
+      username: ref(null),
+      password: ref(null),
     };
   },
   methods: {
@@ -142,23 +145,15 @@ export default {
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
           <div class="login-form">
-            <div class="input-group">
-              <input type="email" v-model="username" placeholder=" " id="email" class="login-input" :disabled="loading" />
+            <FloatLabel variant="on">
+              <InputText id="email" type="email" v-model="username" :disabled="loading" />
               <label for="email">Correo electrónico</label>
-            </div>
+            </FloatLabel>
 
-            <div class="input-group">
-              <input
-                type="password"
-                v-model="password"
-                placeholder=" "
-                id="password"
-                class="login-input"
-                :disabled="loading"
-                @keyup.enter="handleLogin"
-              />
+            <FloatLabel variant="on">
+              <Password  id="password" type="password" v-model="password" :disabled="loading" @keyup.enter="handleLogin" toggleMask showClear />
               <label for="password">Contraseña</label>
-            </div>
+            </FloatLabel>
           </div>
 
           <div class="login-button">
@@ -244,45 +239,6 @@ export default {
   justify-content: space-around;
   align-items: center;
   gap: 1em;
-}
-
-.input-group {
-  position: relative;
-}
-
-.input-group input {
-  padding: 1rem 0.5rem 0.5rem 0.5rem;
-  color: var(--texto-primario);
-  font-size: var(--font-size-input);
-  border: 1px solid var(--color-border-input);
-  border-radius: 5px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.input-group input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.input-group label {
-  position: absolute;
-  top: 0.8rem;
-  left: 0.5rem;
-  color: var(--texto-primario);
-  font-size: var(--font-size-text);
-  pointer-events: none;
-  transition: 0.2s ease all;
-  padding: 0 0.25rem;
-}
-
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
-  top: -0.5rem;
-  left: 0.4rem;
-  font-size: 0.75rem;
-  color: var(--texto-primario);
-  background: var(--color-fondo-login);
 }
 
 .login-button {
