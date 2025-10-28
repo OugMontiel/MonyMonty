@@ -84,7 +84,7 @@ onMounted(() => {
           <!-- FORMULARIO PRIMEVUE -->
           <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
             <!-- EMAIL -->
-            <FormField v-slot="$field" initialValue="" name="email">
+            <FormField v-slot="$field" name="email">
               <FloatLabel variant="on">
                 <InputText id="email" type="email" v-bind="$field.props" :disabled="loading"/>
                 <label for="email">Correo electrónico</label>
@@ -105,9 +105,9 @@ onMounted(() => {
             <Button type="submit" label="Iniciar Sesión" class="w-full" severity="primary" :loading="loading" />
 
           </Form>
-          
+
           <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
-  
+
           <!-- Olvidaste tu contraseña -->
           <Button label="¿Olvidaste tu contraseña?" link @click="redirectToRecuperarCuenta" />
         </div>
@@ -171,37 +171,6 @@ onMounted(() => {
   justify-content: space-around;
   align-items: center;
   gap: 1em;
-}
-
-.login-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.login-error {
-  color: #dc3545;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: rgba(220, 53, 69, 0.1);
-  border-left: 3px solid #dc3545;
-  border-radius: 0.25rem;
-}
-
-.forgot-password {
-  color: var(--texto-primario-azul);
-  font-size: var(--font-size-botones);
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: all 0.2s ease;
-}
-
-.forgot-password:hover {
-  text-decoration: none;
-  font-weight: bold;
-  color: var(--texto-primario-azul-hover);
 }
 
 .login-mesaje {
