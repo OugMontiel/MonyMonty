@@ -1,4 +1,4 @@
-<script>
+<script setup>
 /**
  * ============================================================
  * Autor: Diego Alejandro Montiel Flórez
@@ -8,131 +8,107 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
+import {ref, onMounted} from "vue";
 import {useToast} from "primevue/usetoast";
-import { ref } from 'vue';
+import {useRouter} from "vue-router";
 
 import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
-import CustomButton from "../components/CustomButton.vue";
 
+const toast = useToast();
+const router = useRouter();
+const {login, loading, isAuthenticated} = useAuth();
 
-export default {
-  name: "Login",
-  components: {
-    InfoView,
-    CustomButton,
-  },
-  setup() {
-    const {login, loading, isAuthenticated} = useAuth();
-    const toast = useToast();
+const username = ref("");
+const password = ref("");
 
-    // Función reutilizable para mostrar errores con Toast
-    const showError = (message) => {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: message,
-        life: 4000,
-      });
-    };
-
-    return {
-      login,
-      loading,
-      isAuthenticated,
-      showError,
-    };
-  },
-  data() {
-    return {
-      // variable del logo
-      logo,
-      // Datos para el inicio de sesión
-      username: ref(null),
-      password: ref(null),
-    };
-  },
-  methods: {
-    // Validar campos
-    validateFields() {
-      if (!this.username.trim()) {
-        this.showError("Por favor, ingresa tu correo electrónico.");
-        return false;
-      }
-
-      if (!this.isValidEmail(this.username)) {
-        this.showError("Por favor, ingresa un correo electrónico válido.");
-        return false;
-      }
-
-      if (!this.password.trim()) {
-        this.showError("Por favor, ingresa tu contraseña.");
-        return false;
-      }
-
-      if (this.password.length < 6) {
-        this.showError("La contraseña debe tener al menos 6 caracteres.");
-        return false;
-      }
-
-      return true;
-    },
-
-    // Validar formato de email
-    isValidEmail(email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    },
-
-    // Manejo del login
-    async handleLogin() {
-      if (!this.validateFields()) return;
-
-      const credentials = {
-        email: this.username.trim(),
-        password: this.password,
-      };
-
-      try {
-        const result = await this.login(credentials);
-
-        if (result.success) {
-          // Login exitoso, redirigir
-          this.$router.push("/tablero");
-        } else {
-          // Mostrar error del servidor
-          this.showError(result.error || "Error en el inicio de sesión");
-        }
-      } catch (error) {
-        this.showError("Error de conexión. Inténtalo de nuevo.");
-      }
-    },
-
-    // Redirecciones
-    redirectToDashboard() {
-      if (this.isAuthenticated) {
-        this.$router.push("/tablero");
-      } else {
-        this.$router.push("/");
-      }
-    },
-
-    redirectToRecuperarCuenta() {
-      this.$router.push("/recuperarCuenta");
-    },
-    redirectToCrearCuenta() {
-      this.$router.push("/crearCuenta");
-    },
-  },
-
-  // Verificar si ya está autenticado al montar el componente
-  async mounted() {
-    if (this.isAuthenticated) {
-      this.$router.push("/tablero");
-    }
-  },
+// Función reutilizable para mostrar errores con Toast
+const showError = (message) => {
+  toast.add({
+    severity: "error",
+    summary: "Error",
+    detail: message,
+    life: 4000,
+  });
 };
+
+// Validar campos
+const validateFields = () => {
+  if (!username.value.trim()) {
+    showError("Por favor, ingresa tu correo electrónico.");
+    return false;
+  }
+
+  if (!isValidEmail(username.value)) {
+    showError("Por favor, ingresa un correo electrónico válido.");
+    return false;
+  }
+
+  if (!password.value.trim()) {
+    showError("Por favor, ingresa tu contraseña.");
+    return false;
+  }
+
+  if (password.value.length < 6) {
+    showError("La contraseña debe tener al menos 6 caracteres.");
+    return false;
+  }
+
+  return true;
+};
+
+// Validar formato de email
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+// Manejo del login
+const handleLogin = async () => {
+  console.log("✅ handleLogin ejecutado");
+
+  if (!validateFields()) return;
+
+  const credentials = {
+    email: username.value.trim(),
+    password: password.value,
+  };
+
+  try {
+    const result = await login(credentials);
+
+    if (result.success) {
+      // Login exitoso, redirigir
+      router.push("/tablero");
+    } else {
+      // Mostrar error del servidor
+      showError(result.error || "Error en el inicio de sesión");
+    }
+  } catch (error) {
+    showError("Error de conexión. Inténtalo de nuevo.");
+  }
+};
+
+// Redirecciones
+const redirectToDashboard = () => {
+  if (isAuthenticated.value) {
+    router.push("/tablero");
+  } else {
+    router.push("/");
+  }
+};
+
+const redirectToRecuperarCuenta = () => {
+  router.push("/recuperarCuenta");
+};
+const redirectToCrearCuenta = () => {
+  router.push("/crearCuenta");
+};
+
+// Verificar si ya está autenticado al montar el componente
+onMounted(() => {
+  if (isAuthenticated.value) {
+    router.push("/tablero");
+  }
+});
 </script>
 
 <template>
@@ -151,33 +127,30 @@ export default {
             </FloatLabel>
 
             <FloatLabel variant="on">
-              <Password  id="password" type="password" v-model="password" :disabled="loading" @keyup.enter="handleLogin" toggleMask showClear />
+              <Password
+                id="password"
+                type="password"
+                v-model="password"
+                :disabled="loading"
+                @keyup.enter="handleLogin"
+                toggleMask
+                showClear
+              />
               <label for="password">Contraseña</label>
             </FloatLabel>
           </div>
 
-          <div class="login-button">
-            <!-- Botón de login con estado de carga -->
-            <CustomButton
-              :label="loading ? 'Iniciando sesión...' : 'Iniciar Sesión'"
-              :customClick="handleLogin"
-              :disabled="loading"
-              background="var(--color-fondo-button-blue)"
-              text-color="var(--texto-primario-Blanco)"
-            />
+          <!-- Botón de login con estado de carga -->
+          <!-- Botón de login -->
+          <Button v-if="!loading" label="Iniciar Sesión" class="w-full" severity="primary" @click="handleLogin" />
 
-            <!-- Botón de crear cuenta -->
-            <CustomButton
-              label="Crear Cuenta"
-              :customClick="redirectToCrearCuenta"
-              :disabled="loading"
-              background="var(--color-fondo-button-green)"
-              text-color="var(--texto-primario-Blanco)"
-            />
+          <Button v-else class="w-full flex justify-center" severity="primary" :loading="true" />
 
-            <!-- División -->
-            <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
-          </div>
+          <!-- Botón de crear cuenta -->
+          <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
+
+          <!-- División -->
+          <Button label="¿Olvidaste tu contraseña?" link @click="redirectToRecuperarCuenta" />
         </div>
 
         <!-- División -->
