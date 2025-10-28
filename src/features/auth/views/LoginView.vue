@@ -12,7 +12,7 @@ import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
 import CustomButton from "../components/CustomButton.vue";
-import { useToast } from "primevue/usetoast";
+import {useToast} from "primevue/usetoast";
 
 export default {
   name: "Login",
@@ -143,14 +143,7 @@ export default {
           </div>
           <div class="login-form">
             <div class="input-group">
-              <input
-                type="email"
-                v-model="username"
-                placeholder=" "
-                id="email"
-                class="login-input"
-                :disabled="loading"
-              />
+              <input type="email" v-model="username" placeholder=" " id="email" class="login-input" :disabled="loading" />
               <label for="email">Correo electrónico</label>
             </div>
 
@@ -254,7 +247,7 @@ export default {
 }
 
 .input-group {
-  position: relative; 
+  position: relative;
 }
 
 .input-group input {
@@ -292,7 +285,7 @@ export default {
   background: var(--color-fondo-login);
 }
 
-.login-button{
+.login-button {
   display: flex;
   flex-direction: column;
   align-items: center;
