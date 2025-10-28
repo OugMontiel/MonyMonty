@@ -1,13 +1,11 @@
 import {ref, computed} from "vue";
 import axios from "axios";
 
-export function useAuth() {
-  const isAuthenticated = ref(false);
-  const loading = ref(false);
-  
-  // Debug: verificar variable de entorno
-  const API_URL = import.meta.env.VITE_API_URL;
+const isAuthenticated = ref(false);
+const loading = ref(false);
+const API_URL = import.meta.env.VITE_API_URL;
 
+export function useAuth() {
   // Verificar autenticación
   async function checkAuth() {
     loading.value = true;
