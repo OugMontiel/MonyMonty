@@ -39,30 +39,28 @@ export default {
 .info {
   width: 100%;
   max-width: 720px;
-  padding: 2rem;
+  padding: 1rem;
   color: var(--texto-primario);
-  font-family: "Segoe UI", sans-serif;
   animation: fadeIn 0.8s ease-in;
 }
 
 .info__section {
-  margin-bottom: 2.5rem;
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 
 .info__title {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-letra-seleccion);
-  margin-bottom: 0.3rem;
 }
 
 .info__text {
   font-size: 1rem;
   line-height: 1.6;
-  color: #000000;
+  color: var(--texto-primario);
 }
 
 .info__eslogan {
@@ -72,7 +70,7 @@ export default {
   color: var(--color-letra-seleccion);
   background-color: rgba(255, 204, 0, 0.1);
   padding: 1rem;
-  border-left: 4px solid #ff9900;
+  border-left: 4px solid var(--color-letra-seleccion);
   border-radius: 10px;
   transition: background-color 0.3s ease;
 }
