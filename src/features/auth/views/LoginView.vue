@@ -9,9 +9,9 @@
  * ============================================================
  */
 import {useAuth} from "../logic/useAuth.js";
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-import InfoView from "@/features/auth/components/infoLogin.vue";
-import CustomButton from "@/features/auth/components/CustomButton.vue";
+import logo from "../../../assets/img/MonyMontySinFondo3.png";
+import InfoView from "../components/infoLogin.vue";
+import CustomButton from "../components/CustomButton.vue";
 
 export default {
   name: "Login",
