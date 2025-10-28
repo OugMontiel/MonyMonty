@@ -17,6 +17,8 @@ import Card from "primevue/card";
 import ProgressSpinner from "primevue/progressspinner";
 import Avatar from "primevue/avatar";
 import Badge from "primevue/badge";
+import Toast from 'primevue/toast';
+import ToastService from "primevue/toastservice";
 
 const app = createApp(App);
 
@@ -30,6 +32,7 @@ app.use(PrimeVue, {
     },
   },
 });
+app.use(ToastService);
 
 app.component("Button", Button);
 app.component("InputText", InputText);
@@ -43,5 +46,6 @@ app.component("Form", Form);
 app.component("ProgressSpinner", ProgressSpinner);
 app.component("Avatar", Avatar);
 app.component("Badge", Badge);
+app.component("Toast", Toast);
 
 app.mount("#app");

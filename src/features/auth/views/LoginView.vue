@@ -12,6 +12,7 @@ import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
 import CustomButton from "../components/CustomButton.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "Login",
@@ -21,22 +22,29 @@ export default {
   },
   setup() {
     const {login, loading, isAuthenticated} = useAuth();
+    const toast = useToast();
+
+    // Función reutilizable para mostrar errores con Toast
+    const showError = (message) => {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: message,
+        life: 4000,
+      });
+    };
 
     return {
       login,
       loading,
       isAuthenticated,
+      showError,
     };
   },
   data() {
     return {
       // variable del logo
       logo,
-
-      // Variable para Mostrar error
-      showErrorFlag: false,
-      errorMessage: "",
-
       // Datos para el inicio de sesión
       username: "",
       password: "",
@@ -76,9 +84,7 @@ export default {
 
     // Manejo del login
     async handleLogin() {
-      if (!this.validateFields()) {
-        return;
-      }
+      if (!this.validateFields()) return;
 
       const credentials = {
         email: this.username.trim(),
@@ -98,23 +104,6 @@ export default {
       } catch (error) {
         this.showError("Error de conexión. Inténtalo de nuevo.");
       }
-    },
-
-    // Mostrar error
-    showError(message) {
-      this.errorMessage = message;
-      this.showErrorFlag = true;
-
-      // Auto-ocultar error después de 5 segundos
-      setTimeout(() => {
-        this.hideError();
-      }, 5000);
-    },
-
-    // Ocultar error
-    hideError() {
-      this.showErrorFlag = false;
-      this.errorMessage = "";
     },
 
     // Redirecciones
@@ -145,9 +134,6 @@ export default {
 
 <template>
   <div class="login">
-    <!-- Mostrar errores -->
-    <p v-if="showError" class="login-error">{{ errorMessage }}</p>
-    <!-- Error .. se muestra apesar de que no esta -->
     <div class="contentCentrado">
       <div class="login-container">
         <!-- Sección derecha -->
@@ -164,7 +150,6 @@ export default {
                 id="email"
                 class="login-input"
                 :disabled="loading"
-                @focus="hideError"
               />
               <label for="email">Correo electrónico</label>
             </div>
@@ -177,7 +162,6 @@ export default {
                 id="password"
                 class="login-input"
                 :disabled="loading"
-                @focus="hideError"
                 @keyup.enter="handleLogin"
               />
               <label for="password">Contraseña</label>
