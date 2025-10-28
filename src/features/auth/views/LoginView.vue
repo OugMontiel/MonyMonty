@@ -8,9 +8,11 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import {ref, onMounted} from "vue";
+import {ref, onMounted, reactive} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {z} from "zod";
 
 import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
@@ -20,88 +22,47 @@ const toast = useToast();
 const router = useRouter();
 const {login, loading, isAuthenticated} = useAuth();
 
-const username = ref("");
-const password = ref("");
+// Esquema de validación con Zod
+const resolver = zodResolver(
+  z.object({
+    email: z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."}),
+    password: z.string().min(8, {message: "La contraseña debe tener al menos 8 caracteres."}),
+  })
+);
 
-// Función reutilizable para mostrar errores con Toast
-const showError = (message) => {
-  toast.add({
-    severity: "error",
-    summary: "Error",
-    detail: message,
-    life: 4000,
-  });
-};
-
-// Validar campos
-const validateFields = () => {
-  if (!username.value.trim()) {
-    showError("Por favor, ingresa tu correo electrónico.");
-    return false;
-  }
-
-  if (!isValidEmail(username.value)) {
-    showError("Por favor, ingresa un correo electrónico válido.");
-    return false;
-  }
-
-  if (!password.value.trim()) {
-    showError("Por favor, ingresa tu contraseña.");
-    return false;
-  }
-
-  if (password.value.length < 6) {
-    showError("La contraseña debe tener al menos 6 caracteres.");
-    return false;
-  }
-
-  return true;
-};
-
-// Validar formato de email
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-// Manejo del login
-const handleLogin = async () => {
-  console.log("✅ handleLogin ejecutado");
-
-  if (!validateFields()) return;
-
-  const credentials = {
-    email: username.value.trim(),
-    password: password.value,
-  };
+// === SUBMIT DEL FORM ===
+const onFormSubmit = async ({valid, values}) => {
+  if (!valid) return;
 
   try {
-    const result = await login(credentials);
+    const result = await login({
+      email: values.email.trim(),
+      password: values.password,
+    });
 
     if (result.success) {
-      // Login exitoso, redirigir
       router.push("/tablero");
     } else {
-      // Mostrar error del servidor
-      showError(result.error || "Error en el inicio de sesión");
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: result.error || "Error en el inicio de sesión",
+        life: 4000,
+      });
     }
-  } catch (error) {
-    showError("Error de conexión. Inténtalo de nuevo.");
+  } catch {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo.",
+      life: 4000,
+    });
   }
 };
 
 // Redirecciones
-const redirectToDashboard = () => {
-  if (isAuthenticated.value) {
-    router.push("/tablero");
-  } else {
-    router.push("/");
-  }
-};
-
-const redirectToRecuperarCuenta = () => {
-  router.push("/recuperarCuenta");
-};
-const redirectToCrearCuenta = () => {
-  router.push("/crearCuenta");
-};
+const redirectToRecuperarCuenta = () => router.push("/recuperarCuenta");
+const redirectToCrearCuenta = () => router.push("/crearCuenta");
 
 // Verificar si ya está autenticado al montar el componente
 onMounted(() => {
@@ -120,36 +81,34 @@ onMounted(() => {
           <div>
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
-          <div class="login-form">
-            <FloatLabel variant="on">
-              <InputText id="email" type="email" v-model="username" :disabled="loading" />
-              <label for="email">Correo electrónico</label>
-            </FloatLabel>
+          <!-- FORMULARIO PRIMEVUE -->
+          <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
+            <!-- EMAIL -->
+            <FormField v-slot="$field" initialValue="" name="email">
+              <FloatLabel variant="on">
+                <InputText id="email" type="email" v-bind="$field.props" :disabled="loading"/>
+                <label for="email">Correo electrónico</label>
+              </FloatLabel>
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
+            </FormField>
 
-            <FloatLabel variant="on">
-              <Password
-                id="password"
-                type="password"
-                v-model="password"
-                :disabled="loading"
-                @keyup.enter="handleLogin"
-                toggleMask
-                showClear
-              />
-              <label for="password">Contraseña</label>
-            </FloatLabel>
-          </div>
+            <!-- PASSWORD -->
+            <FormField v-slot="$field" name="password">
+              <FloatLabel variant="on">
+                <Password id="password" v-bind="$field.props" :feedback="false" toggleMask showClear :disabled="loading" />
+                <label for="password">Contraseña</label>
+              </FloatLabel>
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
+            </FormField>
 
-          <!-- Botón de login con estado de carga -->
-          <!-- Botón de login -->
-          <Button v-if="!loading" label="Iniciar Sesión" class="w-full" severity="primary" @click="handleLogin" />
+            <!-- BOTONES -->
+            <Button type="submit" label="Iniciar Sesión" class="w-full" severity="primary" :loading="loading" />
 
-          <Button v-else class="w-full flex justify-center" severity="primary" :loading="true" />
-
-          <!-- Botón de crear cuenta -->
+          </Form>
+          
           <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
-
-          <!-- División -->
+  
+          <!-- Olvidaste tu contraseña -->
           <Button label="¿Olvidaste tu contraseña?" link @click="redirectToRecuperarCuenta" />
         </div>
 

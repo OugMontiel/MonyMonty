@@ -12,7 +12,7 @@ import DatePicker from 'primevue/datepicker';
 import Password from "primevue/password";
 import Divider from "primevue/divider";
 import Message from "primevue/message";
-import {Form} from "@primevue/forms";
+import { Form, FormField } from '@primevue/forms'
 import Card from "primevue/card";
 import ProgressSpinner from "primevue/progressspinner";
 import Avatar from "primevue/avatar";
@@ -43,6 +43,7 @@ app.component("Divider", Divider);
 app.component("Card", Card);
 app.component("Message", Message);
 app.component("Form", Form);
+app.component("FormField", FormField);
 app.component("ProgressSpinner", ProgressSpinner);
 app.component("Avatar", Avatar);
 app.component("Badge", Badge);
