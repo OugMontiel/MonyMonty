@@ -22,6 +22,8 @@ import ProgressSpinner from "primevue/progressspinner";
 import Avatar from "primevue/avatar";
 import Badge from "primevue/badge";
 import Toast from "primevue/toast";
+import AutoComplete from 'primevue/autocomplete';
+import MultiSelect from 'primevue/multiselect';
 
 const app = createApp(App);
 
@@ -54,5 +56,7 @@ app.component("ProgressSpinner", ProgressSpinner);
 app.component("Avatar", Avatar);
 app.component("Badge", Badge);
 app.component("Toast", Toast);
+app.component("AutoComplete", AutoComplete);
+app.component("MultiSelect", MultiSelect);
 
 app.mount("#app");
