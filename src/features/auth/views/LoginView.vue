@@ -45,7 +45,7 @@ const onFormSubmit = async ({valid, values}) => {
     });
 
     if (result.success) {
-      router.push("/tablero");
+      redirectToTablero();
     } else {
       toast.add({
         severity: "error",
@@ -67,11 +67,12 @@ const onFormSubmit = async ({valid, values}) => {
 // Redirecciones
 const redirectToRecuperarCuenta = () => router.push("/recuperarCuenta");
 const redirectToCrearCuenta = () => router.push("/crearCuenta");
+const redirectToTablero = () => router.push("/tablero");
 
 // Verificar si ya está autenticado al montar el componente
 onMounted(() => {
   if (isAuthenticated.value) {
-    router.push("/tablero");
+    redirectToTablero();
   }
 });
 </script>
