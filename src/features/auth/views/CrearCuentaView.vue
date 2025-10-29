@@ -1,97 +1,113 @@
-<script>
-import logo from "@/assets/img/MonyMontySinFondo3.png";
+<script setup>
+/**
+ * ============================================================
+ * Autor: Diego Alejandro Montiel Flórez
+ * Proyecto: MonyMonty
+ * Descripción: Este código es propiedad intelectual de
+ * Diego Alejandro Montiel Flórez. Su uso, copia o distribución
+ * sin autorización está estrictamente prohibido.
+ * ============================================================
+ */
+import {ref, reactive, computed} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
-import {reactive, computed} from "vue";
-import {object, string, date, ref} from "yup";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {z} from "zod";
 
-// Función para calcular fecha mínima (mayor de 18 años)
-const MIN_EDAD = 18;
+import logo from "../../../assets/img/MonyMontySinFondo3.png";
+
+const toast = useToast();
+const router = useRouter();
+const submitted = ref(false);
+
+// variables para esquema de validación
 const fechaMinima = new Date();
-fechaMinima.setFullYear(fechaMinima.getFullYear() - MIN_EDAD);
+fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
 
-// Regex de reutilización
-const REGEX_MAYUS = /[A-Z]/;
-const REGEX_NUMERO = /\d/;
-const REGEX_SIMBOLO = /[!@#$%^&*()_\-+=<>?{}[\]~]/;
+// Esquema de validación con Zod
+const resolver = zodResolver(
+  z
+    .object({
+      nombre: z.string().trim().min(1, {message: "El nombre es obligatorio"}).min(3, {message: "Debe tener al menos 3 caracteres"}),
+      apellido: z.string().trim().min(1, {message: "El apellido es obligatorio"}).min(3, {message: "Debe tener al menos 3 caracteres"}),
+      email: z.string().trim().min(1, {message: "El email es obligatorio"}).email({message: "Formato de email inválido"}),
+      password: z
+        .string()
+        .min(8, {message: "Debe tener al menos 8 caracteres"})
+        .refine((v) => /[A-Z]/.test(v), {message: "Debe contener al menos una mayúscula"})
+        .refine((v) => /\d/.test(v), {message: "Debe contener al menos un número"})
+        .refine((v) => /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(v), {
+          message: "Debe contener al menos un símbolo",
+        }),
+      confirmPassword: z.string().min(1, {message: "Confirma tu contraseña"}),
+      fechaNacimiento: z
+        .date({
+          required_error: "La fecha es obligatoria",
+          invalid_type_error: "Selecciona una fecha válida",
+        })
+        .max(fechaMinima, {message: "Debes ser mayor de 18 años"}),
+      genero: z
+        .string()
+        .min(1, {message: "Selecciona un género"})
+        .refine((v) => ["Mujer", "Hombre"].includes(v), {
+          message: "Opción no válida",
+        }),
+      plan: z
+        .string()
+        .min(1, {message: "Selecciona un plan"})
+        .refine((v) => ["free", "basic", "premium"].includes(v), {
+          message: "Opción no válida",
+        }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Las contraseñas no coinciden",
+      path: ["confirmPassword"],
+    })
+);
 
-export const schemaRegistro = object({
-  nombre: string().trim().required("El nombre es obligatorio").min(2, "Debe tener al menos 2 caracteres"),
-  apellido: string().trim().required("El apellido es obligatorio").min(2, "Debe tener al menos 2 caracteres"),
-  fechaNacimiento: date().required("La fecha es obligatoria").max(fechaMinima, "Debes ser mayor de 18 años"),
-  genero: string().required("Selecciona un género").oneOf(["Mujer", "Hombre"], "Opción no válida"),
-  email: string().trim().required("El email es obligatorio").email("Formato de email inválido"),
-  password: string()
-    .required("La contraseña es obligatoria")
-    .min(8, "Debe tener al menos 8 caracteres")
-    .matches(REGEX_MAYUS, "Debe contener al menos una mayúscula")
-    .matches(REGEX_NUMERO, "Debe contener al menos un número")
-    .matches(REGEX_SIMBOLO, "Debe contener al menos un símbolo"),
-  confirmPassword: string()
-    .oneOf([ref("password")], "Las contraseñas no coinciden")
-    .required("Confirma tu contraseña"),
-});
+// === SUBMIT DEL FORM ===
+const onFormSubmit = async ({valid, values}) => {
+  submitted.value = true;
 
-export default {
-  name: "RegisterForm",
-  setup() {
-    const form = reactive({
-      nombre: "",
-      apellido: "",
-      fechaNacimiento: new Date().toISOString().split("T")[0],
-      genero: "Mujer",
-      email: "",
-      contraseña: "",
+  if (!valid) return;
+
+  try {
+    const result = await CrearUsuario({
+      nombre: values.nombre.trim(),
+      apellido: values.apellido.trim(),
+      fechaNacimiento: values.fechaNacimiento,
+      genero: values.genero,
+      email: values.email.trim(),
+      password: values.password,
+      plan: values.plan,
     });
 
-    const errors = reactive({});
-
-    const generos = [
-      {label: "Mujer", value: "Mujer", icon: "pi pi-venus"},
-      {label: "Hombre", value: "Hombre", icon: "pi pi-mars"},
-    ];
-
-    const isMujerSelected = computed(() => form.genero === "Mujer");
-
-    const selectGenero = (genero) => {
-      form.genero = genero;
-    };
-
-    return {logo, form, isMujerSelected, selectGenero, errors, generos};
-  },
-  methods: {
-    async handleSubmit() {
-      try {
-        await schema.validate(this.form, {abortEarly: false});
-
-        // Registro exitoso
-        console.log("Datos válidos:", this.form);
-        // TODO: Llamar API de registro
-      } catch (err) {
-        if (err.inner) {
-          err.inner.forEach((error) => {
-            this.errors[error.path] = error.message;
-          });
-        }
-        alert(err.errors?.[0] || "Por favor completa todos los campos correctamente");
-      }
-    },
-
-    irALogin() {
-      this.$router.push("/");
-    },
-
-    irAPrivacidad() {
-      this.$router.push("/privacidad");
-    },
-
-    irACondiciones() {
-      this.$router.push("/condiciones");
-    },
-  },
-  components: {
-    Icon,
-  },
+    if (result.success) {
+      irALogin();
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: result.error || "Error en Crear Cuenta",
+        life: 4000,
+      });
+    }
+  } catch {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo.",
+      life: 4000,
+    });
+  }
 };
+
+// Redirecciones
+
+const irALogin = () => router.push("/");
+const irAPrivacidad = () => router.push("/privacidad");
+const irACondiciones = () => router.push("/condiciones");
 </script>
 
 <template>
@@ -149,7 +165,8 @@ export default {
 
       <button type="submit" @click="handleSubmit" class="register-button">Registrarte</button>
 
-      <p @click="irALogin" class="forgot-login">¿Ya tienes una cuenta?</p>
+      <!--  Ya tienes Cuenta -->
+      <Button label="¿Ya tienes una cuenta?" link @click="irALogin" />
     </div>
   </div>
 </template>
