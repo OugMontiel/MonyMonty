@@ -19,9 +19,22 @@ import logo from "../../../assets/img/MonyMontySinFondo3.png";
 
 const toast = useToast();
 const router = useRouter();
-const submitted = ref(false);
 
-// variables para esquema de validación
+// Constantes
+const submitted = ref(false);
+const selectedPlanes = ref();
+const planes = ref([
+  {label: "Free", value: "free"},
+  {label: "Basic", value: "basic"},
+  {label: "Premium", value: "premium"},
+]);
+const selectedGenero = ref();
+const generos = ref([
+  {label: "Mujer", value: "Mujer"},
+  {label: "Hombre", value: "Hombre"},
+]);
+
+// variables para los selects
 const fechaMinima = new Date();
 fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
 
@@ -116,54 +129,94 @@ const irACondiciones = () => router.push("/condiciones");
       <div class="logo-section">
         <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
       </div>
-      <div class="user-section">
-        <FloatLabel variant="on">
-          <InputText id="nombre" v-model.trim="form.nombre" />
-          <label for="nombre">Nombre</label>
-        </FloatLabel>
+      <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']" class="flex flex-col justify-around gap-4">
+        <div class="flex gap-4">
+          <FormField v-slot="$field" name="nombre" class="flex-1">
+            <FloatLabel variant="on" class="w-full">
+              <InputText id="nombre" v-bind="$field.props" class="w-full" />
+              <label for="nombre">Nombre</label>
+            </FloatLabel>
+          </FormField>
+          <FormField v-slot="$field" name="apellido" class="flex-1">
+            <FloatLabel variant="on" class="w-full">
+              <InputText id="apellido" v-bind="$field.props" class="w-full" />
+              <label for="apellido">Apellido</label>
+            </FloatLabel>
+          </FormField>
+        </div>
 
-        <FloatLabel variant="on">
-          <InputText id="apellido" v-model.trim="form.apellido" />
-          <label for="apellido">Apellido</label>
-        </FloatLabel>
-      </div>
+        <FormField v-slot="$field" name="fechaNacimiento" class="w-full">
+          <FloatLabel variant="on" class="w-full">
+            <DatePicker
+              id="fechaNacimiento"
+              v-bind="$field.props"
+              :max-date="new Date()"
+              date-format="yy-mm-dd"
+              show-icon
+              input-class="w-full"
+            />
+            <label for="fechaNacimiento">Fecha de nacimiento</label>
+          </FloatLabel>
+        </FormField>
 
-      <div class="nacimiento-section">
-        <FloatLabel variant="on">
-          <DatePicker id="fechaNacimiento" v-model="form.fechaNacimiento" :max-date="new Date()" date-format="yy-mm-dd" show-icon />
-          <label for="fechaNacimiento">Fecha de nacimiento</label>
-        </FloatLabel>
-      </div>
+        <div class="flex gap-4">
+          <FormField v-slot="$field" name="plan" class="flex-1">
+            <FloatLabel variant="on" class="w-full">
+              <AutoComplete
+                v-model="selectedPlanes"
+                v-bind="$field.props"
+                :suggestions="planes"
+                optionLabel="label"
+                optionValue="value"
+                dropdown
+              />
+              <label for="plan">Selecciona un plan</label>
+            </FloatLabel>
+          </FormField>
+          <FormField v-slot="$field" name="genero" class="flex-1">
+            <FloatLabel variant="on" class="w-full">
+              <AutoComplete
+                v-model="selectedGenero"
+                v-bind="$field.props"
+                :suggestions="generos"
+                optionLabel="label"
+                optionValue="value"
+                dropdown
+              />
+              <label for="genero">Selecciona un género</label>
+            </FloatLabel>
+          </FormField>
+        </div>
 
-      <div class="genero-section">
-        <label>Género</label>
-        <SelectButton v-model="form.genero" :options="generos" optionLabel="label" optionValue="value" allowEmpty="false">
-          <template #option="slotProps">
-            <i :class="slotProps.option.icon" class="mr-2"></i>
-            {{ slotProps.option.label }}
-          </template>
-        </SelectButton>
-      </div>
+        <FormField v-slot="$field" name="email" class="w-full">
+          <FloatLabel variant="on" class="w-full">
+            <InputText id="email" type="email" v-bind="$field.props" class="w-full" />
+            <label for="email">Correo electrónico</label>
+          </FloatLabel>
+        </FormField>
 
-      <div class="correo-container">
-        <FloatLabel variant="on">
-          <InputText id="email" type="email" v-model.trim="form.email" />
-          <label for="email">Correo electrónico</label>
-        </FloatLabel>
-
-        <FloatLabel variant="on">
-          <InputText id="password" type="password" v-model="form.contraseña" />
-          <label for="password">Contraseña</label>
-        </FloatLabel>
-      </div>
+        <div class="flex gap-4">
+          <FormField v-slot="$field" name="password" class="flex-1">
+            <FloatLabel variant="on" class="w-full">
+              <Password id="password" v-bind="$field.props" :feedback="false" toggleMask class="w-full" inputClass="w-full" />
+              <label for="password">Contraseña</label>
+            </FloatLabel>
+          </FormField>
+          <FormField v-slot="$field" name="confirmPassword" class="flex-1">
+            <FloatLabel variant="on" class="w-full">
+              <Password id="confirmPassword" v-bind="$field.props" :feedback="false" toggleMask class="w-full" inputClass="w-full" />
+              <label for="confirmPassword">Confirma tu contraseña</label>
+            </FloatLabel>
+          </FormField>
+        </div>
+        <Button type="submit" label="Registrarte" severity="primary" />
+      </Form>
 
       <p class="text-small">
         Al hacer clic en "Registrarte", aceptas nuestras
-        <span class="text-condicionesypoliticas" @click="irACondiciones"> Condiciones </span>, y
-        <span class="text-condicionesypoliticas" @click="irAPrivacidad"> Política de privacidad </span>.
+        <Button label="Condiciones" variant="text" class="text-condicionesypoliticas" @click="irACondiciones" /> y
+        <Button label="Política de privacidad" variant="text" class="text-condicionesypoliticas" @click="irAPrivacidad" />
       </p>
-
-      <button type="submit" @click="handleSubmit" class="register-button">Registrarte</button>
 
       <!--  Ya tienes Cuenta -->
       <Button label="¿Ya tienes una cuenta?" link @click="irALogin" />
@@ -319,7 +372,6 @@ const irACondiciones = () => router.push("/condiciones");
 .text-small {
   font-size: 10px;
   color: var(--texto-secundario);
-  margin-bottom: 10px;
 }
 
 /* botones de registrarse */
@@ -344,11 +396,7 @@ const irACondiciones = () => router.push("/condiciones");
 }
 
 .text-condicionesypoliticas {
-  color: #1877f2;
-  font-size: 10px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: underline;
+  font-size: 1em;
 }
 
 .forgot-login {
