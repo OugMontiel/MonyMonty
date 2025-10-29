@@ -24,13 +24,11 @@ const {CrearUsuario, loading} = useAuth();
 
 // Constantes
 const submitted = ref(false);
-const selectedPlanes = ref();
 const planes = ref([
-  {label: "Free", value: "free"},
-  {label: "Basic", value: "basic"},
-  {label: "Premium", value: "premium"},
+  {label: "Free", value: "Free"},
+  {label: "Basic", value: "Basic"},
+  {label: "Premium", value: "Premium"},
 ]);
-const selectedGenero = ref();
 const generos = ref([
   {label: "Mujer", value: "Mujer"},
   {label: "Hombre", value: "Hombre"},
@@ -63,15 +61,19 @@ const resolver = zodResolver(
         })
         .max(fechaMinima, {message: "Debes ser mayor de 18 años"}),
       genero: z
-        .string()
-        .min(1, {message: "Selecciona un género"})
-        .refine((v) => ["Mujer", "Hombre"].includes(v), {
+        .object({
+          label: z.string(),
+          value: z.string(),
+        })
+        .refine((v) => ["Mujer", "Hombre"].includes(v.value), {
           message: "Opción no válida",
         }),
       plan: z
-        .string()
-        .min(1, {message: "Selecciona un plan"})
-        .refine((v) => ["free", "basic", "premium"].includes(v), {
+        .object({
+          label: z.string(),
+          value: z.string(),
+        })
+        .refine((v) => ["Free", "Basic", "Premium"].includes(v.value), {
           message: "Opción no válida",
         }),
     })
@@ -138,12 +140,18 @@ const irACondiciones = () => router.push("/condiciones");
               <InputText id="nombre" v-bind="$field.props" class="w-full" :disabled="loading" />
               <label for="nombre">Nombre</label>
             </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
           </FormField>
           <FormField v-slot="$field" name="apellido" class="flex-1">
             <FloatLabel variant="on" class="w-full">
               <InputText id="apellido" v-bind="$field.props" class="w-full" :disabled="loading" />
               <label for="apellido">Apellido</label>
             </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
           </FormField>
         </div>
 
@@ -161,13 +169,13 @@ const irACondiciones = () => router.push("/condiciones");
             />
             <label for="fechaNacimiento">Fecha de nacimiento</label>
           </FloatLabel>
+          <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
         </FormField>
 
         <div class="flex gap-4">
           <FormField v-slot="$field" name="plan" class="flex-1">
             <FloatLabel variant="on" class="w-full">
               <AutoComplete
-                v-model="selectedPlanes"
                 v-bind="$field.props"
                 :suggestions="planes"
                 optionLabel="label"
@@ -178,11 +186,13 @@ const irACondiciones = () => router.push("/condiciones");
               />
               <label for="plan">Selecciona un plan</label>
             </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
           </FormField>
           <FormField v-slot="$field" name="genero" class="flex-1">
             <FloatLabel variant="on" class="w-full">
               <AutoComplete
-                v-model="selectedGenero"
                 v-bind="$field.props"
                 :suggestions="generos"
                 optionLabel="label"
@@ -193,6 +203,9 @@ const irACondiciones = () => router.push("/condiciones");
               />
               <label for="genero">Selecciona un género</label>
             </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
           </FormField>
         </div>
 
@@ -201,6 +214,7 @@ const irACondiciones = () => router.push("/condiciones");
             <InputText id="email" type="email" v-bind="$field.props" class="w-full" :disabled="loading" />
             <label for="email">Correo electrónico</label>
           </FloatLabel>
+          <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
         </FormField>
 
         <div class="flex gap-4">
@@ -214,9 +228,14 @@ const irACondiciones = () => router.push("/condiciones");
                 class="w-full"
                 inputClass="w-full"
                 :disabled="loading"
+                @blur="$field.onBlur"
+                @input="$field.onChange"
               />
               <label for="password">Contraseña</label>
             </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
           </FormField>
           <FormField v-slot="$field" name="confirmPassword" class="flex-1">
             <FloatLabel variant="on" class="w-full">
@@ -228,9 +247,14 @@ const irACondiciones = () => router.push("/condiciones");
                 class="w-full"
                 inputClass="w-full"
                 :disabled="loading"
+                @blur="$field.onBlur"
+                @input="$field.onChange"
               />
               <label for="confirmPassword">Confirma tu contraseña</label>
             </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
           </FormField>
         </div>
         <Button type="submit" label="Registrarte" severity="primary" :loading="loading" />
