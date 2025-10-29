@@ -110,27 +110,41 @@ export default {
   }
 }
 
-/* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {
+.info {
+  width: 100%;
+  max-width: 720px; /* Pantallas grandes por defecto */
+  padding: 1rem;
+  color: var(--texto-primario);
+  animation: fadeIn 0.8s ease-in;
 }
 
-/* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
+/* 💻 Laptops medianas */
+@media (max-width: 1200px) {
+  .info {
+    max-width: 640px;
+  }
 }
 
-/* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
+/* 📱 Tablets grandes */
+@media (max-width: 992px) {
+  .info {
+    max-width: 500px;
+  }
 }
 
-/* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
+/* 📱 Tablets pequeñas / móviles grandes */
+@media (max-width: 868px) {
+  .info {
+    max-width: 400px;
+  }
 }
 
-/* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
+/* 📱 Móviles medianos */
+@media (max-width: 676px) {
+  .info {
+    max-width: 280px;
+  }
 }
 
-/* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-}
+
 </style>
