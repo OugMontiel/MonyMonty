@@ -15,10 +15,12 @@ import {Icon} from "@iconify/vue";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 import {z} from "zod";
 
+import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 
 const toast = useToast();
 const router = useRouter();
+const {CrearUsuario, loading} = useAuth();
 
 // Constantes
 const submitted = ref(false);
@@ -133,13 +135,13 @@ const irACondiciones = () => router.push("/condiciones");
         <div class="flex gap-4">
           <FormField v-slot="$field" name="nombre" class="flex-1">
             <FloatLabel variant="on" class="w-full">
-              <InputText id="nombre" v-bind="$field.props" class="w-full" />
+              <InputText id="nombre" v-bind="$field.props" class="w-full" :disabled="loading" />
               <label for="nombre">Nombre</label>
             </FloatLabel>
           </FormField>
           <FormField v-slot="$field" name="apellido" class="flex-1">
             <FloatLabel variant="on" class="w-full">
-              <InputText id="apellido" v-bind="$field.props" class="w-full" />
+              <InputText id="apellido" v-bind="$field.props" class="w-full" :disabled="loading" />
               <label for="apellido">Apellido</label>
             </FloatLabel>
           </FormField>
@@ -153,7 +155,9 @@ const irACondiciones = () => router.push("/condiciones");
               :max-date="new Date()"
               date-format="yy-mm-dd"
               show-icon
+              class="w-full"
               input-class="w-full"
+              :disabled="loading"
             />
             <label for="fechaNacimiento">Fecha de nacimiento</label>
           </FloatLabel>
@@ -169,6 +173,8 @@ const irACondiciones = () => router.push("/condiciones");
                 optionLabel="label"
                 optionValue="value"
                 dropdown
+                :disabled="loading"
+                class="w-full"
               />
               <label for="plan">Selecciona un plan</label>
             </FloatLabel>
@@ -182,6 +188,8 @@ const irACondiciones = () => router.push("/condiciones");
                 optionLabel="label"
                 optionValue="value"
                 dropdown
+                :disabled="loading"
+                class="w-full"
               />
               <label for="genero">Selecciona un género</label>
             </FloatLabel>
@@ -190,7 +198,7 @@ const irACondiciones = () => router.push("/condiciones");
 
         <FormField v-slot="$field" name="email" class="w-full">
           <FloatLabel variant="on" class="w-full">
-            <InputText id="email" type="email" v-bind="$field.props" class="w-full" />
+            <InputText id="email" type="email" v-bind="$field.props" class="w-full" :disabled="loading" />
             <label for="email">Correo electrónico</label>
           </FloatLabel>
         </FormField>
@@ -198,28 +206,45 @@ const irACondiciones = () => router.push("/condiciones");
         <div class="flex gap-4">
           <FormField v-slot="$field" name="password" class="flex-1">
             <FloatLabel variant="on" class="w-full">
-              <Password id="password" v-bind="$field.props" :feedback="false" toggleMask class="w-full" inputClass="w-full" />
+              <Password
+                id="password"
+                v-bind="$field.props"
+                :feedback="false"
+                toggleMask
+                class="w-full"
+                inputClass="w-full"
+                :disabled="loading"
+              />
               <label for="password">Contraseña</label>
             </FloatLabel>
           </FormField>
           <FormField v-slot="$field" name="confirmPassword" class="flex-1">
             <FloatLabel variant="on" class="w-full">
-              <Password id="confirmPassword" v-bind="$field.props" :feedback="false" toggleMask class="w-full" inputClass="w-full" />
+              <Password
+                id="confirmPassword"
+                v-bind="$field.props"
+                :feedback="false"
+                toggleMask
+                class="w-full"
+                inputClass="w-full"
+                :disabled="loading"
+              />
               <label for="confirmPassword">Confirma tu contraseña</label>
             </FloatLabel>
           </FormField>
         </div>
-        <Button type="submit" label="Registrarte" severity="primary" />
+        <Button type="submit" label="Registrarte" severity="primary" :loading="loading" />
       </Form>
 
-      <p class="text-small">
+      <Message severity="secondary" variant="simple" class="text-xs leading-snug">
         Al hacer clic en "Registrarte", aceptas nuestras
-        <Button label="Condiciones" variant="text" class="text-condicionesypoliticas" @click="irACondiciones" /> y
-        <Button label="Política de privacidad" variant="text" class="text-condicionesypoliticas" @click="irAPrivacidad" />
-      </p>
+        <Button label="Condiciones" variant="text" @click="irACondiciones" size="small" />
+        y
+        <Button label="Política de privacidad" variant="text" @click="irAPrivacidad" size="small" />.
+      </Message>
 
       <!--  Ya tienes Cuenta -->
-      <Button label="¿Ya tienes una cuenta?" link @click="irALogin" />
+      <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" />
     </div>
   </div>
 </template>
