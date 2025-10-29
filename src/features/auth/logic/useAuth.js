@@ -68,6 +68,27 @@ export function useAuth() {
     }
   }
 
+  // CrearUsuario
+  async function CrearUsuario(userData) {
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}user`, userData, {
+        withCredentials: true,
+      });
+
+      if (response.status === 201) {
+        return {success: true};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en la creación de usuario",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     // Estado
     isAuthenticated: computed(() => isAuthenticated.value),
@@ -77,5 +98,6 @@ export function useAuth() {
     checkAuth,
     login,
     logout,
+    CrearUsuario,
   };
 }
