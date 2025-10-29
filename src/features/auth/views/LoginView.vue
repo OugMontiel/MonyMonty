@@ -22,6 +22,8 @@ const toast = useToast();
 const router = useRouter();
 const {login, loading, isAuthenticated} = useAuth();
 
+const submitted = ref(false);
+
 // Esquema de validación con Zod
 const resolver = zodResolver(
   z.object({
@@ -32,6 +34,8 @@ const resolver = zodResolver(
 
 // === SUBMIT DEL FORM ===
 const onFormSubmit = async ({valid, values}) => {
+  submitted.value = true;
+
   if (!valid) return;
 
   try {
@@ -84,26 +88,37 @@ onMounted(() => {
           <!-- FORMULARIO PRIMEVUE -->
           <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
             <!-- EMAIL -->
-            <FormField v-slot="$field" name="email">
-              <FloatLabel variant="on">
-                <InputText id="email" type="email" v-bind="$field.props" :disabled="loading"/>
+            <FormField v-slot="$field" name="email" class="w-full flex flex-col items-center">
+              <FloatLabel variant="on" class="w-full">
+                <InputText id="email" type="email" v-bind="$field.props" :disabled="loading" class="w-full" />
                 <label for="email">Correo electrónico</label>
               </FloatLabel>
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
             </FormField>
 
             <!-- PASSWORD -->
-            <FormField v-slot="$field" name="password">
-              <FloatLabel variant="on">
-                <Password id="password" v-bind="$field.props" :feedback="false" toggleMask showClear :disabled="loading" />
+            <FormField v-slot="$field" name="password" class="w-full flex flex-col items-center">
+              <FloatLabel variant="on" class="w-full">
+                <Password
+                  id="password"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  :disabled="loading"
+                  class="w-full"
+                  inputClass="w-full"
+                />
                 <label for="password">Contraseña</label>
               </FloatLabel>
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
             </FormField>
 
             <!-- BOTONES -->
             <Button type="submit" label="Iniciar Sesión" class="w-full" severity="primary" :loading="loading" />
-
           </Form>
 
           <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
