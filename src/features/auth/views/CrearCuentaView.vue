@@ -261,10 +261,10 @@ const irACondiciones = () => router.push("/condiciones");
       </Form>
 
       <Message severity="secondary" variant="simple" class="text-xs leading-snug">
-        Al hacer clic en "Registrarte", aceptas nuestras
-        <Button label="Condiciones" variant="text" @click="irACondiciones" size="small" />
-        y
-        <Button label="Política de privacidad" variant="text" @click="irAPrivacidad" size="small" />.
+        Al hacer clic en "Registrarte", aceptas nuestros
+        <Button label="Términos y Condiciones" variant="text" @click="irACondiciones" size="small" />
+        y nuestra
+        <Button label="Política de Privacidad" variant="text" @click="irAPrivacidad" size="small" />.
       </Message>
 
       <!--  Ya tienes Cuenta -->
