@@ -102,6 +102,12 @@ const onFormSubmit = async ({valid, values}) => {
     });
 
     if (result.success) {
+      toast.add({
+        severity: "success",
+        summary: "Éxito",
+        detail: result.message || "Se ha creado el Usuario.",
+        life: 3000,
+      });
       irALogin();
     } else {
       toast.add({
@@ -129,147 +135,158 @@ const irACondiciones = () => router.push("/condiciones");
 </script>
 
 <template>
-  <div class="form-container">
-    <div class="card">
-      <div class="logo-section">
-        <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
+  <div class="form-container p-4">
+    <div class="flex justify-center items-center flex-1">
+      <div class="card">
+        <div class="logo-section">
+          <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
+        </div>
+        <div class="p-1">
+          <div class="flex justify-center">
+            <Message severity="contrast" variant="simple" size="large"> Crea tu cuenta </Message>
+          </div>
+        </div>
+        <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']" class="flex flex-col justify-around gap-4">
+          <div class="flex gap-4">
+            <FormField v-slot="$field" name="nombre" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <InputText id="nombre" v-bind="$field.props" class="w-full" :disabled="loading" />
+                <label for="nombre">Nombre</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+            <FormField v-slot="$field" name="apellido" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <InputText id="apellido" v-bind="$field.props" class="w-full" :disabled="loading" />
+                <label for="apellido">Apellido</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+          </div>
+
+          <FormField v-slot="$field" name="fechaNacimiento" class="w-full">
+            <FloatLabel variant="on" class="w-full">
+              <DatePicker
+                id="fechaNacimiento"
+                v-bind="$field.props"
+                :max-date="new Date()"
+                date-format="yy-mm-dd"
+                show-icon
+                class="w-full"
+                input-class="w-full"
+                :disabled="loading"
+              />
+              <label for="fechaNacimiento">Fecha de nacimiento</label>
+            </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
+          </FormField>
+
+          <div class="flex gap-4">
+            <FormField v-slot="$field" name="plan" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <AutoComplete
+                  v-bind="$field.props"
+                  :suggestions="planes"
+                  optionLabel="label"
+                  optionValue="value"
+                  dropdown
+                  :disabled="loading"
+                  class="w-full"
+                />
+                <label for="plan">Selecciona un plan</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+            <FormField v-slot="$field" name="genero" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <AutoComplete
+                  v-bind="$field.props"
+                  :suggestions="generos"
+                  optionLabel="label"
+                  optionValue="value"
+                  dropdown
+                  :disabled="loading"
+                  class="w-full"
+                />
+                <label for="genero">Selecciona un género</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+          </div>
+
+          <FormField v-slot="$field" name="email" class="w-full">
+            <FloatLabel variant="on" class="w-full">
+              <InputText id="email" type="email" v-bind="$field.props" class="w-full" :disabled="loading" />
+              <label for="email">Correo electrónico</label>
+            </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
+          </FormField>
+
+          <div class="flex gap-4">
+            <FormField v-slot="$field" name="password" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <Password
+                  id="password"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                  :disabled="loading"
+                  @blur="$field.onBlur"
+                  @input="$field.onChange"
+                />
+                <label for="password">Contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+            <FormField v-slot="$field" name="confirmPassword" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <Password
+                  id="confirmPassword"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                  :disabled="loading"
+                  @blur="$field.onBlur"
+                  @input="$field.onChange"
+                />
+                <label for="confirmPassword">Confirma tu contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+          </div>
+          <Button type="submit" label="Registrarte" severity="primary" :loading="loading" />
+        </Form>
+
+        <Message severity="secondary" variant="simple" class="text-xs leading-snug">
+          Al hacer clic en "Registrarte", aceptas nuestros
+          <Button label="Términos y Condiciones" variant="text" @click="irACondiciones" size="small" />
+          y nuestra
+          <Button label="Política de Privacidad" variant="text" @click="irAPrivacidad" size="small" />.
+        </Message>
+
+        <!--  Ya tienes Cuenta -->
+        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" />
       </div>
-      <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']" class="flex flex-col justify-around gap-4">
-        <div class="flex gap-4">
-          <FormField v-slot="$field" name="nombre" class="flex-1">
-            <FloatLabel variant="on" class="w-full">
-              <InputText id="nombre" v-bind="$field.props" class="w-full" :disabled="loading" />
-              <label for="nombre">Nombre</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-          <FormField v-slot="$field" name="apellido" class="flex-1">
-            <FloatLabel variant="on" class="w-full">
-              <InputText id="apellido" v-bind="$field.props" class="w-full" :disabled="loading" />
-              <label for="apellido">Apellido</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-        </div>
-
-        <FormField v-slot="$field" name="fechaNacimiento" class="w-full">
-          <FloatLabel variant="on" class="w-full">
-            <DatePicker
-              id="fechaNacimiento"
-              v-bind="$field.props"
-              :max-date="new Date()"
-              date-format="yy-mm-dd"
-              show-icon
-              class="w-full"
-              input-class="w-full"
-              :disabled="loading"
-            />
-            <label for="fechaNacimiento">Fecha de nacimiento</label>
-          </FloatLabel>
-          <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
-        </FormField>
-
-        <div class="flex gap-4">
-          <FormField v-slot="$field" name="plan" class="flex-1">
-            <FloatLabel variant="on" class="w-full">
-              <AutoComplete
-                v-bind="$field.props"
-                :suggestions="planes"
-                optionLabel="label"
-                optionValue="value"
-                dropdown
-                :disabled="loading"
-                class="w-full"
-              />
-              <label for="plan">Selecciona un plan</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-          <FormField v-slot="$field" name="genero" class="flex-1">
-            <FloatLabel variant="on" class="w-full">
-              <AutoComplete
-                v-bind="$field.props"
-                :suggestions="generos"
-                optionLabel="label"
-                optionValue="value"
-                dropdown
-                :disabled="loading"
-                class="w-full"
-              />
-              <label for="genero">Selecciona un género</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-        </div>
-
-        <FormField v-slot="$field" name="email" class="w-full">
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="email" type="email" v-bind="$field.props" class="w-full" :disabled="loading" />
-            <label for="email">Correo electrónico</label>
-          </FloatLabel>
-          <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{ $field.error?.message }}</Message>
-        </FormField>
-
-        <div class="flex gap-4">
-          <FormField v-slot="$field" name="password" class="flex-1">
-            <FloatLabel variant="on" class="w-full">
-              <Password
-                id="password"
-                v-bind="$field.props"
-                :feedback="false"
-                toggleMask
-                class="w-full"
-                inputClass="w-full"
-                :disabled="loading"
-                @blur="$field.onBlur"
-                @input="$field.onChange"
-              />
-              <label for="password">Contraseña</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-          <FormField v-slot="$field" name="confirmPassword" class="flex-1">
-            <FloatLabel variant="on" class="w-full">
-              <Password
-                id="confirmPassword"
-                v-bind="$field.props"
-                :feedback="false"
-                toggleMask
-                class="w-full"
-                inputClass="w-full"
-                :disabled="loading"
-                @blur="$field.onBlur"
-                @input="$field.onChange"
-              />
-              <label for="confirmPassword">Confirma tu contraseña</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-        </div>
-        <Button type="submit" label="Registrarte" severity="primary" :loading="loading" />
-      </Form>
-
-      <Message severity="secondary" variant="simple" class="text-xs leading-snug">
-        Al hacer clic en "Registrarte", aceptas nuestros
-        <Button label="Términos y Condiciones" variant="text" @click="irACondiciones" size="small" />
-        y nuestra
-        <Button label="Política de Privacidad" variant="text" @click="irAPrivacidad" size="small" />.
-      </Message>
-
-      <!--  Ya tienes Cuenta -->
-      <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" />
     </div>
 
     <FooterAuth />
@@ -295,7 +312,7 @@ const irACondiciones = () => router.push("/condiciones");
 .form-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 100vh;
   width: 100%;
@@ -309,12 +326,11 @@ const irACondiciones = () => router.push("/condiciones");
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 1rem;
 }
 
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */

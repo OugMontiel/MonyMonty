@@ -79,7 +79,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="login">
+  <div class="login p-4">
     <div class="contentCentrado">
       <div class="login-container">
         <!-- Sección derecha -->
@@ -137,7 +137,7 @@ onMounted(() => {
     </div>
 
     <!-- mensaje de pie de pagina -->
-    <FooterAuth/>
+    <FooterAuth />
   </div>
 </template>
 
