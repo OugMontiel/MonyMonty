@@ -8,7 +8,7 @@ export default {
   <div class="info">
     <!-- ¿Qué es nuestra aplicación? -->
     <section class="info__section">
-      <box-icon name="bulb" type="solid" color="#ffcc00" size="md"></box-icon>
+      <!-- <box-icon name="bulb" type="solid" color="#ffcc00" size="md"></box-icon> -->
       <h2 class="info__title">¿Qué es nuestra aplicación?</h2>
       <p class="info__text">
         Una innovadora solución <strong>SaaS</strong> para gestionar tus finanzas personales de forma <strong>eficiente</strong> y
@@ -18,13 +18,13 @@ export default {
 
     <!-- Eslogan (sin título) -->
     <section class="info__section">
-      <box-icon name="rocket" type="solid" color="#ff9900" size="md"></box-icon>
+      <!-- <box-icon name="rocket" type="solid" color="#ff9900" size="md"></box-icon> -->
       <p class="info__eslogan">"Tu camino hacia la <span>libertad financiera</span> comienza aquí."</p>
     </section>
 
     <!-- Características destacadas -->
     <section class="info__section">
-      <box-icon name="star" type="solid" color="#ffcc00" size="md"></box-icon>
+      <!-- <box-icon name="star" type="solid" color="#ffcc00" size="md"></box-icon> -->
       <h2 class="info__title">Características destacadas</h2>
       <ul class="info__list">
         <li class="info__item"><strong>Asesorías personalizadas:</strong> orientación adaptada a tus necesidades financieras.</li>
