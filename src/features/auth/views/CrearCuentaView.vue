@@ -17,6 +17,7 @@ import {z} from "zod";
 
 import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
+import FooterAuth from "../components/FooterAuth.vue";
 
 const toast = useToast();
 const router = useRouter();
@@ -270,6 +271,8 @@ const irACondiciones = () => router.push("/condiciones");
       <!--  Ya tienes Cuenta -->
       <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" />
     </div>
+
+    <FooterAuth />
   </div>
 </template>
 

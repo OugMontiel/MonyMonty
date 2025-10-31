@@ -17,6 +17,7 @@ import {z} from "zod";
 import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
+import FooterAuth from "../components/FooterAuth.vue";
 
 const toast = useToast();
 const router = useRouter();
@@ -136,9 +137,7 @@ onMounted(() => {
     </div>
 
     <!-- mensaje de pie de pagina -->
-    <div class="login-mesaje">
-      <p>"El dinero es un terrible amo pero un excelente sirviente." - P.T. Barnum</p>
-    </div>
+    <FooterAuth/>
   </div>
 </template>
 
