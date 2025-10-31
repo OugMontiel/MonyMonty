@@ -1,13 +1,11 @@
 import {ref, computed} from "vue";
 import axios from "axios";
 
-export function useAuth() {
-  const isAuthenticated = ref(false);
-  const loading = ref(false);
-  
-  // Debug: verificar variable de entorno
-  const API_URL = import.meta.env.VITE_API_URL;
+const isAuthenticated = ref(false);
+const loading = ref(false);
+const API_URL = import.meta.env.VITE_API_URL;
 
+export function useAuth() {
   // Verificar autenticación
   async function checkAuth() {
     loading.value = true;
@@ -70,6 +68,27 @@ export function useAuth() {
     }
   }
 
+  // CrearUsuario
+  async function CrearUsuario(userData) {
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}user`, userData, {
+        withCredentials: true,
+      });
+
+      if (response.status === 201) {
+        return {success: true};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en la creación de usuario",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     // Estado
     isAuthenticated: computed(() => isAuthenticated.value),
@@ -79,5 +98,6 @@ export function useAuth() {
     checkAuth,
     login,
     logout,
+    CrearUsuario,
   };
 }
