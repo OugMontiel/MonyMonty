@@ -1,25 +1,9 @@
-<script>
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-import Footer from "@/components/web/footer.vue";
+<script setup>
+import logo from "../../../assets/img/MonyMontySinFondo3.png";
+import FooterAuth from "../components/FooterAuth.vue";
 
-export default {
-  name: "RecuperarCuenta",
-  data() {
-    return {
-      // variable del logo
-      logo,
-    };
-  },
-  components: {Footer},
-  methods: {
-    cancelar() {
-      this.$router.push("/");
-    },
-    buscarCuenta() {
-      this.$router.push("/");
-    },
-  },
-};
+const cancelar = () => router.push("/");
+const buscarCuenta = () => router.push("/");
 </script>
 
 <template>
@@ -42,12 +26,7 @@ export default {
       </div>
     </div>
 
-    <!-- mensaje de pie de pagina -->
-    <div class="form-footer">
-      <p class="footer-p">"El dinero es un terrible amo pero un excelente sirviente." - P.T. Barnum</p>
-    </div>
-
-    <Footer />
+    <FooterAuth />
   </div>
 </template>
 
