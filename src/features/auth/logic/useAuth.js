@@ -37,7 +37,7 @@ export function useAuth() {
 
       if (response.status === 201) {
         await checkAuth(); // Revalidar después del login
-        return {success: true};
+        return {success: true, ...response};
       }
     } catch (error) {
       return {
@@ -77,12 +77,35 @@ export function useAuth() {
       });
 
       if (response.status === 201) {
-        return {success: true};
+        return {success: true, ...response};
       }
     } catch (error) {
       return {
         success: false,
         error: error.response?.data?.message || "Error en la creación de usuario",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+  
+  // Lanza Correo para recuperacion
+  async function recuperarCuenta(email) {
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}auth/recuperar`, email, {
+        withCredentials: true,
+      });
+
+      console.log('response',response)
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Erro al enviar correo",
       };
     } finally {
       loading.value = false;
@@ -99,5 +122,6 @@ export function useAuth() {
     login,
     logout,
     CrearUsuario,
+    recuperarCuenta,
   };
 }
