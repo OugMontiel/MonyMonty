@@ -4,6 +4,7 @@ import {useAuth} from "../features/auth/logic/useAuth.js";
 import login from "../features/auth/views/LoginView.vue";
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
+import CambioDeClave from "../features/auth/views/CambioDeClave.vue"; 
 
 import elTablero from "../features/dashBoard/views/elTablero.vue";
 
@@ -30,6 +31,12 @@ const router = createRouter({
       path: "/recuperarCuenta",
       name: "RecuperarCuenta",
       component: recuperarCuentaCliente,
+      meta: {requiresAuth: false},
+    },
+    {
+      path: "/resetPassword",
+      name: "resetPassword",
+      component: CambioDeClave,
       meta: {requiresAuth: false},
     },
     // Ruta 404
