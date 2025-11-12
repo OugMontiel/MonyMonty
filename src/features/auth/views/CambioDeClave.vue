@@ -25,6 +25,7 @@ const {verificacionTocken, CambiodeClave, loading} = useAuth();
 const submitted = ref(false);
 const loadingUser = ref(false);
 const user = ref({});
+const Token = ref();
 
 onMounted(async () => {
   try {
@@ -53,6 +54,7 @@ onMounted(async () => {
         life: 3000,
       });
       user.value = result?.data?.userDelTocken;
+      Token.value = token;
       loadingUser.value = true;
     } else {
       toast.add({
@@ -76,7 +78,6 @@ onMounted(async () => {
 const resolver = zodResolver(
   z
     .object({
-      email: z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."}),
       password: z
         .string()
         .min(8, {message: "Debe tener al menos 8 caracteres"})
@@ -102,7 +103,7 @@ const onFormSubmit = async ({valid, values}) => {
 
   try {
     const result = await CambiodeClave({
-      email: values.email.trim(),
+      token: Token.value,
       password: values.password,
       confirmPassword: values.confirmPassword,
     });
@@ -166,7 +167,15 @@ const irALogin = () => router.push("/");
             <!-- NUEVA CONTRASEÑA -->
             <FormField v-slot="$field" name="password" class="w-full">
               <FloatLabel variant="on" class="w-full">
-                <Password id="password" v-bind="$field.props" :feedback="false" :disabled="loading" toggleMask class="w-full" />
+                <Password
+                  id="password"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  :disabled="loading"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                />
                 <label for="password">Nueva contraseña</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
@@ -177,7 +186,15 @@ const irALogin = () => router.push("/");
             <!-- CONFIRMAR CONTRASEÑA -->
             <FormField v-slot="$field" name="confirmPassword" class="w-full">
               <FloatLabel variant="on" class="w-full">
-                <Password id="confirmPassword" v-bind="$field.props" :feedback="false" :disabled="loading" toggleMask class="w-full" />
+                <Password
+                  id="confirmPassword"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  :disabled="loading"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                />
                 <label for="confirmPassword">Confirmar contraseña</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">

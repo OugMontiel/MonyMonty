@@ -110,8 +110,8 @@ export function useAuth() {
     }
   }
 
-  // Validamos token de recuperar Contraseña 
-  async function verificacionTocken({ token }) {
+  // Validamos token de recuperar Contraseña
+  async function verificacionTocken({token}) {
     loading.value = true;
     try {
       const response = await axios.get(`${API_URL}auth/checkToken?token=${token}`, {
@@ -131,6 +131,28 @@ export function useAuth() {
     }
   }
 
+  // Cambio de clave
+  async function CambiodeClave(credentials) {
+    console.log("credentials", credentials);
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}auth/updatePassword`, credentials, {
+        withCredentials: true,
+      });
+
+      if (response.status === 201) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en actualizar contraseña",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     // Estado
     isAuthenticated: computed(() => isAuthenticated.value),
@@ -143,5 +165,6 @@ export function useAuth() {
     CrearUsuario,
     recuperarCuenta,
     verificacionTocken,
+    CambiodeClave,
   };
 }
