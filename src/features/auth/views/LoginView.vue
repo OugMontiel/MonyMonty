@@ -1,220 +1,143 @@
-<script>
+<script setup>
+/**
+ * ============================================================
+ * Autor: Diego Alejandro Montiel Flórez
+ * Proyecto: MonyMonty
+ * Descripción: Este código es propiedad intelectual de
+ * Diego Alejandro Montiel Flórez. Su uso, copia o distribución
+ * sin autorización está estrictamente prohibido.
+ * ============================================================
+ */
+import {ref, onMounted, reactive} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {z} from "zod";
+
 import {useAuth} from "../logic/useAuth.js";
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-import InfoView from "@/features/auth/components/infoLogin.vue";
-import CustomButton from "@/features/auth/components/CustomButton.vue";
+import logo from "../../../assets/img/MonyMontySinFondo3.png";
+import InfoView from "../components/infoLogin.vue";
+import FooterAuth from "../components/FooterAuth.vue";
 
-export default {
-  name: "Login",
-  components: {
-    InfoView,
-    CustomButton,
-  },
-  setup() {
-    const {login, loading, isAuthenticated} = useAuth();
+const toast = useToast();
+const router = useRouter();
+const {login, loading, isAuthenticated} = useAuth();
 
-    return {
-      login,
-      loading,
-      isAuthenticated,
-    };
-  },
-  data() {
-    return {
-      // variable del logo
-      logo,
+const submitted = ref(false);
 
-      // Variable para Mostrar error
-      showErrorFlag: false,
-      errorMessage: "",
+// Esquema de validación con Zod
+const resolver = zodResolver(
+  z.object({
+    email: z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."}),
+    password: z.string().min(8, {message: "La contraseña debe tener al menos 8 caracteres."}),
+  })
+);
 
-      // Datos para el inicio de sesión
-      username: "",
-      password: "",
-    };
-  },
-  methods: {
-    // Validar campos
-    validateFields() {
-      if (!this.username.trim()) {
-        this.showError("Por favor, ingresa tu correo electrónico.");
-        return false;
-      }
+// === SUBMIT DEL FORM ===
+const onFormSubmit = async ({valid, values}) => {
+  submitted.value = true;
 
-      if (!this.isValidEmail(this.username)) {
-        this.showError("Por favor, ingresa un correo electrónico válido.");
-        return false;
-      }
+  if (!valid) return;
 
-      if (!this.password.trim()) {
-        this.showError("Por favor, ingresa tu contraseña.");
-        return false;
-      }
+  try {
+    const result = await login({
+      email: values.email.trim(),
+      password: values.password,
+    });
 
-      if (this.password.length < 6) {
-        this.showError("La contraseña debe tener al menos 6 caracteres.");
-        return false;
-      }
-
-      return true;
-    },
-
-    // Validar formato de email
-    isValidEmail(email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    },
-
-    // Manejo del login
-    async handleLogin() {
-      if (!this.validateFields()) {
-        return;
-      }
-
-      const credentials = {
-        email: this.username.trim(),
-        password: this.password,
-      };
-
-      try {
-        const result = await this.login(credentials);
-
-        if (result.success) {
-          // Login exitoso, redirigir
-          this.$router.push("/tablero");
-        } else {
-          // Mostrar error del servidor
-          this.showError(result.error || "Error en el inicio de sesión");
-        }
-      } catch (error) {
-        this.showError("Error de conexión. Inténtalo de nuevo.");
-      }
-    },
-
-    // Mostrar error
-    showError(message) {
-      this.errorMessage = message;
-      this.showErrorFlag = true;
-
-      // Auto-ocultar error después de 5 segundos
-      setTimeout(() => {
-        this.hideError();
-      }, 5000);
-    },
-
-    // Ocultar error
-    hideError() {
-      this.showErrorFlag = false;
-      this.errorMessage = "";
-    },
-
-    // Redirecciones
-    redirectToDashboard() {
-      if (this.isAuthenticated) {
-        this.$router.push("/tablero");
-      } else {
-        this.$router.push("/");
-      }
-    },
-
-    redirectToRecuperarCuenta() {
-      this.$router.push("/recuperarCuenta");
-    },
-  },
-
-  // Verificar si ya está autenticado al montar el componente
-  async mounted() {
-    if (this.isAuthenticated) {
-      this.$router.push("/tablero");
+    if (result.success) {
+      redirectToTablero();
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: result.error || "Error en el inicio de sesión",
+        life: 4000,
+      });
     }
-  },
+  } catch {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo.",
+      life: 4000,
+    });
+  }
 };
+
+// Redirecciones
+const redirectToRecuperarCuenta = () => router.push("/recuperarCuenta");
+const redirectToCrearCuenta = () => router.push("/crearCuenta");
+const redirectToTablero = () => router.push("/tablero");
+
+// Verificar si ya está autenticado al montar el componente
+onMounted(() => {
+  if (isAuthenticated.value) {
+    redirectToTablero();
+  }
+});
 </script>
 
 <template>
-  <div class="login">
-    <div class="login-container">
-      <!-- Sección derecha -->
-      <div class="login-card">
-        <div class="login-form">
+  <div class="login p-4">
+    <div class="contentCentrado">
+      <div class="login-container">
+        <!-- Sección derecha -->
+        <div class="login-card">
           <div>
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
+          <!-- FORMULARIO PRIMEVUE -->
+          <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
+            <!-- EMAIL -->
+            <FormField v-slot="$field" name="email" class="w-full flex flex-col items-center">
+              <FloatLabel variant="on" class="w-full">
+                <InputText id="email" type="email" v-bind="$field.props" :disabled="loading" class="w-full" />
+                <label for="email">Correo electrónico</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
 
-          <div class="login-form-datos">
-            <div class="input-group">
-              <input
-                type="email"
-                v-model="username"
-                placeholder=" "
-                id="email"
-                class="login-input"
-                :disabled="loading"
-                @focus="hideError"
-              />
-              <label for="email">Correo electrónico</label>
-            </div>
+            <!-- PASSWORD -->
+            <FormField v-slot="$field" name="password" class="w-full flex flex-col items-center">
+              <FloatLabel variant="on" class="w-full">
+                <Password
+                  id="password"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  :disabled="loading"
+                  class="w-full"
+                  inputClass="w-full"
+                />
+                <label for="password">Contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
 
-            <div class="input-group">
-              <input
-                type="password"
-                v-model="password"
-                placeholder=" "
-                id="password"
-                class="login-input"
-                :disabled="loading"
-                @focus="hideError"
-                @keyup.enter="handleLogin"
-              />
-              <label for="password">Contraseña</label>
-            </div>
+            <!-- BOTONES -->
+            <Button type="submit" label="Iniciar Sesión" class="w-full" severity="primary" :loading="loading" />
+          </Form>
 
-            <!-- Mostrar errores -->
-            <p v-if="showError" class="login-error">{{ errorMessage }}</p>
-          </div>
+          <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
 
-          <!-- Botón de login con estado de carga -->
-          <CustomButton
-            :label="loading ? 'Iniciando sesión...' : 'Iniciar Sesión'"
-            :customClick="handleLogin"
-            :disabled="loading"
-            background="var(--color-fondo-button-blue)"
-            text-color="var(--texto-primario-Blanco)"
-          />
-
-          <p @click="redirectToRecuperarCuenta" class="forgot-password">¿Olvidaste tu contraseña?</p>
-
-          <div class="divider-buton"></div>
-
-          <CustomButton
-            label="Crear cuenta nueva"
-            :to="'/crearCuenta'"
-            :disabled="loading"
-            background="var(--color-fondo-button-green)"
-            text-color="var(--texto-primario-Blanco)"
-          />
-
-          <!-- Botón de prueba (remover en producción) -->
-          <CustomButton
-            label="tablero prueba"
-            :customClick="redirectToDashboard"
-            :disabled="loading"
-            background="var(--color-fondo-button-green)"
-            text-color="var(--texto-primario-Blanco)"
-          />
+          <!-- Olvidaste tu contraseña -->
+          <Button label="¿Olvidaste tu contraseña?" link @click="redirectToRecuperarCuenta" />
         </div>
+
+        <!-- División -->
+
+        <!-- Sección izquierda -->
+        <InfoView />
       </div>
-
-      <div class="divider"></div>
-
-      <!-- Sección izquierda -->
-      <InfoView />
     </div>
 
     <!-- mensaje de pie de pagina -->
-    <div class="login-mesaje">
-      <p>"El dinero es un terrible amo pero un excelente sirviente." - P.T. Barnum</p>
-    </div>
+    <FooterAuth />
   </div>
 </template>
 
@@ -227,16 +150,18 @@ export default {
   align-items: center;
   background-color: var(--color-fondo-login);
   height: 100vh;
-  font-family: sans-serif;
+}
+
+.contentCentrado {
+  flex: 1; /* ocupa todo el espacio disponible entre header y footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-container {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
-  width: 70%;
-  height: 60%;
-  margin: auto;
   background: var(--color-fondo-login);
   border-radius: 0.5rem;
   box-shadow: 0 8px 30px var(--color-fondo-shadow);
@@ -250,113 +175,25 @@ export default {
 .login-card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  height: 90%;
-  width: 35%;
-  padding: 0.5rem;
-  border-radius: 0.2rem;
-  background: var(--color-fondo-login);
+  padding: 1rem;
 }
 
 .login-form {
-  height: 90%;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-}
-
-.login-form-datos {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.input-group {
-  position: relative;
-  margin: 1rem 0;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 1rem 0.5rem 0.5rem 0.5rem;
-  font-size: 1rem;
-  border: 1px solid var(--color-border-input);
-  border-radius: 5px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.input-group input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.input-group label {
-  position: absolute;
-  top: 0.8rem;
-  left: 0.5rem;
-  color: var(--texto-primario);
-  font-size: 1rem;
-  pointer-events: none;
-  transition: 0.2s ease all;
-  padding: 0 0.25rem;
-}
-
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
-  top: -0.5rem;
-  left: 0.4rem;
-  font-size: 0.75rem;
-  color: var(--texto-primario);
-  background: var(--color-fondo-login);
-}
-
-.login-error {
-  color: #dc3545;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: rgba(220, 53, 69, 0.1);
-  border-left: 3px solid #dc3545;
-  border-radius: 0.25rem;
-}
-
-.forgot-password {
-  color: var(--texto-primario-azul);
-  font-size: var(--font-size-botones);
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: all 0.2s ease;
-}
-
-.forgot-password:hover {
-  text-decoration: none;
-  font-weight: bold;
-  color: var(--texto-primario-azul-hover);
-}
-
-.divider-buton {
-  width: 50%;
-  height: 5px;
-  margin: 15px 0;
-  background-color: #e0e0e0;
-}
-
-.divider {
-  width: 2px;
-  height: 80%;
-  background-color: #e0e0e0;
+  gap: 1em;
 }
 
 .login-mesaje {
   text-align: center;
   width: 100%;
   padding: 10px 0;
-  font-size: 0.9em;
-  color: #6c757d;
+  font-size: var(--font-size-text);
+  color: var(--color-oscuro);
 }
 
 /* Responsive Design */
@@ -381,13 +218,6 @@ export default {
 
   .login-form input {
     font-size: 14px;
-  }
-
-  .divider-buton {
-    width: 50%;
-    height: 5px;
-    margin: 15px 0;
-    background-color: #e0e0e0;
   }
 
   .divider {

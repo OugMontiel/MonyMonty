@@ -1,193 +1,296 @@
-<script>
-import logo from "@/assets/img/MonyMontySinFondo3.png";
-import Footer from "@/components/web/footer.vue";
+<script setup>
+/**
+ * ============================================================
+ * Autor: Diego Alejandro Montiel Flórez
+ * Proyecto: MonyMonty
+ * Descripción: Este código es propiedad intelectual de
+ * Diego Alejandro Montiel Flórez. Su uso, copia o distribución
+ * sin autorización está estrictamente prohibido.
+ * ============================================================
+ */
+import {ref, reactive, computed} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
+import {Icon} from "@iconify/vue";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {z} from "zod";
 
-export default {
-  name: "RegisterForm",
-  data() {
-    const hoy = new Date();
-    const meses = [
-      "enero",
-      "febrero",
-      "marzo",
-      "abril",
-      "mayo",
-      "junio",
-      "julio",
-      "agosto",
-      "septiembre",
-      "octubre",
-      "noviembre",
-      "diciembre",
-    ];
-    return {
-      logo,
+import {useAuth} from "../logic/useAuth.js";
+import logo from "../../../assets/img/MonyMontySinFondo3.png";
+import FooterAuth from "../components/FooterAuth.vue";
 
-      nombre: "",
-      apellido: "",
-      dia: hoy.getDate(),
-      mes: meses[hoy.getMonth()],
-      año: hoy.getFullYear().toString(),
-      genero: "",
-      email: "",
-      contraseña: "",
-      showRules: false,
-    };
-  },
-  computed: {
-    rules() {
-      return {
-        length: this.contraseña.length >= 8,
-        uppercase: /[A-Z]/.test(this.contraseña),
-        number: /\d/.test(this.contraseña),
-        symbol: /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(this.contraseña),
-      };
-    },
-  },
-  components: {Footer},
-  methods: {
-    irALogin() {
-      this.$router.push("/");
-    },
-    esMayorDeEdad() {
-      const dia = parseInt(this.dia);
-      const mes = this.obtenerIndiceMes(this.mes); // enero = 0, febrero = 1, etc.
-      const año = parseInt(this.año);
+const toast = useToast();
+const router = useRouter();
+const {CrearUsuario, loading} = useAuth();
 
-      if (!dia || mes === null || !año) return false;
+// Constantes
+const submitted = ref(false);
+const planes = ref([
+  {label: "Free", value: "Free"},
+  {label: "Basic", value: "Basic"},
+  {label: "Premium", value: "Premium"},
+]);
+const generos = ref([
+  {label: "Mujer", value: "Mujer"},
+  {label: "Hombre", value: "Hombre"},
+]);
 
-      const fechaNacimiento = new Date(año, mes, dia);
-      const hoy = new Date();
+// variables para los selects
+const fechaMinima = new Date();
+fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
 
-      const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-      const mesActual = hoy.getMonth();
-      const diaActual = hoy.getDate();
+// Esquema de validación con Zod
+const resolver = zodResolver(
+  z
+    .object({
+      nombre: z.string().trim().min(1, {message: "El nombre es obligatorio"}).min(3, {message: "Debe tener al menos 3 caracteres"}),
+      apellido: z.string().trim().min(1, {message: "El apellido es obligatorio"}).min(3, {message: "Debe tener al menos 3 caracteres"}),
+      email: z.string().trim().min(1, {message: "El email es obligatorio"}).email({message: "Formato de email inválido"}),
+      password: z
+        .string()
+        .min(8, {message: "Debe tener al menos 8 caracteres"})
+        .refine((v) => /[A-Z]/.test(v), {message: "Debe contener al menos una mayúscula"})
+        .refine((v) => /\d/.test(v), {message: "Debe contener al menos un número"})
+        .refine((v) => /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(v), {
+          message: "Debe contener al menos un símbolo",
+        }),
+      confirmPassword: z.string().min(1, {message: "Confirma tu contraseña"}),
+      fechaNacimiento: z
+        .date({
+          required_error: "La fecha es obligatoria",
+          invalid_type_error: "Selecciona una fecha válida",
+        })
+        .max(fechaMinima, {message: "Debes ser mayor de 18 años"}),
+      genero: z
+        .object({
+          label: z.string(),
+          value: z.string(),
+        })
+        .refine((v) => ["Mujer", "Hombre"].includes(v.value), {
+          message: "Opción no válida",
+        }),
+      plan: z
+        .object({
+          label: z.string(),
+          value: z.string(),
+        })
+        .refine((v) => ["Free", "Basic", "Premium"].includes(v.value), {
+          message: "Opción no válida",
+        }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Las contraseñas no coinciden",
+      path: ["confirmPassword"],
+    })
+);
 
-      if (edad > 18 || (edad === 18 && (mesActual > mes || (mesActual === mes && diaActual >= dia)))) {
-        return true;
-      }
-      return false;
-    },
-    obtenerIndiceMes(mesNombre) {
-      const meses = [
-        "enero",
-        "febrero",
-        "marzo",
-        "abril",
-        "mayo",
-        "junio",
-        "julio",
-        "agosto",
-        "septiembre",
-        "octubre",
-        "noviembre",
-        "diciembre",
-      ];
-      const index = meses.indexOf(mesNombre.toLowerCase());
-      return index >= 0 ? index : null;
-    },
-    irARegistarse() {
-      if (!this.esMayorDeEdad()) {
-        alert("Debes ser mayor de 18 años para registrarte.");
-        return;
-      }
-    },
-    irAPrivacidad() {
-      alert("privacidad");
-    },
-    irACondiciones() {
-      alert("Condiciones");
-    },
-  },
+// === SUBMIT DEL FORM ===
+const onFormSubmit = async ({valid, values}) => {
+  submitted.value = true;
+
+  if (!valid) return;
+
+  try {
+    const result = await CrearUsuario({
+      nombre: values.nombre.trim(),
+      apellido: values.apellido.trim(),
+      fechaNacimiento: values.fechaNacimiento,
+      genero: values.genero,
+      email: values.email.trim(),
+      password: values.password,
+      plan: values.plan,
+    });
+
+    if (result.success) {
+      toast.add({
+        severity: "success",
+        summary: "Éxito",
+        detail: result.message || "Se ha creado el Usuario.",
+        life: 3000,
+      });
+      irALogin();
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: result.error || "Error en Crear Cuenta",
+        life: 4000,
+      });
+    }
+  } catch {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo.",
+      life: 4000,
+    });
+  }
 };
+
+// Redirecciones
+
+const irALogin = () => router.push("/");
+const irAPrivacidad = () => router.push("/privacidad");
+const irACondiciones = () => router.push("/condiciones");
 </script>
 
 <template>
-  <div class="logo-section">
-    <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
-  </div>
-  <div class="form-container">
-    <div class="card">
-      <div class="card-text">
-        <h2 class="card-h2">Crea una cuenta</h2>
-        <p>Es rápido y fácil.</p>
-      </div>
-
-      <div class="row">
-        <input type="text" placeholder="Nombre" v-model="nombre" />
-        <input type="text" placeholder="Apellido" v-model="apellido" />
-      </div>
-
-      <label>Fecha de nacimiento</label>
-      <div class="row">
-        <select v-model="dia">
-          <option v-for="n in 31" :key="n" :value="n">{{ n }}</option>
-        </select>
-        <select v-model="mes">
-          <option value="enero">Enero</option>
-          <option value="febrero">Febrero</option>
-          <option value="marzo">Marzo</option>
-          <option value="abril">Abril</option>
-          <option value="mayo">Mayo</option>
-          <option value="junio">Junio</option>
-          <option value="julio">Julio</option>
-          <option value="agosto">Agosto</option>
-          <option value="septiembre">Septiembre</option>
-          <option value="octubre">Octubre</option>
-          <option value="noviembre">Noviembre</option>
-          <option value="diciembre">Diciembre</option>
-        </select>
-        <select v-model="año">
-          <option v-for="n in 100" :key="n" :value="new Date().getFullYear() - n">
-            {{ new Date().getFullYear() - n }}
-          </option>
-        </select>
-      </div>
-
-      <label>Género</label>
-      <div class="genero-container">
-        <label class="genero-opcion">
-          <input type="radio" value="Mujer" v-model="genero" />
-          <span>Mujer</span>
-        </label>
-        <label class="genero-opcion">
-          <input type="radio" value="Hombre" v-model="genero" />
-          <span>Hombre</span>
-        </label>
-      </div>
-      <div class="correo-container">
-        <input type="email" placeholder="Correo electrónico" v-model="email" class="" />
-        <input
-          type="password"
-          v-model="contraseña"
-          placeholder="Ingresa tu contraseña"
-          class="password-input"
-          @focus="showRules = true"
-          @blur="showRules = false"
-        />
-        <!-- Alerta flotante de reglas -->
-        <div v-if="showRules" class="rules-alert">
-          <p :class="rules.length ? 'valid' : 'invalid'">✔ Mínimo 8 caracteres</p>
-          <p :class="rules.uppercase ? 'valid' : 'invalid'">✔ Una letra mayúscula</p>
-          <p :class="rules.number ? 'valid' : 'invalid'">✔ Un número</p>
-          <p :class="rules.symbol ? 'valid' : 'invalid'">✔ Un símbolo ($#%&...)</p>
+  <div class="form-container p-4">
+    <div class="flex justify-center items-center flex-1">
+      <div class="card">
+        <div class="logo-section">
+          <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
         </div>
+        <div class="p-1">
+          <div class="flex justify-center">
+            <Message severity="contrast" variant="simple" size="large"> Crea tu cuenta </Message>
+          </div>
+        </div>
+        <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']" class="flex flex-col justify-around gap-4">
+          <div class="flex gap-4">
+            <FormField v-slot="$field" name="nombre" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <InputText id="nombre" v-bind="$field.props" class="w-full" :disabled="loading" />
+                <label for="nombre">Nombre</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+            <FormField v-slot="$field" name="apellido" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <InputText id="apellido" v-bind="$field.props" class="w-full" :disabled="loading" />
+                <label for="apellido">Apellido</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+          </div>
+
+          <FormField v-slot="$field" name="fechaNacimiento" class="w-full">
+            <FloatLabel variant="on" class="w-full">
+              <DatePicker
+                id="fechaNacimiento"
+                v-bind="$field.props"
+                :max-date="new Date()"
+                date-format="yy-mm-dd"
+                show-icon
+                class="w-full"
+                input-class="w-full"
+                :disabled="loading"
+              />
+              <label for="fechaNacimiento">Fecha de nacimiento</label>
+            </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
+          </FormField>
+
+          <div class="flex gap-4">
+            <FormField v-slot="$field" name="plan" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <AutoComplete
+                  v-bind="$field.props"
+                  :suggestions="planes"
+                  optionLabel="label"
+                  optionValue="value"
+                  dropdown
+                  :disabled="loading"
+                  class="w-full"
+                />
+                <label for="plan">Selecciona un plan</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+            <FormField v-slot="$field" name="genero" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <AutoComplete
+                  v-bind="$field.props"
+                  :suggestions="generos"
+                  optionLabel="label"
+                  optionValue="value"
+                  dropdown
+                  :disabled="loading"
+                  class="w-full"
+                />
+                <label for="genero">Selecciona un género</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+          </div>
+
+          <FormField v-slot="$field" name="email" class="w-full">
+            <FloatLabel variant="on" class="w-full">
+              <InputText id="email" type="email" v-bind="$field.props" class="w-full" :disabled="loading" />
+              <label for="email">Correo electrónico</label>
+            </FloatLabel>
+            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+              $field.error?.message
+            }}</Message>
+          </FormField>
+
+          <div class="flex gap-4">
+            <FormField v-slot="$field" name="password" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <Password
+                  id="password"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                  :disabled="loading"
+                  @blur="$field.onBlur"
+                  @input="$field.onChange"
+                />
+                <label for="password">Contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+            <FormField v-slot="$field" name="confirmPassword" class="flex-1">
+              <FloatLabel variant="on" class="w-full">
+                <Password
+                  id="confirmPassword"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                  :disabled="loading"
+                  @blur="$field.onBlur"
+                  @input="$field.onChange"
+                />
+                <label for="confirmPassword">Confirma tu contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
+            </FormField>
+          </div>
+          <Button type="submit" label="Registrarte" severity="primary" :loading="loading" />
+        </Form>
+
+        <Message severity="secondary" variant="simple" class="text-xs leading-snug">
+          Al hacer clic en "Registrarte", aceptas nuestros
+          <Button label="Términos y Condiciones" variant="text" @click="irACondiciones" size="small" />
+          y nuestra
+          <Button label="Política de Privacidad" variant="text" @click="irAPrivacidad" size="small" />.
+        </Message>
+
+        <!--  Ya tienes Cuenta -->
+        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" />
       </div>
-      <div class="password-container"></div>
-
-      <p class="text-small">
-        Al hacer clic en "Registrarte", aceptas nuestras
-        <span class="text-condicionesypoliticas" @click="irACondiciones">Condiciones</span> , la
-        <span class="text-condicionesypoliticas" @click="irAPrivacidad">Política de privacidad</span>. Es posible que te enviemos
-        notificaciones por SMS, que puedes desactivar cuando quieras.
-      </p>
-
-      <button type="submit" @click="irARegistarse" class="register-button">Registrarte</button>
-
-      <p @click="irALogin" class="forgot-login">¿Ya tienes una cuenta?</p>
     </div>
+
+    <FooterAuth />
   </div>
-  <Footer />
 </template>
 
 <style scoped>
@@ -197,244 +300,37 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 50px;
+  padding: 1em 0;
 }
 
 .logo-icon {
-  width: 150px;
-  height: auto;
+  width: clamp(5rem, 10vw, 13rem);
 }
 
 /* ---Ajuste General--- */
 
 .form-container {
-  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  height: 100vh;
+  width: 100%;
+  color: #000; /* Color de texto predeterminado */
 }
 
 .card {
-  width: 22%;
-  background: white;
-  border-radius: 10px;
+  background: var(--color-fondo);
+  border-radius: var(--border-radius-card);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  padding: 20px;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ---Logo--- */
-.card-text {
-  align-items: center;
-}
-
-/* ---Nombre y apellido--- */
-.row {
+  padding: 1rem;
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-select {
-  flex: 1;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccd0d5;
-  border-radius: 6px;
-  width: 100%;
-  margin-top: 5px;
-}
-
-label {
-  font-size: 14px;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.text-small {
-  font-size: 10px;
-  color: #606770;
-  margin-bottom: 10px;
-}
-
-.genero-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.genero-opcion {
-  position: relative;
-  border: 1px solid #ccd0d5;
-  border-radius: 5px;
-  padding: 10px 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  user-select: none;
-  background-color: #fff;
-  transition: border-color 0.3s;
-}
-
-.genero-opcion input[type="radio"] {
-  margin-right: 8px;
-  accent-color: #1877f2;
-}
-
-.genero-opcion input[type="radio"]:checked + span {
-  font-weight: bold;
-}
-
-.genero-opcion:hover {
-  border-color: #1877f2;
-}
-
-.correo-container {
-  margin-bottom: 20px;
-}
-
-.register-button {
-  background-color: #42b72a;
-  color: white;
-  width: 100%;
-  padding: 13px;
-  font-size: 20px;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 5px 0;
-}
-
-.register-button:hover {
-  border: 0.5px #1877f2 solid;
-}
-
-.login-link {
-  text-align: center;
-  color: #1877f2;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.text-condicionesypoliticas {
-  color: #1877f2;
-  font-size: 10px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.text-condicionesypoliticas {
-  text-decoration: underline;
-}
-
-.forgot-login {
-  color: #1877f2;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.forgot-login:hover {
-  text-decoration: underline;
-}
-
-.password-container {
-  display: flex;
-  gap: 15px;
-  align-items: start;
-}
-
-.password-input {
-  padding: 8px;
-  font-size: 16px;
-  width: 220px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.rules-alert {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 280px;
-  margin-top: 10px;
-  padding: 12px;
-  background-color: #fff8dc;
-  border: 1px solid #ffc107;
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.rules-alert p {
-  margin: 6px 0;
-  font-size: 14px;
-}
-
-.valid {
-  color: green;
-  font-weight: bold;
-}
-
-.invalid {
-  color: red;
-}
 /* Extra pequeño: móviles pequeños (xs) */
 @media (max-width: 575.98px) {
-  .card {
-    max-width: 270px;
-    margin: 30px auto;
-    background-color: #f3f3f3;
-    padding: 1.5em;
-    border: 1px solid #c5c1c1;
-    border-radius: 2px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  .register-button {
-    background-color: #42b72a;
-    color: white;
-    width: 100%;
-    padding: 7px;
-    font-size: 14px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin: 5px 0;
-  }
-
-  .register-button:hover {
-    border: 0.5px #1877f2 solid;
-  }
-
-  .forgot-login {
-    color: #1877f2;
-    font-size: 10px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-
-  .forgot-login:hover {
-    text-decoration: underline;
-  }
-
-  .footer-p {
-    font-style: italic;
-    font-size: 15px;
-    color: #333;
-  }
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */

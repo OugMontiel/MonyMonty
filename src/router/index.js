@@ -1,11 +1,12 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {useAuth} from "@/features/auth/logic/useAuth.js";
+import {useAuth} from "../features/auth/logic/useAuth.js";
 
-import login from "@/features/auth/views/LoginView.vue";
+import login from "../features/auth/views/LoginView.vue";
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
+import CambioDeClave from "../features/auth/views/CambioDeClave.vue"; 
 
-import elTablero from "@/features/dashBoard/views/elTablero.vue";
+import elTablero from "../features/dashBoard/views/elTablero.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,12 @@ const router = createRouter({
       path: "/recuperarCuenta",
       name: "RecuperarCuenta",
       component: recuperarCuentaCliente,
+      meta: {requiresAuth: false},
+    },
+    {
+      path: "/resetPassword",
+      name: "resetPassword",
+      component: CambioDeClave,
       meta: {requiresAuth: false},
     },
     // Ruta 404
@@ -57,7 +64,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const {checkAuth, isAuthenticated} = useAuth();
 
-  // Verificar si la ruta necesita autenticación (por defecto sí)
+  // Verificar si la ruta necesita autenticación (por defeczto sí)
   const requiresAuth = to.meta.requiresAuth !== false;
 
   if (requiresAuth) {

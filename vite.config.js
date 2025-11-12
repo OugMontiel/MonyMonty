@@ -11,4 +11,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"), // Configuración de alias
     },
   },
+  server: {
+    proxy: {
+      '/auth': {
+        target: 'https://api.monteflor.co',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 });

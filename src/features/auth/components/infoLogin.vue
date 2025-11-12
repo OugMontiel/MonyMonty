@@ -8,7 +8,7 @@ export default {
   <div class="info">
     <!-- ¿Qué es nuestra aplicación? -->
     <section class="info__section">
-      <box-icon name="bulb" type="solid" color="#ffcc00" size="md"></box-icon>
+      <!-- <box-icon name="bulb" type="solid" color="#ffcc00" size="md"></box-icon> -->
       <h2 class="info__title">¿Qué es nuestra aplicación?</h2>
       <p class="info__text">
         Una innovadora solución <strong>SaaS</strong> para gestionar tus finanzas personales de forma <strong>eficiente</strong> y
@@ -18,13 +18,13 @@ export default {
 
     <!-- Eslogan (sin título) -->
     <section class="info__section">
-      <box-icon name="rocket" type="solid" color="#ff9900" size="md"></box-icon>
+      <!-- <box-icon name="rocket" type="solid" color="#ff9900" size="md"></box-icon> -->
       <p class="info__eslogan">"Tu camino hacia la <span>libertad financiera</span> comienza aquí."</p>
     </section>
 
     <!-- Características destacadas -->
     <section class="info__section">
-      <box-icon name="star" type="solid" color="#ffcc00" size="md"></box-icon>
+      <!-- <box-icon name="star" type="solid" color="#ffcc00" size="md"></box-icon> -->
       <h2 class="info__title">Características destacadas</h2>
       <ul class="info__list">
         <li class="info__item"><strong>Asesorías personalizadas:</strong> orientación adaptada a tus necesidades financieras.</li>
@@ -39,30 +39,28 @@ export default {
 .info {
   width: 100%;
   max-width: 720px;
-  padding: 2rem;
+  padding: 1rem;
   color: var(--texto-primario);
-  font-family: "Segoe UI", sans-serif;
   animation: fadeIn 0.8s ease-in;
 }
 
 .info__section {
-  margin-bottom: 2.5rem;
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 
 .info__title {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-letra-seleccion);
-  margin-bottom: 0.3rem;
 }
 
 .info__text {
   font-size: 1rem;
   line-height: 1.6;
-  color: #000000;
+  color: var(--texto-primario);
 }
 
 .info__eslogan {
@@ -72,7 +70,7 @@ export default {
   color: var(--color-letra-seleccion);
   background-color: rgba(255, 204, 0, 0.1);
   padding: 1rem;
-  border-left: 4px solid #ff9900;
+  border-left: 4px solid var(--color-letra-seleccion);
   border-radius: 10px;
   transition: background-color 0.3s ease;
 }
@@ -112,27 +110,41 @@ export default {
   }
 }
 
-/* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {
+.info {
+  width: 100%;
+  max-width: 720px; /* Pantallas grandes por defecto */
+  padding: 1rem;
+  color: var(--texto-primario);
+  animation: fadeIn 0.8s ease-in;
 }
 
-/* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
+/* 💻 Laptops medianas */
+@media (max-width: 1200px) {
+  .info {
+    max-width: 640px;
+  }
 }
 
-/* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
+/* 📱 Tablets grandes */
+@media (max-width: 992px) {
+  .info {
+    max-width: 500px;
+  }
 }
 
-/* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
+/* 📱 Tablets pequeñas / móviles grandes */
+@media (max-width: 868px) {
+  .info {
+    max-width: 400px;
+  }
 }
 
-/* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
+/* 📱 Móviles medianos */
+@media (max-width: 676px) {
+  .info {
+    max-width: 280px;
+  }
 }
 
-/* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-}
+
 </style>

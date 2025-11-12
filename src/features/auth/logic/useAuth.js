@@ -3,21 +3,19 @@ import axios from "axios";
 
 const isAuthenticated = ref(false);
 const loading = ref(false);
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function useAuth() {
-  // Debug: verificar variable de entorno
-  const API_URL = import.meta.env.VITE_API_URL;
-
   // Verificar autenticación
   async function checkAuth() {
     loading.value = true;
     try {
-      const response = await axios.get(`${API_URL}/auth/check`, {
+      const response = await axios.get(`${API_URL}auth/check`, {
         withCredentials: true,
       });
 
       if (response.status === 200) {
-        isAuthenticated.value = true;
+        isAuthenticated.value = response.data.authenticated;
         return true;
       }
     } catch (error) {
@@ -33,13 +31,13 @@ export function useAuth() {
   async function login(credentials) {
     loading.value = true;
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, credentials, {
+      const response = await axios.post(`${API_URL}auth/login`, credentials, {
         withCredentials: true,
       });
 
       if (response.status === 201) {
         await checkAuth(); // Revalidar después del login
-        return {success: true};
+        return {success: true, ...response};
       }
     } catch (error) {
       return {
@@ -55,8 +53,8 @@ export function useAuth() {
   async function logout() {
     loading.value = true;
     try {
-      await axios.post(
-        `${API_URL}/auth/logout`,
+      await axios.get(
+        `${API_URL}auth/logout`,
         {},
         {
           withCredentials: true,
@@ -70,6 +68,91 @@ export function useAuth() {
     }
   }
 
+  // CrearUsuario
+  async function CrearUsuario(userData) {
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}user`, userData, {
+        withCredentials: true,
+      });
+
+      if (response.status === 201) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en la creación de usuario",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Lanza Correo para recuperacion
+  async function recuperarCuenta(email) {
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}auth/recuperar`, email, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Erro al enviar correo",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Validamos token de recuperar Contraseña
+  async function verificacionTocken({token}) {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${API_URL}auth/checkToken?token=${token}`, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Erro al verificar el token ",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Cambio de clave
+  async function CambiodeClave(credentials) {
+    console.log("credentials", credentials);
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}auth/updatePassword`, credentials, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en actualizar contraseña",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     // Estado
     isAuthenticated: computed(() => isAuthenticated.value),
@@ -79,5 +162,9 @@ export function useAuth() {
     checkAuth,
     login,
     logout,
+    CrearUsuario,
+    recuperarCuenta,
+    verificacionTocken,
+    CambiodeClave,
   };
 }
