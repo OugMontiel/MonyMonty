@@ -37,7 +37,7 @@ export function useAuth() {
 
       if (response.status === 201) {
         await checkAuth(); // Revalidar después del login
-        return {success: true};
+        return {success: true, ...response};
       }
     } catch (error) {
       return {
@@ -77,12 +77,76 @@ export function useAuth() {
       });
 
       if (response.status === 201) {
-        return {success: true};
+        return {success: true, ...response};
       }
     } catch (error) {
       return {
         success: false,
         error: error.response?.data?.message || "Error en la creación de usuario",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Lanza Correo para recuperacion
+  async function recuperarCuenta(email) {
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}auth/recuperar`, email, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Erro al enviar correo",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Validamos token de recuperar Contraseña
+  async function verificacionTocken({token}) {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${API_URL}auth/checkToken?token=${token}`, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Erro al verificar el token ",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Cambio de clave
+  async function CambiodeClave(credentials) {
+    console.log("credentials", credentials);
+    loading.value = true;
+    try {
+      const response = await axios.post(`${API_URL}auth/updatePassword`, credentials, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en actualizar contraseña",
       };
     } finally {
       loading.value = false;
@@ -99,5 +163,8 @@ export function useAuth() {
     login,
     logout,
     CrearUsuario,
+    recuperarCuenta,
+    verificacionTocken,
+    CambiodeClave,
   };
 }
