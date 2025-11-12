@@ -24,12 +24,12 @@ const {verificacionTocken, CambiodeClave, loading} = useAuth();
 
 const submitted = ref(false);
 const loadingUser = ref(false);
+const user = ref({});
 
 onMounted(async () => {
   try {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window?.location?.search);
     const token = params.get("token");
-    console.log("Token encontrado:", token);
 
     if (!token) {
       toast.add({
@@ -48,17 +48,17 @@ onMounted(async () => {
     if (result.success) {
       toast.add({
         severity: "success",
-        summary: "Éxito",
-        detail: result.message,
+        summary: "Tocken Verificado",
+        detail: result?.message,
         life: 3000,
       });
+      user.value = result?.data?.userDelTocken;
       loadingUser.value = true;
-      const user = result.data;
     } else {
       toast.add({
         severity: "error",
         summary: "Error",
-        detail: result.error || "Error al verificar el Tocken",
+        detail: result?.error || "Error al verificar el Tocken",
         life: 4000,
       });
     }
@@ -97,6 +97,7 @@ const resolver = zodResolver(
 const onFormSubmit = async ({valid, values}) => {
   submitted.value = true;
 
+  if (!loadingUser) return;
   if (!valid) return;
 
   try {
@@ -144,48 +145,61 @@ const irALogin = () => router.push("/");
           <img :src="logo" alt="Icono de la aplicación" class="h-16 object-contain login-logo" />
         </div>
 
-        <!-- MENSAJES SUPERIORES -->
-        <div>
-          <div class="flex justify-center">
-            <Message severity="contrast" variant="simple" size="large"> Restablece tu contraseña </Message>
+        <!-- Si hay data disponible -->
+        <template v-if="loadingUser">
+          <!-- MENSAJES SUPERIORES -->
+          <div>
+            <div class="flex justify-center">
+              <Message severity="contrast" variant="simple" size="large"> Restablece tu contraseña </Message>
+            </div>
+
+            <div class="flex justify-center">
+              <Message severity="secondary" variant="simple" class="p-4 text-lg">
+                <p class="mb-1">Estás recuperando el acceso a la cuenta:</p>
+                <p class="font-semibold text-xl">{{ user?.nombre }} ({{ user?.email }})</p>
+              </Message>
+            </div>
           </div>
 
-          <Message severity="secondary" variant="simple">
-            Estás recuperando el acceso a la cuenta:
-            <strong>{{ cuentaRecuperada?.email || "usuario@ejemplo.com" }}</strong>
-          </Message>
-        </div>
+          <!-- FORMULARIO PRIMEVUE -->
+          <Form :resolver="resolver" @submit="onFormSubmit" class="flex flex-col justify-around gap-4">
+            <!-- NUEVA CONTRASEÑA -->
+            <FormField v-slot="$field" name="password" class="w-full">
+              <FloatLabel variant="on" class="w-full">
+                <Password id="password" v-bind="$field.props" :feedback="false" :disabled="loading" toggleMask class="w-full" />
+                <label for="password">Nueva contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
 
-        <!-- FORMULARIO PRIMEVUE -->
-        <Form :resolver="resolver" @submit="onFormSubmit" class="flex flex-col justify-around gap-4">
-          <!-- NUEVA CONTRASEÑA -->
-          <FormField v-slot="$field" name="password" class="w-full">
-            <FloatLabel variant="on" class="w-full">
-              <Password id="password" v-bind="$field.props" :feedback="false" :disabled="loading" toggleMask class="w-full" />
-              <label for="password">Nueva contraseña</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
-              {{ $field.error?.message }}
-            </Message>
-          </FormField>
+            <!-- CONFIRMAR CONTRASEÑA -->
+            <FormField v-slot="$field" name="confirmPassword" class="w-full">
+              <FloatLabel variant="on" class="w-full">
+                <Password id="confirmPassword" v-bind="$field.props" :feedback="false" :disabled="loading" toggleMask class="w-full" />
+                <label for="confirmPassword">Confirmar contraseña</label>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
 
-          <!-- CONFIRMAR CONTRASEÑA -->
-          <FormField v-slot="$field" name="confirmPassword" class="w-full">
-            <FloatLabel variant="on" class="w-full">
-              <Password id="confirmPassword" v-bind="$field.props" :feedback="false" :disabled="loading" toggleMask class="w-full" />
-              <label for="confirmPassword">Confirmar contraseña</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
-              {{ $field.error?.message }}
-            </Message>
-          </FormField>
+            <!-- BOTONES -->
+            <div class="flex flex-col gap-2 pt-2">
+              <Button type="submit" label="Actualizar contraseña" severity="primary" :loading="loading" class="w-full" />
+              <Button label="Volver al inicio" link :disabled="loading" @click="irALogin" outlined class="w-full" />
+            </div>
+          </Form>
+        </template>
 
-          <!-- BOTONES -->
-          <div class="flex flex-col gap-2 pt-2">
-            <Button type="submit" label="Actualizar contraseña" severity="primary" :loading="loading" class="w-full" />
-            <Button label="Volver al inicio" link :disabled="loading" @click="irALogin" outlined class="w-full" />
+        <!-- Si NO hay data disponible -->
+        <template v-else>
+          <div class="flex flex-col justify-center items-center text-center p-8 gap-4">
+            <Message severity="warn" variant="simple" size="large"> El enlace de recuperación no es válido o ha expirado. </Message>
+            <Button label="Volver al inicio" @click="irALogin" outlined />
           </div>
-        </Form>
+        </template>
       </div>
     </div>
 

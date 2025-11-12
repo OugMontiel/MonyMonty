@@ -88,7 +88,7 @@ export function useAuth() {
       loading.value = false;
     }
   }
-  
+
   // Lanza Correo para recuperacion
   async function recuperarCuenta(email) {
     loading.value = true;
@@ -97,8 +97,6 @@ export function useAuth() {
         withCredentials: true,
       });
 
-      console.log('response',response)
-
       if (response.status === 200) {
         return {success: true, ...response};
       }
@@ -106,6 +104,27 @@ export function useAuth() {
       return {
         success: false,
         error: error.response?.data?.message || "Erro al enviar correo",
+      };
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Validamos token de recuperar Contraseña 
+  async function verificacionTocken({ token }) {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${API_URL}auth/checkToken?token=${token}`, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        return {success: true, ...response};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Erro al verificar el token ",
       };
     } finally {
       loading.value = false;
@@ -123,5 +142,6 @@ export function useAuth() {
     logout,
     CrearUsuario,
     recuperarCuenta,
+    verificacionTocken,
   };
 }
