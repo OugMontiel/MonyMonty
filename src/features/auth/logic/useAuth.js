@@ -140,7 +140,7 @@ export function useAuth() {
         withCredentials: true,
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         return {success: true, ...response};
       }
     } catch (error) {
