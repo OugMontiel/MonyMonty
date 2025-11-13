@@ -66,31 +66,20 @@ const goTo = (path) => router.push(path);
     </div>
 
     <nav class="flex-1 py-8">
-      <!-- Menu Items -->
       <ul>
         <li v-for="item in menuItems" :key="item.id" class="py-2">
-          <a class="flex gap-2">
-            <span>
-              <Icon :icon="item.icon" class="w-5 h-5" />
-            </span>
-
-            <span v-if="!isCollapsed">{{ item.title }}</span>
+          <a class="flex gap-2" @click="goTo(item.path)">
+            <Icon :icon="item.icon" class="w-5 h-5" />
+            <span>{{ item.title }}</span>
           </a>
         </li>
       </ul>
     </nav>
 
-    <!-- Logout -->
-    <li>
-      <a @click.prevent="handleLogout" class="flex gap-2" >
-        <span>
-          <Icon icon="ion:log-out-outline" />
-        </span>
-        
-          <span v-if="!isCollapsed">Sign out</span>
-        
-      </a>
-    </li>
+    <button class="flex items-center gap-2 py-3" @click.prevent="handleLogout">
+      <Icon icon="ion:log-out-outline" class="w-5 h-5" />
+      <span>Sign out</span>
+    </button>
   </div>
 </template>
 
