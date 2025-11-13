@@ -49,25 +49,6 @@ export function useAuth() {
     }
   }
 
-  // Logout
-  async function logout() {
-    loading.value = true;
-    try {
-      await axios.get(
-        `${API_URL}auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-    } catch (error) {
-      console.error("Error en logout:", error);
-    } finally {
-      isAuthenticated.value = false;
-      loading.value = false;
-    }
-  }
-
   // CrearUsuario
   async function CrearUsuario(userData) {
     loading.value = true;
@@ -161,7 +142,6 @@ export function useAuth() {
     // Métodos
     checkAuth,
     login,
-    logout,
     CrearUsuario,
     recuperarCuenta,
     verificacionTocken,
