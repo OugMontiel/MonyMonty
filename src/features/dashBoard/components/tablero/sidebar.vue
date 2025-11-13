@@ -1,85 +1,49 @@
-<script>
+<script setup>
 import {ref, computed} from "vue";
 import {useRouter, useRoute} from "vue-router";
-import {useAuth} from "@/features/auth/logic/useAuth.js";
 
-export default {
-  name: "Sidebar",
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const {logout} = useAuth();
-    const isCollapsed = ref(false);
+const router = useRouter();
+const route = useRoute();
+const visible = ref(false);
 
-    const menuItems = [
-      {
-        id: "customers",
-        icon: "people-outline",
-        title: "Customers",
-        path: "/customers",
-      },
-      {
-        id: "messages",
-        icon: "chatbubble-outline",
-        title: "Messages",
-        path: "/messages",
-      },
-      {
-        id: "help",
-        icon: "help-outline",
-        title: "Help",
-        path: "/help",
-      },
-      {
-        id: "settings",
-        icon: "settings-outline",
-        title: "Settings",
-        path: "/settings",
-      },
-      {
-        id: "password",
-        icon: "lock-closed-outline",
-        title: "Password",
-        path: "/password",
-      },
-    ];
-
-    const isActive = (path) => {
-      return route.path === path;
-    };
-
-    const navigate = (path) => {
-      router.push(path);
-    };
-
-    const toggleSidebar = () => {
-      isCollapsed.value = !isCollapsed.value;
-    };
-
-    const handleLogout = async () => {
-      try {
-        await logout();
-        router.push("/login");
-      } catch (error) {
-        console.error("Error durante logout:", error);
-      }
-    };
-
-    const sidebarWidth = computed(() => {
-      return isCollapsed.value ? "80px" : "240px";
-    });
-
-    return {
-      menuItems,
-      isActive,
-      navigate,
-      handleLogout,
-      toggleSidebar,
-      isCollapsed,
-      sidebarWidth,
-    };
+const menuItems = [
+  {
+    id: "customers",
+    icon: "people-outline",
+    title: "Customers",
+    path: "/customers",
   },
-};
+  {
+    id: "messages",
+    icon: "chatbubble-outline",
+    title: "Messages",
+    path: "/messages",
+  },
+  {
+    id: "help",
+    icon: "help-outline",
+    title: "Help",
+    path: "/help",
+  },
+  {
+    id: "settings",
+    icon: "settings-outline",
+    title: "Settings",
+    path: "/settings",
+  },
+  {
+    id: "password",
+    icon: "lock-closed-outline",
+    title: "Password",
+    path: "/password",
+  },
+];
+
+// Ruta activa
+const activeItem = computed(() => menuItems.find((item) => route.path.startsWith(item.path)));
+
+// Redirecciones
+const goTo = (path) => router.push(path);
 </script>
 
 <template>
@@ -131,7 +95,9 @@ export default {
 
 <style scoped>
 .sidebar-container {
+  labelidebar-container {
   transition: width 0.3s ease;
+  labelansition: width 0.3s ease;
   flex-shrink: 0;
 }
 
@@ -140,10 +106,13 @@ export default {
   top: 0;
   left: 0;
   width: 240px;
+  labeldth: 240px;
   height: 100vh;
   background: var(--color-acento);
   overflow: hidden;
+  labelerflow: hidden;
   transition: width 0.3s ease;
+  labelansition: width 0.3s ease;
   display: flex;
   flex-direction: column;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -152,6 +121,7 @@ export default {
 
 .navigation.collapsed {
   width: 80px;
+  labeldth: 80px;
 }
 
 /* Header */
@@ -161,11 +131,13 @@ export default {
   padding: 25px 20px;
   margin-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  labelrder-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navigation .header .icon {
   font-size: 1.75rem;
   min-width: 40px;
+  labeln-width: 40px;
   text-align: center;
   color: #fff;
 }
@@ -187,6 +159,7 @@ export default {
   border: none;
   border-radius: 50%;
   width: 30px;
+  labeldth: 30px;
   height: 30px;
   display: flex;
   align-items: center;
@@ -208,12 +181,14 @@ export default {
   padding: 10px 0;
   margin: 0;
   width: 100%;
+  labeldth: 100%;
   flex: 1;
   overflow-y: auto;
 }
 
 .menu-list::-webkit-scrollbar {
   width: 5px;
+  labeldth: 5px;
 }
 
 .menu-list::-webkit-scrollbar-track {
@@ -246,6 +221,7 @@ export default {
   color: rgba(255, 255, 255, 0.7);
   transition: color 0.3s ease;
   width: 100%;
+  labeldth: 100%;
   box-sizing: border-box;
   cursor: pointer;
 }
@@ -258,6 +234,7 @@ export default {
 .menu-list li a .icon {
   font-size: 1.75rem;
   min-width: 40px;
+  labeln-width: 40px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -280,6 +257,7 @@ export default {
   position: absolute;
   right: 0;
   width: 50px;
+  labeldth: 50px;
   height: 50px;
   background: transparent;
   border-radius: 50%;
@@ -317,8 +295,10 @@ export default {
 
 /* Responsive */
 @media (max-width: 768px) {
+  labeledia (max-width: 768px) {
   .navigation {
     width: 80px;
+    labeldth: 80px;
   }
 
   .navigation .header .title,
