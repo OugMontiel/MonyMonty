@@ -1,19 +1,9 @@
-<script>
+<script setup>
 import HeaderView from "../components/tablero/header.vue";
 import SidebarView from "../components/tablero/sidebar.vue";
-import FooterView from "../components/tablero/footer.vue";
 import BackgroundView from "../components/dashBoardMovimiento/dashboardView.vue";
-
-export default {
-  name: "ElTablero",
-  components: {
-    HeaderView,
-    SidebarView,
-    FooterView,
-    BackgroundView,
-  },
-};
 </script>
+
 <template>
   <div class="min-h-screen flex flex-col">
     <!-- Header -->
