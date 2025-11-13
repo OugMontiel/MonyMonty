@@ -1,21 +1,26 @@
 import axios from "axios";
-import {ref} from "vue";
 
-const user = ref(null);
+const API_URL = import.meta.env.VITE_API_URL;
 
-async function cargarUsuario() {
-  try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}user/me`, {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    user.value = res.data;
-  } catch (error) {
-    console.error("Error al cargar usuario:", error);
-    user.value = null;
+export function userData() {
+  async function cargarUsuario() {
+    try {
+      const res = await axios.get(`${API_URL}user/me`, {
+        withCredentials: true,
+      });
+      if (res.status === 200){
+        return {success: true, ...res};
+      }
+    } catch (error) {
+      return{
+        success: false,
+        error: error.res?.data?.message || "Error en Cargar el Usuario"
+      }
+    }
+  }
+
+  return{
+    cargarUsuario,
   }
 }
 
-export {user, cargarUsuario};
