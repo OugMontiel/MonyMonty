@@ -14,28 +14,21 @@ export default {
   },
 };
 </script>
-
 <template>
-  <div class="flex flex-col h-screen">
+  <div class="min-h-screen flex flex-col">
     <!-- Header -->
     <HeaderView />
 
-    <!-- Main Layout: Sidebar + Content -->
-    <div class="flex flex-1 min-h-0">
+    <div class="flex flex-1">
       <!-- Sidebar -->
       <SidebarView />
 
-      <!-- Main Content Area -->
-      <div class="flex-1 overflow-auto bg-gray-50">
+      <!-- Main Content / Background -->
+      <main class="flex-1 relative">
         <BackgroundView />
-      </div>
+      </main>
     </div>
-
-    <!-- Footer -->
-    <FooterView />
   </div>
 </template>
 
-<style scoped>
-/* Solo estilos que no se pueden lograr con Tailwind o personalizaciones específicas */
-</style>
+<style scoped></style>
