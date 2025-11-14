@@ -107,7 +107,7 @@ defineExpose({visible, open, close});
 
     <!-- Logout Button -->
     <template #footer>
-      <Button label="Logout" @click="handleLogout" text severity="danger" class="w-full flex-auto">
+      <Button label="Logout" @click="handleLogout" text severity="danger" >
         <template #icon>
           <Icon icon="ion:log-out-outline" class="w-5 h-5" />
         </template>

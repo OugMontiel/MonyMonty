@@ -40,9 +40,7 @@ onMounted(async () => {
 <template>
   <header class="flex items-center justify-between px-4 py-2 lg:px-6 xl:px-8">
     <div>
-      <Button @click="$emit('open-drawer')" text>
-        <Icon icon="ion:menu-outline" class="w-5 h-5" />
-      </Button>
+      <Icon icon="ion:menu-outline" class="w-8 h-8 cursor-pointer" @click="$emit('open-drawer')" />
     </div>
     <div class="flex-1 flex items-center justify-end">
       <!-- Loading state -->
