@@ -4,7 +4,9 @@ import {useRouter, useRoute} from "vue-router";
 import {Icon} from "@iconify/vue";
 
 import logo from "../../../../assets/img/MonyMontySinFondo3.png";
+import {useAuth} from "../../../auth/logic/useAuth.js"
 
+const {logout} = useAuth()
 const router = useRouter();
 const route = useRoute();
 const visible = ref(false);
@@ -66,25 +68,25 @@ const close = () => {
 
 // Función para manejar el logout
 const handleLogout = () => {
-  // Aquí va tu lógica de logout
-  console.log("Logging out...");
+  logout()
+  goTo("/")
   visible.value = false;
 };
 
 // Exponer visible y métodos para control seguro desde el componente padre
-defineExpose({ visible, open, close });
+defineExpose({visible, open, close});
 </script>
 
 <template>
   <Drawer v-model:visible="visible" class="flex flex-col justify-between px-4 py-3">
     <!-- Header -->
-    <div>
+    <template #header>
       <div class="flex items-center justify-between w-full">
         <span class="inline-flex items-center">
           <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
         </span>
       </div>
-    </div>
+    </template>
 
     <!-- Navigation -->
     <div class="flex-1 pt-8">
@@ -92,14 +94,9 @@ defineExpose({ visible, open, close });
         <nav class="flex-1">
           <ul class="list-none p-0 m-0">
             <li v-for="item in menuItems" :key="item.id" class="py-2">
-              <Button
-                :label="item.title"
-                @click="goTo(item.path)"
-                text
-                :severity="activeItem?.id === item.id ? 'primary' : 'secondary'"
-              >
+              <Button :label="item.title" @click="goTo(item.path)" text :severity="activeItem?.id === item.id ? 'primary' : 'secondary'">
                 <template #icon>
-                <Icon :icon="item.icon" class="w-5 h-5" />
+                  <Icon :icon="item.icon" class="w-5 h-5" />
                 </template>
               </Button>
             </li>
@@ -109,13 +106,13 @@ defineExpose({ visible, open, close });
     </div>
 
     <!-- Logout Button -->
-    <div>
+    <template #footer>
       <Button label="Logout" @click="handleLogout" text severity="danger" class="w-full flex-auto">
         <template #icon>
           <Icon icon="ion:log-out-outline" class="w-5 h-5" />
         </template>
       </Button>
-    </div>
+    </template>
   </Drawer>
 </template>
 
