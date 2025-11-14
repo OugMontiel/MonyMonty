@@ -16,20 +16,8 @@ export function userData() {
       };
     }
   }
-  // Logout
-  async function logout() {
-    try {
-      await axios.get(`${API_URL}auth/logout`, {withCredentials: true});
-    } catch (error) {
-      return {
-        success: false,
-        error: error.res?.data?.message || "Error en Cargar el Usuario",
-      };
-    }
-  }
-
   return {
     cargarUsuario,
-    logout,
+
   };
 }

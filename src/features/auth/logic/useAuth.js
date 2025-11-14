@@ -133,6 +133,24 @@ export function useAuth() {
       loading.value = false;
     }
   }
+    // Logout
+  async function logout() {
+    loading.value = true;
+    try {
+      await axios.get(
+        `${API_URL}auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+    } catch (error) {
+      console.error("Error en logout:", error);
+    } finally {
+      isAuthenticated.value = false;
+      loading.value = false;
+    }
+  }
 
   return {
     // Estado
@@ -146,5 +164,6 @@ export function useAuth() {
     recuperarCuenta,
     verificacionTocken,
     CambiodeClave,
+    logout,
   };
 }
