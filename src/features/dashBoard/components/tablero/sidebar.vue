@@ -11,6 +11,12 @@ const visible = ref(false);
 
 const menuItems = [
   {
+    id: "dashboard",
+    icon: "ion:grid-outline",
+    title: "Dashboard",
+    path: "/tablero",
+  },
+  {
     id: "customers",
     icon: "ion:people-outline",
     title: "Customers",
@@ -46,41 +52,69 @@ const menuItems = [
 const activeItem = computed(() => menuItems.find((item) => route.path.startsWith(item.path)));
 
 // Redirecciones
-const goTo = (path) => router.push(path);
+const goTo = (path) => {
+  router.push(path);
+  visible.value = false;
+};
+
+// Función para cerrar el drawer
+const closeDrawer = () => {
+  visible.value = false;
+};
+
+// Función para manejar el logout
+const handleLogout = () => {
+  // Aquí va tu lógica de logout
+  console.log("Logging out...");
+  visible.value = false;
+};
+
+// Exponer visible para que pueda ser controlado desde el componente padre
+defineExpose({visible});
 </script>
 
 <template>
-  <div class="flex flex-col justify-between px-4 py-3">
+  <Drawer v-model:visible="visible" class="flex flex-col justify-between px-4 py-3">
     <!-- Header -->
     <div>
-      <div class="flex items-center justify-between shrink-0">
-        <span class="inline-flex items-center pr-4">
+      <div class="flex items-center justify-between w-full">
+        <span class="inline-flex items-center">
           <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
-        </span>
-        <span>
-          <Button type="button" @click="closeCallback" rounded variant="outlined">
-            <Icon icon="mdi:close" class="w-5 h-5" />
-          </Button>
         </span>
       </div>
     </div>
 
-    <nav class="flex-1 py-8">
-      <ul>
-        <li v-for="item in menuItems" :key="item.id" class="py-2">
-          <a class="flex gap-2" @click="goTo(item.path)">
-            <Icon :icon="item.icon" class="w-5 h-5" />
-            <span>{{ item.title }}</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <!-- Navigation -->
+    <div class="flex-1 pt-8">
+      <div class="flex flex-col justify-between h-full">
+        <nav class="flex-1">
+          <ul class="list-none p-0 m-0">
+            <li v-for="item in menuItems" :key="item.id" class="py-2">
+              <Button
+                :label="item.title"
+                @click="goTo(item.path)"
+                text
+                :severity="activeItem?.id === item.id ? 'primary' : 'secondary'"
+              >
+                <template #icon>
+                <Icon :icon="item.icon" class="w-5 h-5" />
+                </template>
+              </Button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
 
-    <button class="flex items-center gap-2 py-3" @click.prevent="handleLogout">
-      <Icon icon="ion:log-out-outline" class="w-5 h-5" />
-      <span>Sign out</span>
-    </button>
-  </div>
+    <!-- Logout Button -->
+    <div>
+      <Button label="Logout" @click="handleLogout" text severity="danger" class="w-full flex-auto">
+        <template #icon>
+          <Icon icon="ion:log-out-outline" class="w-5 h-5" />
+        </template>
+      </Button>
+    </div>
+  </Drawer>
 </template>
 
 <style scoped>
