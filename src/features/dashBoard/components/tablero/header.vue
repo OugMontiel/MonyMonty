@@ -1,6 +1,7 @@
 <script setup>
 import {useToast} from "primevue/usetoast";
 import {onMounted, ref} from "vue";
+import {Icon} from "@iconify/vue";
 
 import {userData} from "../../logic/user.js";
 
@@ -38,11 +39,16 @@ onMounted(async () => {
 
 <template>
   <header class="flex items-center justify-between px-4 py-2 lg:px-6 xl:px-8">
+    <div>
+      <Button @click="$emit('open-drawer')" text>
+        <Icon icon="ion:menu-outline" class="w-5 h-5" />
+      </Button>
+    </div>
     <div class="flex-1 flex items-center justify-end">
       <!-- Loading state -->
       <div v-if="isLoading" class="flex items-center gap-3">
         <ProgressSpinner class="w-5 h-5" />
-        <Message severity="contrast" variant="simple" > Cargando usuario... </Message>
+        <Message severity="contrast" variant="simple"> Cargando usuario... </Message>
       </div>
 
       <!-- User profile -->

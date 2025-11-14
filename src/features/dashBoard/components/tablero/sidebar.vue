@@ -54,11 +54,13 @@ const activeItem = computed(() => menuItems.find((item) => route.path.startsWith
 // Redirecciones
 const goTo = (path) => {
   router.push(path);
-  visible.value = false;
 };
 
-// Función para cerrar el drawer
-const closeDrawer = () => {
+//abrir/cerrar el drawer desde el padre.
+const open = () => {
+  visible.value = true;
+};
+const close = () => {
   visible.value = false;
 };
 
@@ -69,8 +71,8 @@ const handleLogout = () => {
   visible.value = false;
 };
 
-// Exponer visible para que pueda ser controlado desde el componente padre
-defineExpose({visible});
+// Exponer visible y métodos para control seguro desde el componente padre
+defineExpose({ visible, open, close });
 </script>
 
 <template>
