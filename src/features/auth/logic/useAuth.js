@@ -114,7 +114,6 @@ export function useAuth() {
 
   // Cambio de clave
   async function CambiodeClave(credentials) {
-    console.log("credentials", credentials);
     loading.value = true;
     try {
       const response = await axios.post(`${API_URL}auth/updatePassword`, credentials, {
@@ -133,17 +132,13 @@ export function useAuth() {
       loading.value = false;
     }
   }
-    // Logout
+  // Logout
   async function logout() {
     loading.value = true;
     try {
-      await axios.get(
-        `${API_URL}auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.get(`${API_URL}auth/logout`, {
+        withCredentials: true,
+      });
     } catch (error) {
       console.error("Error en logout:", error);
     } finally {
