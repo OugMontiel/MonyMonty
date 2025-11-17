@@ -3,7 +3,6 @@ import {ref} from "vue";
 
 import HeaderView from "../components/tablero/header.vue";
 import SidebarView from "../components/tablero/sidebar.vue";
-import BackgroundView from "../components/dashBoardMovimiento/dashboardView.vue";
 
 const drawerRef = ref(null);
 
@@ -27,7 +26,7 @@ const openDrawer = () => {
 
       <!-- Main Content / Background -->
       <main class="flex-1 relative">
-        <BackgroundView />
+        <router-view />
       </main>
     </div>
   </div>
