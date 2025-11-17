@@ -1,74 +1,47 @@
-<script>
-import Chart from "chart.js/auto";
+<script setup>
+import {ref, onMounted} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
 
-export default {
-  name: "Dashboard",
-  data() {
-    return {
-      ingresos: [
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 550},
-        {nombre: "Sueldo", valor: 200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 55},
-        {nombre: "Sueldo", valor: 1200},
-        {nombre: "Porlote", valor: 550},
-      ],
-      gastos: [
-        {nombre: "Manilla", valor: -10},
-        {nombre: "Colchon", valor: -500},
-        {nombre: "Manilla", valor: -100},
-        {nombre: "Colchon", valor: -200},
-        {nombre: "Manilla", valor: -10},
-        {nombre: "Colchon", valor: -200},
-      ],
+import dataMovimientos from "../logic/movimientos.js";
+
+const toast = useToast();
+const router = useRouter();
+const {UltimoMovimientos, TotalIngresado, TotalEgresado} = dataMovimientos();
+
+const dataDashBoard = ref({});
+const isLoading = ref(true);
+
+//redireciones
+const redirectToIngresos = () => router.push({name: "Ingresos"});
+const redirectToEgresos = () => router.push({name: "Egresos"});
+const redirectToMovimientos = () => router.push({name: "Movimientos"});
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    //funciones
+    const ultimoMov = await UltimoMovimientos();
+    const totalIng = await TotalIngresado();
+    const totalEgr = await TotalEgresado();
+
+    dataDashBoard.value = {
+      ultimoMovimientos: ultimoMov,
+      totalIngresado: totalIng,
+      totalEgresado: totalEgr,
     };
-  },
-  computed: {
-    movimientos() {
-      return [...this.ingresos, ...this.gastos];
-    },
-  },
-  mounted() {
-    this.renderChart(this.$refs.chartIngresos, this.ingresos, "rgb(0, 200, 0)");
-    this.renderChart(this.$refs.chartGastos, this.gastos, "rgb(200, 0, 0)");
-  },
-  methods: {
-    renderChart(canvas, data, color) {
-      new Chart(canvas, {
-        type: "doughnut",
-        data: {
-          labels: data.map((i) => i.nombre),
-          datasets: [
-            {
-              data: data.map((i) => Math.abs(i.valor)),
-              backgroundColor: data.map(() => color),
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {display: false},
-          },
-        },
-      });
-    },
-  },
-};
+    console.log('data', dataDashBoard)
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo cargar el Usuario.",
+      life: 4000,
+    });
+  } finally {
+    isLoading.value = false;
+  }
+});
 </script>
 
 <template>
