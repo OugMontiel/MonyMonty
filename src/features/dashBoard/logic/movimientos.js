@@ -1,10 +1,11 @@
 import axios from "axios";
 import {useToast} from "primevue/usetoast";
 
-const toast = useToast();
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function dataMovimientos() {
+  const toast = useToast();
+  
   const request = async (endpoint) => {
     // lógica aquí
     try { 
