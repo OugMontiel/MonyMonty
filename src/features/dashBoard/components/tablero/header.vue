@@ -45,7 +45,7 @@ onMounted(async () => {
     <div class="flex-1 flex items-center justify-end">
       <!-- Loading state -->
       <div v-if="isLoading" class="flex items-center gap-3">
-        <ProgressSpinner class="w-5 h-5" />
+        <ProgressSpinner style="width: 50px; height: 50px" />
         <Message severity="contrast" variant="simple"> Cargando usuario... </Message>
       </div>
 
