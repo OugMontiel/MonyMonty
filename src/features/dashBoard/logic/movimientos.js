@@ -23,14 +23,10 @@ export function dataMovimientos() {
       });
     }
   };
+  const Cars = () => request("")
   
-  const UltimoMovimientos = () => request("/movimientos");
-  const TotalIngresado = () => request("/ingresos");
-  const TotalEgresado = () => request("/egresos");
 
   return {
-    UltimoMovimientos,
-    TotalIngresado,
-    TotalEgresado,
+    Cars
   };
 }
