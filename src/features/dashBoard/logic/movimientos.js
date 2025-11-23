@@ -9,11 +9,12 @@ export function dataMovimientos() {
   const request = async (endpoint) => {
     // lógica aquí
     try { 
-      const { data } = await axios.get(`${API_URL}${endpoint}`, {
+      const res = await axios.get(`${API_URL}${endpoint}`, {
         withCredentials: true,
       });
-
-      return data; 
+       if (res.status === 200) {
+        return {...res};
+      }
     } catch(error) {
       toast.add({
         severity: "error",

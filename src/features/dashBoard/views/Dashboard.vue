@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, onMounted, computed} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
@@ -22,10 +22,9 @@ onMounted(async () => {
   isLoading.value = true;
   try {
     //funciones
-    const dataCars = await Cars();
+    const {data} = await Cars();
 
-    dataDashBoard.value = dataCars;
-    console.log("data", dataDashBoard);
+    dataDashBoard.value = data.data;
   } catch (error) {
     toast.add({
       severity: "error",
@@ -37,32 +36,32 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
-const stats = [
+const stats = computed(() => [
   {
     label: "Total ingresado",
-    value: dataDashBoard.totalIngresado,
+    value: dataDashBoard.value.totalIngresado,
     icon: "ion:cash-outline",
     redirect: redirectToIngresos,
   },
   {
     label: "Último movimiento",
-    value: dataDashBoard.ultimoMovimientos,
+    value: dataDashBoard.value.ultimoMovimientos,
     icon: "ion:time-outline",
     redirect: redirectToMovimientos,
   },
   {
     label: "Total gastado",
-    value: dataDashBoard.totalEgresado,
+    value: dataDashBoard.value.totalEgresado,
     icon: "ion:trending-down-outline",
     redirect: redirectToEgresos,
   },
   {
     label: "Disponible",
-    value: dataDashBoard.totalDisponible,
+    value: dataDashBoard.value.totalDisponible,
     icon: "ion:wallet-outline",
     redirect: null,
   },
-];
+]);
 </script>
 
 <template>
@@ -84,9 +83,13 @@ const stats = [
 
         <template #content>
           <h2 class="text-3xl font-bold mt-2">
-            <span v-if="!isLoading">
+            <span v-if="isLoading">
               <ProgressSpinner style="width: 50px; height: 50px" />
+            </span>
+            <span v-else>
+              <Message severity="success"  variant="simple">
               {{ item.value }}
+            </Message>
             </span>
           </h2>
         </template>
