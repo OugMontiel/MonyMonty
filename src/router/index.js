@@ -11,6 +11,12 @@ import elTablero from "../features/dashBoard/views/elTablero.vue";
 
 //rutas base 
 import Dashboard from "../features/dashBoard/views/Dashboard.vue";
+import Customers from "../features/dashBoard/views/Customers.vue";
+import Messages from "../features/dashBoard/views/Messages.vue";
+import Help from "../features/dashBoard/views/Help.vue";
+import Settings from "../features/dashBoard/views/Settings.vue";
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +71,26 @@ const router = createRouter({
           path: "",
           name: "DashboardView",
           component: Dashboard,
+        },
+        {
+          path: "/customers",
+          name: "customersView",
+          component: Customers,
+        },
+         {
+          path: "/messages",
+          name: "MessagesView",
+          component: Messages,
+        },
+        {
+          path: "/help",
+          name: "HelpView",
+          component: Help,
+        },
+        {
+          path: "/settings",
+          name: "SettingsView",
+          component: Settings,
         },
       ],
     },

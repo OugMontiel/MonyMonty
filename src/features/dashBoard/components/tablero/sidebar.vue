@@ -42,12 +42,6 @@ const menuItems = [
     title: "Settings",
     path: "/settings",
   },
-  {
-    id: "password",
-    icon: "ion:lock-closed-outline",
-    title: "Password",
-    path: "/password",
-  },
 ];
 
 // Ruta activa
@@ -56,6 +50,7 @@ const activeItem = computed(() => menuItems.find((item) => route.path.startsWith
 // Redirecciones
 const goTo = (path) => {
   router.push(path);
+  visible.value = false;
 };
 
 //abrir/cerrar el drawer desde el padre.
