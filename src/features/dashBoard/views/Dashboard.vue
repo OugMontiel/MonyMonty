@@ -29,7 +29,7 @@ onMounted(async () => {
     toast.add({
       severity: "error",
       summary: "Error de conexión",
-      detail: "Inténtalo de nuevo cargar el Usuario.",
+      detail: "Inténtalo de nuevo cargar el DasBoard.",
       life: 4000,
     });
   } finally {

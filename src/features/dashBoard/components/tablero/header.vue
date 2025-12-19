@@ -9,9 +9,15 @@ import { userData } from "../../logic/user.js";
 
 // Estados reactivos para mejor control
 const toast = useToast();
+<<<<<<< HEAD
 const { cargarUsuario } = userData();
 const isLoading = ref(true);
 const usuario = ref(null);
+=======
+const {cargarUsuario, usuario: cachedUsuario} = userData();
+const isLoading = ref(false);
+const usuario = ref(cachedUsuario ? cachedUsuario.value : null);
+>>>>>>> origin/feature/DiseñoDashBoart
 
 // Obtén la ruta ACTUAL
 const route = useRoute();
@@ -38,6 +44,13 @@ watch(
 );
 
 onMounted(async () => {
+  // Si ya hay datos del usuario
+  if (usuario.value) {
+    return;
+  }
+
+  // Si no hay datos, cargarlos
+  isLoading.value = true;
   try {
     const result = await cargarUsuario();
 
@@ -92,7 +105,11 @@ onMounted(async () => {
         <Badge :label="usuario?.plan" />
         <div class="flex flex-col gap-1 text-right sm:text-center">
           <h3 class="m-0 text-lg sm:text-base">
+<<<<<<< HEAD
             {{ usuario?.nombre || "Usuario1" }}
+=======
+            {{ usuario?.nombre }}
+>>>>>>> origin/feature/DiseñoDashBoart
           </h3>
 
         </div>

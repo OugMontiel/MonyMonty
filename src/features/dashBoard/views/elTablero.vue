@@ -26,7 +26,9 @@ const openDrawer = () => {
 
       <!-- Main Content / Background -->
       <main class="flex-1 relative">
-        <router-view />
+        <keep-alive>
+          <router-view />
+        </keep-alive>
       </main>
     </div>
   </div>
