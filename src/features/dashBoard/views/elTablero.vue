@@ -1,41 +1,40 @@
-<script>
-import HeaderView from "@/features/dashBoard/components/tablero/header.vue";
-import SidebarView from "@/features/dashBoard/components/tablero/sidebar.vue";
-import FooterView from "@/features/dashBoard/components/tablero/footer.vue";
-import BackgroundView from "@/features/dashBoard/components/dashBoardMovimiento/dashboardView.vue";
+<script setup>
+import {ref} from "vue";
 
-export default {
-  name: "ElTablero",
-  components: {
-    HeaderView,
-    SidebarView,
-    FooterView,
-    BackgroundView,
-  },
+import HeaderView from "../components/tablero/header.vue";
+import SidebarView from "../components/tablero/sidebar.vue";
+
+const drawerRef = ref(null);
+
+const openDrawer = () => {
+  if (drawerRef.value?.open) {
+    drawerRef.value.open();
+  } else {
+    drawerRef.value.visible = true;
+  }
 };
 </script>
 
 <template>
-  <div class="flex flex-col h-screen">
+  <div class="min-h-screen flex flex-col">
     <!-- Header -->
-    <HeaderView />
+    <HeaderView @open-drawer="openDrawer" />
 
-    <!-- Main Layout: Sidebar + Content -->
-    <div class="flex flex-1 min-h-0">
+    <div class="flex flex-1">
       <!-- Sidebar -->
-      <SidebarView />
+      <SidebarView ref="drawerRef" />
 
-      <!-- Main Content Area -->
-      <div class="flex-1 overflow-auto bg-gray-50">
-        <BackgroundView />
-      </div>
+      <!-- Main Content / Background -->
+
+      <main class="flex-1 relative">
+        <router-view v-slot="{Component}">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
+      </main>
     </div>
-
-    <!-- Footer -->
-    <FooterView />
   </div>
 </template>
 
-<style scoped>
-/* Solo estilos que no se pueden lograr con Tailwind o personalizaciones específicas */
-</style>
+<style scoped></style>

@@ -24,6 +24,7 @@ import Badge from "primevue/badge";
 import Toast from "primevue/toast";
 import AutoComplete from 'primevue/autocomplete';
 import MultiSelect from 'primevue/multiselect';
+import Drawer from 'primevue/drawer';
 
 const app = createApp(App);
 
@@ -58,5 +59,6 @@ app.component("Badge", Badge);
 app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
 app.component("MultiSelect", MultiSelect);
+app.component("Drawer", Drawer);
 
 app.mount("#app");

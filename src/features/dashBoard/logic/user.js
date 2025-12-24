@@ -1,21 +1,31 @@
 import axios from "axios";
-import {ref} from "vue";
+import { ref } from "vue";
 
-const user = ref(null);
+const API_URL = import.meta.env.VITE_API_URL;
 
-async function cargarUsuario() {
-  try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}user/me`, {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    user.value = res.data;
-  } catch (error) {
-    console.error("Error al cargar usuario:", error);
-    user.value = null;
+// Estado compartido global para el usuario
+const cachedUser = ref(null);
+const isUserLoaded = ref(false);
+
+export function userData() {
+  async function cargarUsuario() {
+    try {
+      const res = await axios.get(`${API_URL}user/me`, {withCredentials: true});
+      if (res.status === 200) {
+        // Guardar en caché
+        cachedUser.value = res.data;
+        isUserLoaded.value = true;
+        return {success: true, data: res.data};
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Error en Cargar el Usuario",
+      };
+    }
   }
+  return {
+    cargarUsuario,
+    usuario: cachedUser,
+  };
 }
-
-export {user, cargarUsuario};
