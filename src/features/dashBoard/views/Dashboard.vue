@@ -3,6 +3,7 @@ import {ref, onMounted, computed} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
+import _ from "lodash";
 
 import {dataMovimientos} from "../logic/movimientos.js";
 
@@ -36,6 +37,40 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
+// Formatea un objeto de movimiento en un resumen legible
+const formatLastMovement = (m) => {
+  if (!m) return "—";
+  const item = _.first(_.castArray(m));
+  if (!item) return "—";
+
+  const fecha = item.fecha;
+  const amount = item.egreso ?? item.ingreso ?? null;
+
+  let currency = "";
+  if (_.isPlainObject(item.divisa)) {
+    currency = _.first(Object.keys(item.divisa));
+  }
+
+  const amountStr = _.compact([amount, currency]).join(" ");
+
+  const extractKV = (obj) => {
+    if (!_.isPlainObject(obj) || _.isEmpty(obj)) return "";
+
+    const key = _.head(_.keys(obj));
+    const val = obj[key];
+
+    return _.isNil(val) || val === "" ? key : `${key}: ${val}`;
+  };
+
+  const entidad = extractKV(item.entidad);
+
+  const parts = [];
+  if (fecha) parts.push(fecha);
+  if (amountStr) parts.push(amountStr);
+  if (entidad) parts.push(entidad);
+
+  return parts.join(" - ");
+};
 const stats = computed(() => [
   {
     label: "Total ingresado",
@@ -45,7 +80,7 @@ const stats = computed(() => [
   },
   {
     label: "Último movimiento",
-    value: dataDashBoard.value.ultimoMovimientos,
+    value: formatLastMovement(dataDashBoard.value.ultimoMovimientos),
     icon: "ion:time-outline",
     redirect: redirectToMovimientos,
   },
@@ -87,9 +122,9 @@ const stats = computed(() => [
               <ProgressSpinner style="width: 50px; height: 50px" />
             </span>
             <span v-else>
-              <Message severity="success"  variant="simple">
-              {{ item.value }}
-            </Message>
+              <Message severity="success" variant="simple">
+                {{ item.value }}
+              </Message>
             </span>
           </h2>
         </template>
