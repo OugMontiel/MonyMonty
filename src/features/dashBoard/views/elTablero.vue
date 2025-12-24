@@ -25,10 +25,13 @@ const openDrawer = () => {
       <SidebarView ref="drawerRef" />
 
       <!-- Main Content / Background -->
+
       <main class="flex-1 relative">
-        <keep-alive>
-          <router-view />
-        </keep-alive>
+        <router-view v-slot="{Component}">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </main>
     </div>
   </div>
