@@ -25,6 +25,8 @@ import Toast from "primevue/toast";
 import AutoComplete from 'primevue/autocomplete';
 import MultiSelect from 'primevue/multiselect';
 import Drawer from 'primevue/drawer';
+import SpeedDial from 'primevue/speeddial';
+import Tooltip from 'primevue/tooltip';
 
 const app = createApp(App);
 
@@ -60,5 +62,9 @@ app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
 app.component("MultiSelect", MultiSelect);
 app.component("Drawer", Drawer);
+app.component("SpeedDial", SpeedDial);
+app.component("Tooltip", Tooltip);
+
+app.directive('tooltip', Tooltip);
 
 app.mount("#app");
