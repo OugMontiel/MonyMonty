@@ -1,16 +1,13 @@
 <script setup>
 import {ref} from "vue";
 import {Icon} from "@iconify/vue";
-import {useMovimientos} from "../logic/useMovimientos";
+import CreateMovimientoModal from "../modals/CreateMovimientoModal.vue";
 
 import {useToast} from "primevue/usetoast";
-import {useRouter} from "vue-router";
 
 const toast = useToast();
-const router = useRouter();
 
-// Logic hook (prepared for future use)
-const {createMovimiento} = useMovimientos();
+const isModalCreateMovimientoOpen = ref(false);
 
 // Items for SpeedDial
 const items = ref([
@@ -18,7 +15,7 @@ const items = ref([
     label: "Nuevo Movimiento",
     icon: "ion:cash-outline",
     command: () => {
-      console.log("Crear movimiento clicked");
+      isModalCreateMovimientoOpen.value = true;
     },
   },
   {
@@ -81,6 +78,8 @@ const items = ref([
         </a>
       </template>
     </SpeedDial>
+
+    <CreateMovimientoModal v-model:visible="isModalCreateMovimientoOpen" />
   </div>
 </template>
 

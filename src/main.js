@@ -28,6 +28,12 @@ import Drawer from 'primevue/drawer';
 import SpeedDial from 'primevue/speeddial';
 import Tooltip from 'primevue/tooltip';
 
+import Dialog from "primevue/dialog";
+import InputNumber from "primevue/inputnumber";
+import Textarea from "primevue/textarea";
+import Select from "primevue/select";
+
+
 const app = createApp(App);
 
 app.use(router);
@@ -64,6 +70,11 @@ app.component("MultiSelect", MultiSelect);
 app.component("Drawer", Drawer);
 app.component("SpeedDial", SpeedDial);
 app.component("Tooltip", Tooltip);
+app.component("Dialog", Dialog);
+app.component("InputNumber", InputNumber);
+app.component("Textarea", Textarea);
+app.component("Select", Select);
+
 
 app.directive('tooltip', Tooltip);
 
