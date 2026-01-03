@@ -2,6 +2,8 @@
 import {ref, computed} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useMovimientos} from "../logic/useMovimientos";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {z} from "zod";
 
 const props = defineProps({
   visible: {
@@ -21,8 +23,14 @@ const movementTypes = [
   {label: "Transferencia", value: "TRANSFERENCIA"},
 ];
 
-// Form Data
-const form = ref({
+// Mock Data (Replace with API calls)
+const entidades = ref([]); // TODO: Fetch from API
+const categorias = ref([]); // TODO: Fetch from API
+const subcategorias = ref([]); // TODO: Fetch from API
+const divisas = ref([]); // TODO: Fetch from API
+
+// Initial Values
+const initialValues = ref({
   tipo: "EGRESO",
   entidadId: null,
   origenEntidadId: null,
@@ -36,87 +44,83 @@ const form = ref({
   categoriaId: null,
   subcategoriaId: null,
   tags: [],
-  divisaId: null, // Should be set to default or selected
+  divisaId: null,
 });
 
-// Mock Data (Replace with API calls)
-const entidades = ref([]); // TODO: Fetch from API
-const categorias = ref([]); // TODO: Fetch from API
-const subcategorias = ref([]); // TODO: Fetch from API
-const divisas = ref([]); // TODO: Fetch from API
+// Zod Schema
+const schema = z
+  .object({
+    tipo: z.string(),
+    monto: z.number({invalid_type_error: "El monto es obligatorio"}).min(0.01, "El monto debe ser mayor a 0"),
+    fecha: z.date({required_error: "La fecha es obligatoria"}),
+    concepto: z.object({
+      titulo: z.string().min(1, "El título es obligatorio"),
+      detalle: z.string().optional(),
+    }),
+    categoriaId: z.string().optional().nullable(),
+    subcategoriaId: z.string().optional().nullable(),
+    tags: z.array(z.string()).optional(),
+    divisaId: z.string().optional().nullable(),
+    entidadId: z.string().optional().nullable(),
+    origenEntidadId: z.string().optional().nullable(),
+    destinoEntidadId: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.tipo === "TRANSFERENCIA") {
+      if (!data.origenEntidadId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La cuenta de origen es obligatoria",
+          path: ["origenEntidadId"],
+        });
+      }
+      if (!data.destinoEntidadId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La cuenta de destino es obligatoria",
+          path: ["destinoEntidadId"],
+        });
+      }
+    } else {
+      if (!data.entidadId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La cuenta es obligatoria",
+          path: ["entidadId"],
+        });
+      }
+    }
+  });
 
-const isTransferencia = computed(() => form.value.tipo === "TRANSFERENCIA");
+const resolver = zodResolver(schema);
 
 const close = () => {
   emit("update:visible", false);
-  resetForm();
 };
 
-const resetForm = () => {
-  form.value = {
-    tipo: "EGRESO",
-    entidadId: null,
-    origenEntidadId: null,
-    destinoEntidadId: null,
-    monto: null,
-    fecha: new Date(),
-    concepto: {
-      titulo: "",
-      detalle: "",
-    },
-    categoriaId: null,
-    subcategoriaId: null,
-    tags: [],
-    divisaId: null,
-  };
-};
-
-const save = async () => {
-  // Basic Validation
-  if (!form.value.monto || !form.value.fecha || !form.value.concepto.titulo) {
+const onFormSubmit = async ({valid, values}) => {
+  if (!valid) {
     toast.add({
       severity: "warn",
-      summary: "Campos incompletos",
-      detail: "Por favor complete los campos obligatorios.",
+      summary: "Formulario inválido",
+      detail: "Por favor revise los campos marcados.",
       life: 3000,
     });
     return;
   }
 
-  if (isTransferencia.value) {
-    if (!form.value.origenEntidadId || !form.value.destinoEntidadId) {
-      toast.add({
-        severity: "warn",
-        summary: "Transferencia incompleta",
-        detail: "Seleccione origen y destino.",
-        life: 3000,
-      });
-      return;
-    }
-  } else {
-    if (!form.value.entidadId) {
-      toast.add({
-        severity: "warn",
-        summary: "Entidad requerida",
-        detail: "Seleccione una entidad.",
-        life: 3000,
-      });
-      return;
-    }
-  }
-
   try {
     const payload = {
-      ...form.value,
+      ...values,
       usuarioId: "TODO_USER_ID", // TODO: Get from auth store
-      referencia: crypto.randomUUID(), // Or generate on backend
+      referencia: crypto.randomUUID(),
       origen: "MANUAL",
       estado: "COMPLETADO",
       isDeleted: false,
     };
 
-    // Adjust payload based on type
-    if (isTransferencia.value) {
+    // Clean up payload based on type
+    if (values.tipo === "TRANSFERENCIA") {
       payload.entidadId = null;
     } else {
       delete payload.origenEntidadId;
@@ -135,7 +139,7 @@ const save = async () => {
     emit("saved");
     close();
   } catch (error) {
-    // Error handled in useMovimientos but we can show extra info here if needed
+    // Error handled in useMovimientos
   }
 };
 </script>
@@ -149,83 +153,69 @@ const save = async () => {
     :style="{width: '50vw'}"
     :breakpoints="{'960px': '75vw', '641px': '90vw'}"
   >
-    <div class="flex flex-col gap-4">
+    <Form v-slot="$form" :resolver="resolver" :initialValues="initialValues" @submit="onFormSubmit" class="flex flex-col gap-4">
       <!-- Tipo -->
       <div class="flex flex-col gap-2">
         <label for="tipo">Tipo de Movimiento</label>
-        <Select
-          id="tipo"
-          v-model="form.tipo"
-          :options="movementTypes"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Seleccione el tipo"
-        />
+        <Select name="tipo" :options="movementTypes" optionLabel="label" optionValue="value" placeholder="Seleccione el tipo" fluid />
       </div>
 
       <!-- Entidad / Origen-Destino -->
-      <div v-if="isTransferencia" class="grid grid-cols-2 gap-4">
+      <div v-if="$form.tipo?.value === 'TRANSFERENCIA'" class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="origen">Origen</label>
-          <Select
-            id="origen"
-            v-model="form.origenEntidadId"
-            :options="entidades"
-            optionLabel="nombre"
-            optionValue="_id"
-            placeholder="Cuenta Origen"
-          />
+          <Select name="origenEntidadId" :options="entidades" optionLabel="nombre" optionValue="_id" placeholder="Cuenta Origen" fluid />
+          <Message v-if="$form.origenEntidadId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.origenEntidadId.error?.message
+          }}</Message>
         </div>
         <div class="flex flex-col gap-2">
           <label for="destino">Destino</label>
-          <Select
-            id="destino"
-            v-model="form.destinoEntidadId"
-            :options="entidades"
-            optionLabel="nombre"
-            optionValue="_id"
-            placeholder="Cuenta Destino"
-          />
+          <Select name="destinoEntidadId" :options="entidades" optionLabel="nombre" optionValue="_id" placeholder="Cuenta Destino" fluid />
+          <Message v-if="$form.destinoEntidadId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.destinoEntidadId.error?.message
+          }}</Message>
         </div>
       </div>
       <div v-else class="flex flex-col gap-2">
         <label for="entidad">Entidad / Cuenta</label>
-        <Select
-          id="entidad"
-          v-model="form.entidadId"
-          :options="entidades"
-          optionLabel="nombre"
-          optionValue="_id"
-          placeholder="Seleccione la cuenta"
-        />
+        <Select name="entidadId" :options="entidades" optionLabel="nombre" optionValue="_id" placeholder="Seleccione la cuenta" fluid />
+        <Message v-if="$form.entidadId?.invalid" severity="error" size="small" variant="simple">{{
+          $form.entidadId.error?.message
+        }}</Message>
       </div>
 
       <!-- Monto y Divisa -->
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="monto">Monto</label>
-          <InputNumber id="monto" v-model="form.monto" mode="currency" currency="USD" locale="en-US" placeholder="0.00" />
+          <InputNumber name="monto" mode="currency" currency="USD" locale="en-US" placeholder="0.00" fluid />
+          <Message v-if="$form.monto?.invalid" severity="error" size="small" variant="simple">{{ $form.monto.error?.message }}</Message>
         </div>
         <div class="flex flex-col gap-2">
           <label for="divisa">Divisa</label>
-          <Select id="divisa" v-model="form.divisaId" :options="divisas" optionLabel="codigo" optionValue="id" placeholder="Divisa" />
+          <Select name="divisaId" :options="divisas" optionLabel="codigo" optionValue="id" placeholder="Divisa" fluid />
         </div>
       </div>
 
       <!-- Fecha -->
       <div class="flex flex-col gap-2">
         <label for="fecha">Fecha</label>
-        <DatePicker id="fecha" v-model="form.fecha" showIcon />
+        <DatePicker name="fecha" showIcon fluid />
+        <Message v-if="$form.fecha?.invalid" severity="error" size="small" variant="simple">{{ $form.fecha.error?.message }}</Message>
       </div>
 
       <!-- Concepto -->
       <div class="flex flex-col gap-2">
         <label for="titulo">Título</label>
-        <InputText id="titulo" v-model="form.concepto.titulo" placeholder="Ej: Compra supermercado" />
+        <InputText name="concepto.titulo" placeholder="Ej: Compra supermercado" fluid />
+        <Message v-if="$form.concepto?.titulo?.invalid" severity="error" size="small" variant="simple">{{
+          $form.concepto.titulo.error?.message
+        }}</Message>
       </div>
       <div class="flex flex-col gap-2">
         <label for="detalle">Detalle</label>
-        <Textarea id="detalle" v-model="form.concepto.detalle" rows="3" autoResize />
+        <Textarea name="concepto.detalle" rows="3" autoResize fluid />
       </div>
 
       <!-- Categoría y Subcategoría -->
@@ -233,23 +223,23 @@ const save = async () => {
         <div class="flex flex-col gap-2">
           <label for="categoria">Categoría</label>
           <Select
-            id="categoria"
-            v-model="form.categoriaId"
+            name="categoriaId"
             :options="categorias"
             optionLabel="categoria"
             optionValue="_id"
             placeholder="Seleccione categoría"
+            fluid
           />
         </div>
         <div class="flex flex-col gap-2">
           <label for="subcategoria">Subcategoría</label>
           <Select
-            id="subcategoria"
-            v-model="form.subcategoriaId"
+            name="subcategoriaId"
             :options="subcategorias"
             optionLabel="subcategoria"
             optionValue="_id"
             placeholder="Seleccione subcategoría"
+            fluid
           />
         </div>
       </div>
@@ -257,14 +247,14 @@ const save = async () => {
       <!-- Tags -->
       <div class="flex flex-col gap-2">
         <label for="tags">Etiquetas</label>
-        <AutoComplete id="tags" v-model="form.tags" multiple :typeahead="false" />
+        <AutoComplete name="tags" multiple :typeahead="false" fluid />
       </div>
-    </div>
 
-    <template #footer>
-      <Button label="Cancelar" icon="pi pi-times" text @click="close" />
-      <Button label="Guardar" icon="pi pi-check" @click="save" :loading="loading" />
-    </template>
+      <div class="flex justify-end gap-2 mt-4">
+        <Button label="Cancelar" icon="pi pi-times" text @click="close" />
+        <Button type="submit" label="Guardar" icon="pi pi-check" :loading="loading" />
+      </div>
+    </Form>
   </Dialog>
 </template>
 
