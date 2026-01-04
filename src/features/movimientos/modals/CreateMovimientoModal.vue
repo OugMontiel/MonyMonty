@@ -221,7 +221,7 @@ const onFormSubmit = async ({valid, values}) => {
         </div>
         <div class="flex flex-col gap-2">
           <label for="divisa">Divisa</label>
-          <Select name="divisaId" :options="divisas" optionLabel="codigo" optionValue="id" placeholder="Divisa" fluid />
+          <Select name="divisaId" :options="divisas" optionLabel="label" optionValue="value" placeholder="Divisa" fluid />
         </div>
       </div>
 

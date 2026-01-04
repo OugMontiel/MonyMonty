@@ -11,14 +11,8 @@ const movementTypes = ref([
   {label: "Transferencia", value: "TRANSFERENCIA"},
 ]);
 const entidades = ref([]);
-const categorias = ref([
-  {_id: "cat1", categoria: "Comida Demo", subcategorias: [{_id: "sub1", subcategoria: "Restaurante Demo"}]},
-  {_id: "cat2", categoria: "Transporte Demo", subcategorias: [{_id: "sub2", subcategoria: "Uber Demo"}]},
-]);
-const divisas = ref([
-  {id: "USD", codigo: "USD", nombre: "Dolar Demo"},
-  {id: "COP", codigo: "COP", nombre: "Peso Colombiano Demo"},
-]);
+const categorias = ref([]);
+const divisas = ref([]);
 
 export function useMovimientoOptions() {
   const loadingOptions = ref(false);
