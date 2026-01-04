@@ -1,33 +1,16 @@
 <script setup>
-import {ref, computed} from "vue";
-import {useToast} from "primevue/usetoast";
-import {useMovimientos} from "../logic/useMovimientos";
-import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {ref, watch} from "vue";
 import {z} from "zod";
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    required: true,
-  },
-});
+import {useToast} from "primevue/usetoast";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
 
-const emit = defineEmits(["update:visible", "saved"]);
+import {useMovimientos} from "../logic/useMovimientos";
+import {useMovimientoOptions, movementTypes} from "../logic/useMovimientoOptions";
 
 const toast = useToast();
 const {createMovimiento, loading} = useMovimientos();
-
-const movementTypes = [
-  {label: "Ingreso", value: "INGRESO"},
-  {label: "Egreso", value: "EGRESO"},
-  {label: "Transferencia", value: "TRANSFERENCIA"},
-];
-
-// Mock Data (Replace with API calls)
-const entidades = ref([]); // TODO: Fetch from API
-const categorias = ref([]); // TODO: Fetch from API
-const subcategorias = ref([]); // TODO: Fetch from API
-const divisas = ref([]); // TODO: Fetch from API
+const {entidades, categorias, divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
 
 // Initial Values
 const initialValues = ref({
@@ -50,17 +33,17 @@ const initialValues = ref({
 // Zod Schema
 const schema = z
   .object({
-    tipo: z.string(),
+    tipo: z.string({required_error: "El tipo de movimiento es obligatorio"}),
     monto: z.number({invalid_type_error: "El monto es obligatorio"}).min(0.01, "El monto debe ser mayor a 0"),
     fecha: z.date({required_error: "La fecha es obligatoria"}),
     concepto: z.object({
-      titulo: z.string().min(1, "El título es obligatorio"),
+      titulo: z.string().optional(),
       detalle: z.string().optional(),
     }),
-    categoriaId: z.string().optional().nullable(),
-    subcategoriaId: z.string().optional().nullable(),
+    categoriaId: z.string().nullable(),
+    subcategoriaId: z.string().nullable(),
     tags: z.array(z.string()).optional(),
-    divisaId: z.string().optional().nullable(),
+    divisaId: z.string().nullable(),
     entidadId: z.string().optional().nullable(),
     origenEntidadId: z.string().optional().nullable(),
     destinoEntidadId: z.string().optional().nullable(),
@@ -112,16 +95,16 @@ const onFormSubmit = async ({valid, values}) => {
   try {
     const payload = {
       ...values,
-      usuarioId: "TODO_USER_ID", // TODO: Get from auth store
-      referencia: crypto.randomUUID(),
+      // usuarioId: "TODO_USER_ID", // TODO: Se Gestiona en backend
+      // referencia: crypto.randomUUID(), // TODO: Se Gestiona en backend
       origen: "MANUAL",
       estado: "COMPLETADO",
-      isDeleted: false,
+      // isDeleted: false, // TODO: Add if needed
     };
 
     // Clean up payload based on type
     if (values.tipo === "TRANSFERENCIA") {
-      payload.entidadId = null;
+      delete payload.entidadId;
     } else {
       delete payload.origenEntidadId;
       delete payload.destinoEntidadId;
@@ -139,7 +122,12 @@ const onFormSubmit = async ({valid, values}) => {
     emit("saved");
     close();
   } catch (error) {
-    // Error handled in useMovimientos
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: err.response?.data?.message || "No se pudo crear el movimiento. Intenta nuevamente.",
+      life: 4000,
+    });
   }
 };
 </script>
@@ -153,7 +141,14 @@ const onFormSubmit = async ({valid, values}) => {
     :style="{width: '50vw'}"
     :breakpoints="{'960px': '75vw', '641px': '90vw'}"
   >
-    <Form v-slot="$form" :resolver="resolver" :initialValues="initialValues" @submit="onFormSubmit" class="flex flex-col gap-4">
+    <Form
+      ref="formRef"
+      v-slot="$form"
+      :resolver="resolver"
+      :initialValues="initialValues"
+      @submit="onFormSubmit"
+      class="flex flex-col gap-4"
+    >
       <!-- Tipo -->
       <div class="flex flex-col gap-2">
         <label for="tipo">Tipo de Movimiento</label>
@@ -229,6 +224,7 @@ const onFormSubmit = async ({valid, values}) => {
             optionValue="_id"
             placeholder="Seleccione categoría"
             fluid
+            @change="onCategoryChange"
           />
         </div>
         <div class="flex flex-col gap-2">
