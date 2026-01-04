@@ -10,10 +10,7 @@ const movementTypes = ref([
   {label: "Egreso", value: "EGRESO"},
   {label: "Transferencia", value: "TRANSFERENCIA"},
 ]);
-const entidades = ref([
-  {_id: "1", nombre: "Banco Demo", tipo: "BANCO"},
-  {_id: "2", nombre: "Efectivo Demo", tipo: "EFECTIVO"},
-]);
+const entidades = ref([]);
 const categorias = ref([
   {_id: "cat1", categoria: "Comida Demo", subcategorias: [{_id: "sub1", subcategoria: "Restaurante Demo"}]},
   {_id: "cat2", categoria: "Transporte Demo", subcategorias: [{_id: "sub2", subcategoria: "Uber Demo"}]},

@@ -85,6 +85,13 @@ const schema = z
           path: ["destinoEntidadId"],
         });
       }
+      if (data.origenEntidadId && data.destinoEntidadId && data.origenEntidadId === data.destinoEntidadId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La cuenta de origen y destino no pueden ser iguales",
+          path: ["destinoEntidadId"],
+        });
+      }
     } else {
       if (!data.entidadId) {
         ctx.addIssue({
@@ -184,14 +191,14 @@ const onFormSubmit = async ({valid, values}) => {
       <div v-if="$form.tipo?.value === 'TRANSFERENCIA'" class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="origen">Origen</label>
-          <Select name="origenEntidadId" :options="entidades" optionLabel="nombre" optionValue="_id" placeholder="Cuenta Origen" fluid />
+          <Select name="origenEntidadId" :options="entidades" optionLabel="label" optionValue="_id" placeholder="Cuenta Origen" fluid />
           <Message v-if="$form.origenEntidadId?.invalid" severity="error" size="small" variant="simple">{{
             $form.origenEntidadId.error?.message
           }}</Message>
         </div>
         <div class="flex flex-col gap-2">
           <label for="destino">Destino</label>
-          <Select name="destinoEntidadId" :options="entidades" optionLabel="nombre" optionValue="_id" placeholder="Cuenta Destino" fluid />
+          <Select name="destinoEntidadId" :options="entidades" optionLabel="label" optionValue="_id" placeholder="Cuenta Destino" fluid />
           <Message v-if="$form.destinoEntidadId?.invalid" severity="error" size="small" variant="simple">{{
             $form.destinoEntidadId.error?.message
           }}</Message>
@@ -199,7 +206,7 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
       <div v-else class="flex flex-col gap-2">
         <label for="entidad">Entidad / Cuenta</label>
-        <Select name="entidadId" :options="entidades" optionLabel="nombre" optionValue="_id" placeholder="Seleccione la cuenta" fluid />
+        <Select name="entidadId" :options="entidades" optionLabel="label" optionValue="_id" placeholder="Seleccione la cuenta" fluid />
         <Message v-if="$form.entidadId?.invalid" severity="error" size="small" variant="simple">{{
           $form.entidadId.error?.message
         }}</Message>
