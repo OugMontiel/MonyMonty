@@ -5,12 +5,21 @@ import {z} from "zod";
 import {useToast} from "primevue/usetoast";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 
-import {useMovimientos} from "../logic/useMovimientos";
-import {useMovimientoOptions, movementTypes} from "../logic/useMovimientoOptions";
+import {useMovimientos} from "../logic/CreateMovimiento";
+import {useMovimientoOptions } from "../logic/OptionsMovimiento";
 
 const toast = useToast();
 const {createMovimiento, loading} = useMovimientos();
-const {entidades, categorias, divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
+const {movementTypes, entidades, categorias, divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
+
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    required: true,
+  },
+});
+
+const emit = defineEmits(["update:visible", "saved"]);
 
 // Initial Values
 const initialValues = ref({
@@ -231,7 +240,7 @@ const onFormSubmit = async ({valid, values}) => {
           <label for="subcategoria">Subcategoría</label>
           <Select
             name="subcategoriaId"
-            :options="subcategorias"
+            :options="categorias?.value?.subcategorias"
             optionLabel="subcategoria"
             optionValue="_id"
             placeholder="Seleccione subcategoría"
