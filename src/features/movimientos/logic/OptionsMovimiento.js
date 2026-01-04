@@ -1,6 +1,7 @@
 import {ref} from "vue";
 import axios from "axios";
 import {_} from "lodash";
+import {useToast} from "primevue/usetoast";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,6 +25,7 @@ const divisas = ref([
 
 export function useMovimientoOptions() {
   const loadingOptions = ref(false);
+  const toast = useToast();
 
   const fetchOptions = async () => {
     loadingOptions.value = true;
@@ -36,15 +38,20 @@ export function useMovimientoOptions() {
         axios.get(`${API_URL}divisa`, {withCredentials: true}),
       ]);
 
-      if (_.isEmpty(entidadesRes.data.data) && _.isEmpty(categoriasRes.data.data) && _.isEmpty(divisasRes.data.data)) {
+      if (_.isEmpty(entidadesRes?.data?.data) && _.isEmpty(categoriasRes?.data?.data) && _.isEmpty(divisasRes?.data?.data)) {
         return;
       } else {
-        entidades.value = entidadesRes.data.data || [];
-        categorias.value = categoriasRes.data.data || [];
-        divisas.value = divisasRes.data.data || [];
+        entidades.value = entidadesRes?.data?.data;
+        categorias.value = categoriasRes?.data?.data;
+        divisas.value = divisasRes?.data?.data;
       }
     } catch (error) {
-      console.error("Error fetching options:", error);
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "No se pudieron cargar las opciones. Por favor recarga la página.",
+        life: 4000,
+      });
     } finally {
       loadingOptions.value = false;
     }

@@ -1,16 +1,28 @@
 <script setup>
-import {ref, watch} from "vue";
+import {ref, watch, onMounted} from "vue";
 import {z} from "zod";
 
 import {useToast} from "primevue/usetoast";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 
 import {useMovimientos} from "../logic/CreateMovimiento";
-import {useMovimientoOptions } from "../logic/OptionsMovimiento";
+import {useMovimientoOptions} from "../logic/OptionsMovimiento";
 
 const toast = useToast();
 const {createMovimiento, loading} = useMovimientos();
 const {movementTypes, entidades, categorias, divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
+
+const subcategories = ref([]);
+
+onMounted(() => {
+  fetchOptions();
+});
+
+const onCategoryChange = (e) => {
+  const selectedCategoryId = e.value;
+  const selectedCategory = categorias.value.find((c) => c._id === selectedCategoryId);
+  subcategories.value = selectedCategory ? selectedCategory.subcategorias : [];
+};
 
 const props = defineProps({
   visible: {
@@ -150,7 +162,11 @@ const onFormSubmit = async ({valid, values}) => {
     :style="{width: '50vw'}"
     :breakpoints="{'960px': '75vw', '641px': '90vw'}"
   >
+    <div v-if="loadingOptions" class="flex justify-center items-center p-8">
+      <ProgressSpinner />
+    </div>
     <Form
+      v-else
       ref="formRef"
       v-slot="$form"
       :resolver="resolver"
@@ -240,7 +256,7 @@ const onFormSubmit = async ({valid, values}) => {
           <label for="subcategoria">Subcategoría</label>
           <Select
             name="subcategoriaId"
-            :options="categorias?.value?.subcategorias"
+            :options="subcategories"
             optionLabel="subcategoria"
             optionValue="_id"
             placeholder="Seleccione subcategoría"
