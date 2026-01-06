@@ -154,7 +154,7 @@ const stats = computed(() => [
             <template #body="slotProps">
               <span v-if="slotProps.data.tipo === 'TRANSFERENCIA'"> Transferencia </span>
               <span v-else>
-                {{ slotProps.data.entidadId }}
+                {{ slotProps.data.entidad?.nombre || slotProps.data.entidadId }}
               </span>
             </template>
           </Column>
@@ -171,8 +171,16 @@ const stats = computed(() => [
             </template>
           </Column>
           <Column field="tipo" header="Tipo" sortable></Column>
-          <Column field="categoriaId" header="Cat" class="hidden md:table-cell"></Column>
-          <Column field="subcategoriaId" header="Sub" class="hidden md:table-cell"></Column>
+          <Column header="Cat" class="hidden md:table-cell">
+            <template #body="slotProps">
+              {{ slotProps.data.categoria?.categoria || "—" }}
+            </template>
+          </Column>
+          <Column header="Sub" class="hidden md:table-cell">
+            <template #body="slotProps">
+              {{ slotProps.data.subcategoria?.subcategoria || "—" }}
+            </template>
+          </Column>
           <Column field="divisaId" header="Div" class="hidden md:table-cell"></Column>
         </DataTable>
       </div>
