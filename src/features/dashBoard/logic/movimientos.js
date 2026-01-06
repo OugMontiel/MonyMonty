@@ -5,17 +5,17 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export function dataMovimientos() {
   const toast = useToast();
-  
+
   const request = async (endpoint) => {
     // lógica aquí
-    try { 
+    try {
       const res = await axios.get(`${API_URL}${endpoint}`, {
         withCredentials: true,
       });
-       if (res.status === 200) {
+      if (res.status === 200) {
         return {...res};
       }
-    } catch(error) {
+    } catch (error) {
       toast.add({
         severity: "error",
         summary: "Error",
@@ -24,10 +24,11 @@ export function dataMovimientos() {
       });
     }
   };
-  const Cars = () => request("movimiento/Dashboard")
-  
+  const Cars = () => request("movimiento/Dashboard");
+  const getAllMovimientos = () => request("movimiento/");
 
   return {
-    Cars
+    Cars,
+    getAllMovimientos,
   };
 }

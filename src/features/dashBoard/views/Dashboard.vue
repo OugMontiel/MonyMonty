@@ -9,7 +9,8 @@ import {dataMovimientos} from "../logic/movimientos.js";
 
 const toast = useToast();
 const router = useRouter();
-const {Cars} = dataMovimientos();
+const {Cars, getAllMovimientos} = dataMovimientos();
+const movimientos = ref([]);
 
 const dataDashBoard = ref({});
 const isLoading = ref(true);
@@ -24,8 +25,10 @@ onMounted(async () => {
   try {
     //funciones
     const {data} = await Cars();
+    const resMovs = await getAllMovimientos();
 
     dataDashBoard.value = data.data;
+    movimientos.value = resMovs.data.data;
   } catch (error) {
     toast.add({
       severity: "error",
@@ -129,6 +132,52 @@ const stats = computed(() => [
           </h2>
         </template>
       </Card>
+    </div>
+
+    <!-- Tabla de Movimientos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="col-span-1 shadow-md bg-white rounded-lg p-4 overflow-hidden">
+        <h3 class="text-xl font-bold mb-4">Últimos Movimientos</h3>
+        <DataTable
+          :value="movimientos"
+          responsiveLayout="scroll"
+          :paginator="true"
+          :rows="5"
+          sortField="fecha"
+          :sortOrder="-1"
+          class="text-sm"
+        >
+          <template #empty>No hay movimientos encontrados.</template>
+          <Column field="referencia" header="Ref" sortable></Column>
+          <Column field="origen" header="Origen" sortable class="hidden sm:table-cell"></Column>
+          <Column header="Entidad">
+            <template #body="slotProps">
+              <span v-if="slotProps.data.tipo === 'TRANSFERENCIA'"> Transferencia </span>
+              <span v-else>
+                {{ slotProps.data.entidadId }}
+              </span>
+            </template>
+          </Column>
+          <Column field="fecha" header="Fecha" sortable>
+            <template #body="slotProps">
+              {{ new Date(slotProps.data.fecha).toLocaleDateString() }}
+            </template>
+          </Column>
+          <Column field="monto" header="Monto" sortable>
+            <template #body="slotProps">
+              <span :class="{'text-red-500': slotProps.data.tipo === 'EGRESO', 'text-green-500': slotProps.data.tipo === 'INGRESO'}">
+                {{ slotProps.data.monto }}
+              </span>
+            </template>
+          </Column>
+          <Column field="tipo" header="Tipo" sortable></Column>
+          <Column field="categoriaId" header="Cat" class="hidden md:table-cell"></Column>
+          <Column field="subcategoriaId" header="Sub" class="hidden md:table-cell"></Column>
+          <Column field="divisaId" header="Div" class="hidden md:table-cell"></Column>
+        </DataTable>
+      </div>
+      <!-- Espacio reservado para la derecha en pantallas grandes -->
+      <div class="hidden lg:block col-span-1"></div>
     </div>
   </div>
 </template>
