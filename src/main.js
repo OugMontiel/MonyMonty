@@ -25,6 +25,14 @@ import Toast from "primevue/toast";
 import AutoComplete from 'primevue/autocomplete';
 import MultiSelect from 'primevue/multiselect';
 import Drawer from 'primevue/drawer';
+import SpeedDial from 'primevue/speeddial';
+import Tooltip from 'primevue/tooltip';
+
+import Dialog from "primevue/dialog";
+import InputNumber from "primevue/inputnumber";
+import Textarea from "primevue/textarea";
+import Select from "primevue/select";
+
 
 const app = createApp(App);
 
@@ -60,5 +68,14 @@ app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
 app.component("MultiSelect", MultiSelect);
 app.component("Drawer", Drawer);
+app.component("SpeedDial", SpeedDial);
+app.component("Tooltip", Tooltip);
+app.component("Dialog", Dialog);
+app.component("InputNumber", InputNumber);
+app.component("Textarea", Textarea);
+app.component("Select", Select);
+
+
+app.directive('tooltip', Tooltip);
 
 app.mount("#app");

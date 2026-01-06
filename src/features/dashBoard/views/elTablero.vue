@@ -3,6 +3,7 @@ import {ref} from "vue";
 
 import HeaderView from "../components/tablero/header.vue";
 import SidebarView from "../components/tablero/sidebar.vue";
+import FloatingMenu from "../../movimientos/components/FloatingMenu.vue";
 
 const drawerRef = ref(null);
 
@@ -32,6 +33,9 @@ const openDrawer = () => {
             <component :is="Component" />
           </keep-alive>
         </router-view>
+        
+        <!-- Floating Action Button -->
+        <FloatingMenu />
       </main>
     </div>
   </div>
