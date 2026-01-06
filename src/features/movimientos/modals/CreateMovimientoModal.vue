@@ -153,7 +153,7 @@ const onFormSubmit = async ({valid, values}) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: err.response?.data?.message || "No se pudo crear el movimiento. Intenta nuevamente.",
+      detail: error.response?.data?.message || "No se pudo crear el movimiento. Intenta nuevamente.",
       life: 4000,
     });
   }
