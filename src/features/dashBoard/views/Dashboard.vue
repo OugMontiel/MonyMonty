@@ -103,9 +103,9 @@ const stats = computed(() => [
 </script>
 
 <template>
-  <div class="w-full px-4 py-6">
+  <div class="w-full px-4 py-6 gap-4 flex flex-col">
     <!-- Grid de las Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- CARDS -->
       <Card v-for="(item, index) in stats" class="cursor-pointer hover:shadow-lg transition-shadow duration-300">
         <template #title>
@@ -136,7 +136,7 @@ const stats = computed(() => [
 
     <!-- Tabla de Movimientos -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="col-span-1 shadow-md bg-white rounded-lg p-4 overflow-hidden">
+      <div class="col-span-1 p-4 overflow-hidden">
         <h3 class="text-xl font-bold mb-4">Últimos Movimientos</h3>
         <DataTable
           :value="movimientos"
