@@ -61,8 +61,8 @@ const schema = z
       titulo: z.string().optional(),
       detalle: z.string().optional(),
     }),
-    categoriaId: z.string().nullable(),
-    subcategoriaId: z.string().nullable(),
+    categoriaId: z.string().optional().nullable(),
+    subcategoriaId: z.string().optional().nullable(),
     tags: z.array(z.string()).optional(),
     divisaId: z.string().nullable(),
     entidadId: z.string().optional().nullable(),
@@ -93,11 +93,26 @@ const schema = z
         });
       }
     } else {
+      // Validaciones para NO TRANSFERENCIA
       if (!data.entidadId) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "La cuenta es obligatoria",
           path: ["entidadId"],
+        });
+      }
+      if (!data.categoriaId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La categoría es obligatoria",
+          path: ["categoriaId"],
+        });
+      }
+      if (!data.subcategoriaId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La subcategoría es obligatoria",
+          path: ["subcategoriaId"],
         });
       }
     }
@@ -132,7 +147,13 @@ const onFormSubmit = async ({valid, values}) => {
 
     // Clean up payload based on type
     if (values.tipo === "TRANSFERENCIA") {
+      payload.transferencia = {
+        origenEntidadId: values.origenEntidadId,
+        destinoEntidadId: values.destinoEntidadId,
+      };
       delete payload.entidadId;
+      delete payload.origenEntidadId;
+      delete payload.destinoEntidadId;
     } else {
       delete payload.origenEntidadId;
       delete payload.destinoEntidadId;
@@ -246,7 +267,7 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Categoría y Subcategoría -->
-      <div class="grid grid-cols-2 gap-4">
+      <div v-if="$form.tipo?.value !== 'TRANSFERENCIA'" class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="categoria">Categoría</label>
           <Select
@@ -258,6 +279,9 @@ const onFormSubmit = async ({valid, values}) => {
             fluid
             @change="onCategoryChange"
           />
+          <Message v-if="$form.categoriaId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.categoriaId.error?.message
+          }}</Message>
         </div>
         <div class="flex flex-col gap-2">
           <label for="subcategoria">Subcategoría</label>
@@ -269,11 +293,14 @@ const onFormSubmit = async ({valid, values}) => {
             placeholder="Seleccione subcategoría"
             fluid
           />
+          <Message v-if="$form.subcategoriaId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.subcategoriaId.error?.message
+          }}</Message>
         </div>
       </div>
 
       <!-- Tags -->
-      <div class="flex flex-col gap-2">
+      <div v-if="$form.tipo?.value !== 'TRANSFERENCIA'" class="flex flex-col gap-2">
         <label for="tags">Etiquetas</label>
         <AutoComplete name="tags" multiple :typeahead="false" fluid />
       </div>
