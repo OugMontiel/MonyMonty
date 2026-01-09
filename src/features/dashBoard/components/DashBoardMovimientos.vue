@@ -1,11 +1,25 @@
 <script setup>
+import {ref, onMounted} from "vue";
+import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
+import {dataMovimientos} from "../../logic/movimientos.js";
 
-defineProps({
-  movimientos: {
-    type: Array,
-    default: () => [],
-  },
+const toast = useToast();
+const {getAllMovimientos} = dataMovimientos();
+const movimientos = ref([]);
+
+onMounted(async () => {
+  try {
+    const resMovs = await getAllMovimientos();
+    movimientos.value = resMovs.data.data;
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo cargar los movimientos.",
+      life: 4000,
+    });
+  }
 });
 
 const verMovimiento = (data) => {

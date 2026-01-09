@@ -1,16 +1,64 @@
 <script setup>
+import {ref, onMounted, computed} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
+import {dataMovimientos} from "../../logic/movimientos.js";
 
-defineProps({
-  stats: {
-    type: Array,
-    required: true,
-  },
-  isLoading: {
-    type: Boolean,
-    default: false,
-  },
+const toast = useToast();
+const router = useRouter();
+const {Cars} = dataMovimientos();
+const dataDashBoard = ref({});
+const isLoading = ref(true);
+
+//redireciones
+const redirectToIngresos = () => router.push({name: "Ingresos"});
+const redirectToEgresos = () => router.push({name: "Egresos"});
+const redirectToMovimientos = () => router.push({name: "Movimientos"});
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    const {data} = await Cars();
+    dataDashBoard.value = data.data;
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Error de conexión",
+      detail: "Inténtalo de nuevo cargar el DasBoard.",
+      life: 4000,
+    });
+  } finally {
+    isLoading.value = false;
+  }
 });
+
+const stats = computed(() => [
+  {
+    label: "Total ingresado",
+    value: dataDashBoard.value.totalIngresado,
+    icon: "ion:cash-outline",
+    redirect: redirectToIngresos,
+  },
+  {
+    label: "Último movimiento",
+    value: dataDashBoard.value.ultimoMovimientos,
+    icon: "ion:time-outline",
+    redirect: redirectToMovimientos,
+  },
+  {
+    label: "Total gastado",
+    value: dataDashBoard.value.totalEgresado,
+    icon: "ion:trending-down-outline",
+    redirect: redirectToEgresos,
+  },
+  {
+    label: "Disponible",
+    value: dataDashBoard.value.totalDisponible,
+    icon: "ion:wallet-outline",
+    redirect: null,
+  },
+]);
 </script>
 
 <template>
