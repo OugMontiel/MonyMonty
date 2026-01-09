@@ -12,9 +12,28 @@ const dataDashBoard = ref({});
 const isLoading = ref(true);
 
 //redireciones
-const redirectToIngresos = () => router.push({name: "Ingresos"});
-const redirectToEgresos = () => router.push({name: "Egresos"});
-const redirectToMovimientos = () => router.push({name: "Movimientos"});
+//redireciones
+const redirectToIngresos = () =>
+  toast.add({
+    severity: "info",
+    summary: "En desarrollo",
+    detail: "Próximamente sección de Ingresos.",
+    life: 3000,
+  });
+const redirectToEgresos = () =>
+  toast.add({
+    severity: "info",
+    summary: "En desarrollo",
+    detail: "Próximamente sección de Egresos.",
+    life: 3000,
+  });
+const redirectToMovimientos = () =>
+  toast.add({
+    severity: "info",
+    summary: "En desarrollo",
+    detail: "Próximamente vista detallada de Movimientos.",
+    life: 3000,
+  });
 
 onMounted(async () => {
   isLoading.value = true;

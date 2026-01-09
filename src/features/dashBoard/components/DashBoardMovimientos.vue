@@ -23,15 +23,30 @@ onMounted(async () => {
 });
 
 const verMovimiento = (data) => {
-  console.log("Ver movimiento", data);
+  toast.add({
+    severity: "info",
+    summary: "En desarrollo",
+    detail: "Funcionalidad para ver el movimiento ",
+    life: 3000,
+  });
 };
 
 const editarMovimiento = (data) => {
-  console.log("Editar movimiento", data);
+  toast.add({
+    severity: "info",
+    summary: "En desarrollo",
+    detail: "Funcionalidad para editar el movimiento ",
+    life: 3000,
+  });
 };
 
 const eliminarMovimiento = (data) => {
-  console.log("Eliminar movimiento", data);
+  toast.add({
+    severity: "info",
+    summary: "En desarrollo",
+    detail: "Funcionalidad para eliminar el movimiento .",
+    life: 3000,
+  });
 };
 </script>
 
