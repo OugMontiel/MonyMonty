@@ -146,15 +146,16 @@ const stats = computed(() => [
           sortField="fecha"
           :sortOrder="-1"
           class="text-sm"
+          :rowClass="(data) => ({'bg-red-50': data.tipo === 'EGRESO', 'bg-green-50': data.tipo === 'INGRESO'})"
         >
           <template #empty>No hay movimientos encontrados.</template>
           <Column field="referencia" header="Ref" sortable></Column>
-          <Column field="origen" header="Origen" sortable class="hidden sm:table-cell"></Column>
           <Column header="Entidad">
             <template #body="slotProps">
               <span v-if="slotProps.data.tipo === 'TRANSFERENCIA'"> Transferencia </span>
               <span v-else>
-                {{ slotProps.data.entidad?.nombre || slotProps.data.entidadId }}
+                {{ slotProps.data.entidad?.nombre}}
+                <span v-if="slotProps.data.entidad?.numero" class="text-xs text-gray-500"> - {{ slotProps.data.entidad.numero }} </span>
               </span>
             </template>
           </Column>
@@ -165,12 +166,16 @@ const stats = computed(() => [
           </Column>
           <Column field="monto" header="Monto" sortable>
             <template #body="slotProps">
-              <span :class="{'text-red-500': slotProps.data.tipo === 'EGRESO', 'text-green-500': slotProps.data.tipo === 'INGRESO'}">
-                {{ slotProps.data.monto }}
+              <span
+                :class="{
+                  'text-red-600 font-bold': slotProps.data.tipo === 'EGRESO',
+                  'text-green-600 font-bold': slotProps.data.tipo === 'INGRESO',
+                }"
+              >
+                {{ slotProps.data.monto }} {{ slotProps.data.divisaId }}
               </span>
             </template>
           </Column>
-          <Column field="tipo" header="Tipo" sortable></Column>
           <Column header="Cat" class="hidden md:table-cell">
             <template #body="slotProps">
               {{ slotProps.data.categoria?.categoria || "—" }}
@@ -181,7 +186,6 @@ const stats = computed(() => [
               {{ slotProps.data.subcategoria?.subcategoria || "—" }}
             </template>
           </Column>
-          <Column field="divisaId" header="Div" class="hidden md:table-cell"></Column>
         </DataTable>
       </div>
       <!-- Espacio reservado para la derecha en pantallas grandes -->
