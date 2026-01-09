@@ -1,10 +1,24 @@
 <script setup>
+import {Icon} from "@iconify/vue";
+
 defineProps({
   movimientos: {
     type: Array,
     default: () => [],
   },
 });
+
+const verMovimiento = (data) => {
+  console.log("Ver movimiento", data);
+};
+
+const editarMovimiento = (data) => {
+  console.log("Editar movimiento", data);
+};
+
+const eliminarMovimiento = (data) => {
+  console.log("Eliminar movimiento", data);
+};
 </script>
 
 <template>
@@ -66,6 +80,28 @@ defineProps({
               <span class="text-xs text-gray-400">
                 {{ new Date(data.fecha).toLocaleDateString() }}
               </span>
+            </div>
+          </template>
+        </Column>
+
+        <Column header="Acciones" class="text-center w-[8rem]">
+          <template #body="{data}">
+            <div class="flex justify-center gap-3">
+              <Icon
+                icon="ion:eye-outline"
+                class="w-6 h-6 cursor-pointer hover:text-blue-700 transition-colors"
+                @click="verMovimiento(data)"
+              />
+              <Icon
+                icon="ion:create-outline"
+                class="w-6 h-6 cursor-pointer hover:text-yellow-700 transition-colors"
+                @click="editarMovimiento(data)"
+              />
+              <Icon
+                icon="ion:trash-outline"
+                class="w-6 h-6 cursor-pointer hover:text-red-700 transition-colors"
+                @click="eliminarMovimiento(data)"
+              />
             </div>
           </template>
         </Column>
