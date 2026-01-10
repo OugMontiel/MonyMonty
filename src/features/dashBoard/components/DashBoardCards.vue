@@ -3,7 +3,7 @@ import {ref, onMounted, computed} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
-import {dataMovimientos} from "../../logic/movimientos.js";
+import {dataMovimientos} from "../logic/movimientos.js";
 
 const toast = useToast();
 const router = useRouter();

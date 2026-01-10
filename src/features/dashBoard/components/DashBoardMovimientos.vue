@@ -2,16 +2,29 @@
 import {ref, onMounted} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
-import {dataMovimientos} from "../../logic/movimientos.js";
+import {dataMovimientos} from "../logic/movimientos.js";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
 const movimientos = ref([]);
+const loading = ref(false);
+const totalRecords = ref(0);
+const lazyParams = ref({
+  page: 0,
+  rows: 10,
+});
 
-onMounted(async () => {
+const loadMovimientos = async () => {
+  loading.value = true;
   try {
-    const resMovs = await getAllMovimientos();
-    movimientos.value = resMovs.data.data;
+    const page = lazyParams.value.page + 1; // PrimeVue paginator is 0-indexed
+    const limit = lazyParams.value.rows;
+    const resMovs = await getAllMovimientos(page, limit);
+
+    // The backend now returns { data: [], total: number, page: number, ... }
+    // inside resMovs.data.data
+    movimientos.value = resMovs.data.data.data;
+    totalRecords.value = resMovs.data.data.total;
   } catch (error) {
     toast.add({
       severity: "error",
@@ -19,7 +32,18 @@ onMounted(async () => {
       detail: "Inténtalo de nuevo cargar los movimientos.",
       life: 4000,
     });
+  } finally {
+    loading.value = false;
   }
+};
+
+const onPage = (event) => {
+  lazyParams.value = event;
+  loadMovimientos();
+};
+
+onMounted(() => {
+  loadMovimientos();
 });
 
 const verMovimiento = (data) => {
@@ -61,11 +85,13 @@ const eliminarMovimiento = (data) => {
       </div>
       <DataTable
         :value="movimientos"
-        responsiveLayout="scroll"
+        :lazy="true"
         :paginator="true"
-        :rows="10"
-        sortField="fecha"
-        :sortOrder="-1"
+        :rows="lazyParams.rows"
+        :totalRecords="totalRecords"
+        :loading="loading"
+        @page="onPage"
+        responsiveLayout="scroll"
         class="text-sm bg-transparent"
         :rowClass="
           (data) => [
@@ -92,8 +118,8 @@ const eliminarMovimiento = (data) => {
                 {{ data.entidad?.nombre || "Transferencia" }}
               </span>
               <span class="text-xs text-gray-500">
-                {{ data.categoria?.categoria }} ·
-                {{ data.subcategoria?.subcategoria || "—" }}
+                {{ data.categoria?.categoria }} · {{ data.subcategoria?.subcategoria }} ·
+                {{ data.concepto?.titulo }}
               </span>
             </div>
           </template>
