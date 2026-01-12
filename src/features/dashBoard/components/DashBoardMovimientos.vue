@@ -125,9 +125,9 @@ const eliminarMovimiento = (data) => {
           </template>
         </Column>
 
-        <Column header="Monto" class="text-right" sortable field="fecha">
+        <Column header="Monto" class="text-center" sortable field="fecha">
           <template #body="{data}">
-            <div class="flex flex-col items-end">
+            <div class="flex flex-col items-center">
               <span class="text-lg font-bold" :class="data.tipo === 'EGRESO' ? 'text-red-600' : 'text-green-600'">
                 {{ data.tipo === "EGRESO" ? "-" : "+" }}
                 {{ data.monto.toLocaleString() }} {{ data.divisaId }}
@@ -139,24 +139,31 @@ const eliminarMovimiento = (data) => {
           </template>
         </Column>
 
-        <Column header="Acciones" class="text-center w-[8rem]">
+        <Column header="Acciones" class="text-center">
           <template #body="{data}">
-            <div class="flex justify-center gap-3">
-              <Icon
-                icon="ion:eye-outline"
-                class="w-6 h-6 cursor-pointer hover:text-blue-700 transition-colors"
-                @click="verMovimiento(data)"
-              />
-              <Icon
-                icon="ion:create-outline"
-                class="w-6 h-6 cursor-pointer hover:text-yellow-700 transition-colors"
-                @click="editarMovimiento(data)"
-              />
-              <Icon
-                icon="ion:trash-outline"
-                class="w-6 h-6 cursor-pointer hover:text-red-700 transition-colors"
-                @click="eliminarMovimiento(data)"
-              />
+            <div class="flex justify-center gap-2">
+              <!-- Card para Editar y Ver -->
+              <div class="flex gap-2 bg-gray-50 border border-gray-100 rounded-md p-1.5 shadow-sm">
+                <Icon
+                  icon="ion:eye-outline"
+                  class="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-700 transition-colors"
+                  @click="verMovimiento(data)"
+                />
+                <Icon
+                  icon="ion:create-outline"
+                  class="w-5 h-5 cursor-pointer text-gray-600 hover:text-yellow-700 transition-colors"
+                  @click="editarMovimiento(data)"
+                />
+              </div>
+
+              <!-- Card para Eliminar -->
+              <div class="flex bg-red-50 border border-red-100 rounded-md p-1.5 shadow-sm">
+                <Icon
+                  icon="ion:trash-outline"
+                  class="w-5 h-5 cursor-pointer text-red-500 hover:text-red-700 transition-colors"
+                  @click="eliminarMovimiento(data)"
+                />
+              </div>
             </div>
           </template>
         </Column>
