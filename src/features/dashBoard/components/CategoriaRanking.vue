@@ -73,150 +73,155 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="categoria-ranking w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-    <!-- Header -->
-    <div class="mb-6 flex items-baseline justify-between">
-      <h2 class="text-xl font-bold text-gray-900">Gastos por categoría</h2>
-    </div>
+  <Card class="categoria-ranking shadow-sm border-0 bg-white overflow-hidden">
+    <template #title>
+      <div class="flex items-center gap-2 text-xl font-bold text-gray-900 border-b border-gray-100 pb-4 mb-4">
+        <i class="pi pi-chart-bar text-blue-500"></i>
+        Gastos por categoría
+      </div>
+    </template>
 
-    <!-- Loading state -->
-    <div v-if="loading" class="flex justify-center py-8">
-      <div class="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
-    </div>
+    <template #content>
+      <!-- Loading state with Skeleton -->
+      <div v-if="loading" class="space-y-6">
+        <div v-for="i in 3" :key="i" class="p-4 rounded-lg border border-gray-50">
+          <div class="flex justify-between mb-4">
+            <div class="flex gap-3">
+              <Skeleton shape="circle" size="3rem" />
+              <div class="space-y-2">
+                <Skeleton width="8rem" height="1.2rem" />
+                <Skeleton width="4rem" height="0.8rem" />
+              </div>
+            </div>
+            <Skeleton width="6rem" height="2rem" />
+          </div>
+          <Skeleton width="100%" height="0.5rem" />
+        </div>
+      </div>
 
-    <!-- Ranking List -->
-    <div v-else class="space-y-4">
-      <div
-        v-for="(categoria, index) in categoriaData"
-        :key="index"
-        class="group relative cursor-pointer rounded-lg border border-gray-100 p-4 transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:shadow-md"
-        :class="{'border-blue-300 bg-blue-50': activeCategoryIndex === index}"
-        @click="toggleCategoria(index)"
-      >
-        <!-- Contenedor Principal -->
-        <div class="space-y-3">
-          <!-- Fila 1: Categoría y Monto -->
-          <div class="flex items-start justify-between">
-            <div class="flex items-center gap-3">
-              <!-- Nombre categoría y porcentaje -->
-              <div>
-                <h3 class="font-semibold text-gray-900">{{ categoria.labelCategoria }}</h3>
+      <!-- Ranking List -->
+      <div v-else-if="categoriaData.length > 0" class="space-y-4">
+        <div
+          v-for="(categoria, index) in categoriaData"
+          :key="index"
+          class="group relative cursor-pointer rounded-xl border border-gray-100 p-4 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50/50 hover:shadow-lg"
+          :class="{'border-blue-300 bg-blue-50 ring-1 ring-blue-100': activeCategoryIndex === index}"
+          @click="toggleCategoria(index)"
+        >
+          <!-- Contenedor Principal -->
+          <div class="space-y-4">
+            <!-- Fila 1: Categoría y Monto -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <!-- Icono/Emoji con Estilo Premium -->
+                <div
+                  class="flex h-12 w-12 items-center justify-center rounded-xl shadow-inner transition-transform group-hover:scale-110"
+                  :style="{
+                    background: `linear-gradient(135deg, ${categoria.colorCategoria || '#3B82F6'}20, ${categoria.colorCategoria || '#60A5FA'}40)`,
+                    color: categoria.colorCategoria || '#3B82F6',
+                  }"
+                >
+                  <span class="text-2xl drop-shadow-sm">{{ categoria.iconoCategoria || "📊" }}</span>
+                </div>
+
+                <div>
+                  <h3 class="font-bold text-gray-800 text-lg leading-tight">{{ categoria.labelCategoria }}</h3>
+                  <span class="text-xs font-medium text-gray-500 uppercase tracking-widest">Distribución mensual</span>
+                </div>
+              </div>
+
+              <!-- Monto y Porcentaje -->
+              <div class="text-right">
+                <p class="text-xl font-black text-gray-900 leading-none mb-1">
+                  {{ formatearMoneda(categoria.montoCategoria) }}
+                </p>
+                <Tag :value="`${categoria.porcentajeCategoria}%`" severity="info" rounded class="font-bold text-xs" />
               </div>
             </div>
 
-            <!-- Monto y Porcentaje -->
-            <div class="text-right">
-              <p class="text-lg font-bold text-gray-900">
-                {{ formatearMoneda(categoria.montoCategoria) }}
-              </p>
-              <p class="text-sm font-semibold text-blue-600">{{ categoria.porcentajeCategoria }}%</p>
-            </div>
-          </div>
-
-          <!-- Fila 2: Barra proporcional -->
-          <div class="space-y-1">
-            <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-              <div
-                class="h-full rounded-full transition-all duration-300"
+            <!-- Fila 2: Barra proporcional con PrimeVue ProgressBar -->
+            <div class="space-y-1">
+              <ProgressBar
+                :value="categoria.porcentajeCategoria"
+                :showValue="false"
+                class="premium-progress"
                 :style="{
-                  width: `${categoria.porcentajeCategoria}%`,
-                  background: `linear-gradient(90deg, ${getCategoryColor(categoria.labelCategoria).start}, ${getCategoryColor(categoria.labelCategoria).end})`,
+                  '--p-progressbar-value-background': `linear-gradient(90deg, ${categoria.colorCategoria || '#3B82F6'}, ${categoria.colorCategoria || '#60A5FA'})`,
                 }"
-              ></div>
+              />
             </div>
-          </div>
 
-          <!-- Fila 3: Top subcategorías (Expandible) -->
-          <div v-if="activeCategoryIndex === index" class="mt-4 border-t border-blue-100 pt-3">
-            <p class="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Subcategorías más destacadas</p>
-            <div class="space-y-2">
+            <!-- Fila 3: Top subcategorías (Expandible) -->
+            <transition name="p-transition-fade">
               <div
-                v-for="sub in categoria.subcategorias"
-                :key="sub.subcategoriaId"
-                class="flex items-center justify-between rounded-md bg-white p-2 text-sm shadow-sm"
+                v-if="activeCategoryIndex === index"
+                class="mt-4 border-t border-blue-100 pt-4 animate-in slide-in-from-top-2 duration-300"
               >
-                <span class="font-medium text-gray-700">{{ sub.labelSubcategoria }}</span>
-                <span class="font-bold text-gray-900">{{ formatearMoneda(sub.montoSubcategoria) }}</span>
+                <div class="flex items-center gap-2 mb-3">
+                  <i class="pi pi-list-check text-blue-400 text-xs"></i>
+                  <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Detalle de subcategorías</p>
+                </div>
+                <div class="grid gap-2">
+                  <div
+                    v-for="sub in categoria.subcategorias"
+                    :key="sub.subcategoriaId"
+                    class="flex items-center justify-between rounded-xl bg-white p-3 text-sm border border-gray-50 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div class="flex items-center gap-2">
+                      <div class="h-1.5 w-1.5 rounded-full bg-blue-300"></div>
+                      <span class="font-semibold text-gray-600">{{ sub.labelSubcategoria }}</span>
+                    </div>
+                    <span class="font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded-lg">{{
+                      formatearMoneda(sub.montoSubcategoria)
+                    }}</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </transition>
           </div>
         </div>
-
-        <!-- Efecto hover (border animado) -->
-        <div
-          class="absolute inset-0 rounded-lg border-2 border-transparent transition-colors duration-200 group-hover:border-blue-300"
-        ></div>
       </div>
-    </div>
 
-    <!-- Empty state -->
-    <div v-if="!loading && categoriaData.length === 0" class="py-8 text-center">
-      <p class="text-gray-500">No hay datos de gastos disponibles</p>
-    </div>
-  </div>
+      <!-- Empty state -->
+      <div v-else class="py-12 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+        <i class="pi pi-chart-line text-4xl text-gray-300 mb-3"></i>
+        <p class="text-gray-500 font-medium">No hay datos de gastos disponibles para este mes</p>
+      </div>
+    </template>
+  </Card>
 </template>
 
-<script>
-// Funciones helper
-const getCategoryEmoji = (categoria) => {
-  const emojis = {
-    Alimentación: "🍔",
-    Transporte: "🚗",
-    Entretenimiento: "🎬",
-    Salud: "🏥",
-    Educación: "📚",
-    Vivienda: "🏠",
-    Servicios: "💡",
-    Compras: "🛍️",
-    Deportes: "⚽",
-    Mascotas: "🐕",
-    Viajes: "✈️",
-    Dinero: "💰",
-  };
-  return emojis[categoria] || "📊";
-};
-
-const getCategoryColor = (categoria) => {
-  const colors = {
-    Alimentación: {start: "#FF6B6B", end: "#FF8E8E"},
-    Transporte: {start: "#4ECDC4", end: "#6FD9D0"},
-    Entretenimiento: {start: "#FFD93D", end: "#FFEB6F"},
-    Salud: {start: "#6BCB77", end: "#8FD995"},
-    Educación: {start: "#4D96FF", end: "#7DB9FF"},
-    Vivienda: {start: "#A566FF", end: "#C9A3FF"},
-    Servicios: {start: "#FF6B9D", end: "#FF91B9"},
-    Compras: {start: "#FF9FF3", end: "#FFB8FA"},
-    Deportes: {start: "#FFB86C", end: "#FFCB9A"},
-    Mascotas: {start: "#FF6B9D", end: "#FF91B9"},
-    Viajes: {start: "#FF6B6B", end: "#FF8E8E"},
-    Dinero: {start: "#F4D03F", end: "#F6D66F"},
-  };
-  return colors[categoria] || {start: "#95B8FF", end: "#B8D4FF"};
-};
-</script>
-
 <style scoped>
-.categoria-ranking {
-  transition: all 0.3s ease;
+.categoria-ranking :deep(.p-card-body) {
+  padding: 1.5rem;
 }
 
-.categoria-ranking:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.premium-progress {
+  height: 8px !important;
+  background-color: #f3f4f6 !important;
+  border-radius: 999px !important;
+  overflow: hidden;
 }
 
-/* Smooth animations */
-@keyframes fadeIn {
+.premium-progress :deep(.p-progressbar-value) {
+  background: var(--p-progressbar-value-background);
+  border-radius: 999px !important;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Animations */
+.animate-in {
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.categoria-ranking > div {
-  animation: fadeIn 0.3s ease;
 }
 </style>
