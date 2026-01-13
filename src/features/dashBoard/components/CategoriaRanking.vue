@@ -4,24 +4,14 @@ import {dataMovimientos} from "../logic/movimientos.js";
 
 const {getRankingCategorias} = dataMovimientos();
 
+// PrimeVue Toast
+import {useToast} from "primevue/usetoast";
+const toast = useToast();
+
 // Estado
 const categoriaData = ref([]);
 const loading = ref(true);
-const selectedCategory = ref(null);
-const tooltip = ref({show: false, x: 0, y: 0, data: null});
-
-// Datos del mes actual y mes anterior
-const currentMonth = ref(new Date());
-const previousMonth = computed(() => {
-  const prev = new Date(currentMonth.value);
-  prev.setMonth(prev.getMonth() - 1);
-  return prev;
-});
-
-// Calcular total de gastos
-const totalGastos = computed(() => {
-  return categoriaData.value.reduce((sum, cat) => sum + (cat.montoCategoria || 0), 0);
-});
+const activeCategoryIndex = ref(null);
 
 // Cargar datos
 const loadData = async () => {
@@ -40,47 +30,31 @@ const loadData = async () => {
   }
 };
 
-// Calcular porcentaje
-const calcularPorcentaje = (monto) => {
-  if (totalGastos.value === 0) return 0;
-  return Math.round((monto / totalGastos.value) * 100);
-};
-
-// Tendencia (Removida a petición del usuario ya que no se requiere el saldo del mes anterior)
-const tendencia = (categoria) => {
-  return {porcentaje: 0, tipo: "neutral"};
-};
-
 // Top subcategorías (vienen del backend, solo se muestran)
 const getTopSubcategorias = (subcategorias, limit = 3) => {
   if (!subcategorias) return [];
   return subcategorias.slice(0, limit);
 };
 
-// Mostrar tooltip
-const mostrarTooltip = (event, categoria) => {
-  const rect = event.target.getBoundingClientRect();
-  tooltip.value = {
-    show: true,
-    x: rect.left,
-    y: rect.top - 10,
-    data: {
-      labelCategoria: categoria.labelCategoria,
-      subcategorias: getTopSubcategorias(categoria.subcategorias, 5),
-    },
-  };
+// Mostrar subcategorías (inline expansion)
+const toggleCategoria = (index) => {
+  if (activeCategoryIndex.value === index) {
+    activeCategoryIndex.value = null;
+  } else {
+    activeCategoryIndex.value = index;
+    irAAnalisis(categoriaData.value[index]);
+  }
 };
 
-// Ocultar tooltip
-const ocultarTooltip = () => {
-  tooltip.value.show = false;
-};
-
-// Navegar a vista de análisis
+// Navegar a vista de análisis (con Toast)
 const irAAnalisis = (categoria) => {
-  selectedCategory.value = categoria;
-  // Implementar navegación a vista de análisis
-  console.log("Navegar a análisis de:", categoria);
+  toast.add({
+    severity: "info",
+    summary: "Análisis de Categoría",
+    detail: `Explorando detalles de ${categoria.labelCategoria}`,
+    life: 3000,
+  });
+  console.log("Análisis de:", categoria);
 };
 
 // Formatear moneda
@@ -102,13 +76,7 @@ onMounted(() => {
   <div class="categoria-ranking w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
     <!-- Header -->
     <div class="mb-6 flex items-baseline justify-between">
-      <h2 class="text-xl font-bold text-gray-900">📊 Gastos por categoría (mes actual)</h2>
-      <div class="text-right">
-        <p class="text-sm text-gray-600">Total</p>
-        <p class="text-2xl font-bold text-gray-900">
-          {{ formatearMoneda(totalGastos) }}
-        </p>
-      </div>
+      <h2 class="text-xl font-bold text-gray-900">Gastos por categoría</h2>
     </div>
 
     <!-- Loading state -->
@@ -121,10 +89,9 @@ onMounted(() => {
       <div
         v-for="(categoria, index) in categoriaData"
         :key="index"
-        class="group relative rounded-lg border border-gray-100 p-4 transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:shadow-md"
-        @mouseenter="mostrarTooltip($event, categoria)"
-        @mouseleave="ocultarTooltip"
-        @click="irAAnalisis(categoria)"
+        class="group relative cursor-pointer rounded-lg border border-gray-100 p-4 transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:shadow-md"
+        :class="{'border-blue-300 bg-blue-50': activeCategoryIndex === index}"
+        @click="toggleCategoria(index)"
       >
         <!-- Contenedor Principal -->
         <div class="space-y-3">
@@ -142,7 +109,7 @@ onMounted(() => {
               <p class="text-lg font-bold text-gray-900">
                 {{ formatearMoneda(categoria.montoCategoria) }}
               </p>
-              <p class="text-sm font-semibold text-blue-600">{{ calcularPorcentaje(categoria.montoCategoria) }}%</p>
+              <p class="text-sm font-semibold text-blue-600">{{ categoria.porcentajeCategoria }}%</p>
             </div>
           </div>
 
@@ -152,23 +119,24 @@ onMounted(() => {
               <div
                 class="h-full rounded-full transition-all duration-300"
                 :style="{
-                  width: `${calcularPorcentaje(categoria.montoCategoria)}%`,
+                  width: `${categoria.porcentajeCategoria}%`,
                   background: `linear-gradient(90deg, ${getCategoryColor(categoria.labelCategoria).start}, ${getCategoryColor(categoria.labelCategoria).end})`,
                 }"
               ></div>
             </div>
           </div>
 
-          <!-- Fila 3: Top subcategorías -->
-          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <!-- Top subcategorías -->
-            <div class="flex flex-wrap gap-2">
+          <!-- Fila 3: Top subcategorías (Expandible) -->
+          <div v-if="activeCategoryIndex === index" class="mt-4 border-t border-blue-100 pt-3">
+            <p class="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Subcategorías más destacadas</p>
+            <div class="space-y-2">
               <div
-                v-for="sub in getTopSubcategorias(categoria.subcategorias)"
+                v-for="sub in categoria.subcategorias"
                 :key="sub.subcategoriaId"
-                class="rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 transition-colors group-hover:bg-gray-200"
+                class="flex items-center justify-between rounded-md bg-white p-2 text-sm shadow-sm"
               >
-                {{ sub.labelSubcategoria }}
+                <span class="font-medium text-gray-700">{{ sub.labelSubcategoria }}</span>
+                <span class="font-bold text-gray-900">{{ formatearMoneda(sub.montoSubcategoria) }}</span>
               </div>
             </div>
           </div>
@@ -184,31 +152,6 @@ onMounted(() => {
     <!-- Empty state -->
     <div v-if="!loading && categoriaData.length === 0" class="py-8 text-center">
       <p class="text-gray-500">No hay datos de gastos disponibles</p>
-    </div>
-  </div>
-
-  <!-- Tooltip -->
-  <div
-    v-if="tooltip.show && tooltip.data"
-    class="fixed z-50 rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
-    :style="{
-      left: `${tooltip.x}px`,
-      top: `${tooltip.y}px`,
-      transform: 'translateY(-100%) translateX(-50%)',
-    }"
-  >
-    <div class="min-w-64 space-y-2">
-      <h4 class="font-bold text-gray-900">{{ tooltip.data.labelCategoria }}</h4>
-
-      <div v-if="tooltip.data.subcategorias.length > 0" class="border-t border-gray-200 pt-2">
-        <p class="mb-2 text-xs font-semibold text-gray-700">Subcategorías</p>
-        <div class="space-y-1">
-          <div v-for="sub in tooltip.data.subcategorias" :key="sub.subcategoriaId" class="flex justify-between text-xs text-gray-600">
-            <span>{{ sub.labelSubcategoria }}</span>
-            <span class="font-medium">{{ formatearMoneda(sub.montoSubcategoria) }}</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
