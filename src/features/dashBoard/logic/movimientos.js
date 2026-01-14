@@ -25,10 +25,12 @@ export function dataMovimientos() {
     }
   };
   const Cars = () => request("movimiento/Dashboard");
+  const getRankingCategorias = () => request("movimiento/ranking");
   const getAllMovimientos = (page = 1, limit = 10) => request(`movimiento/?page=${page}&limit=${limit}`);
 
   return {
     Cars,
+    getRankingCategorias,
     getAllMovimientos,
   };
 }
