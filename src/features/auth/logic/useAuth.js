@@ -49,25 +49,6 @@ export function useAuth() {
     }
   }
 
-  // Logout
-  async function logout() {
-    loading.value = true;
-    try {
-      await axios.get(
-        `${API_URL}auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-    } catch (error) {
-      console.error("Error en logout:", error);
-    } finally {
-      isAuthenticated.value = false;
-      loading.value = false;
-    }
-  }
-
   // CrearUsuario
   async function CrearUsuario(userData) {
     loading.value = true;
@@ -133,7 +114,6 @@ export function useAuth() {
 
   // Cambio de clave
   async function CambiodeClave(credentials) {
-    console.log("credentials", credentials);
     loading.value = true;
     try {
       const response = await axios.post(`${API_URL}auth/updatePassword`, credentials, {
@@ -152,6 +132,20 @@ export function useAuth() {
       loading.value = false;
     }
   }
+  // Logout
+  async function logout() {
+    loading.value = true;
+    try {
+      await axios.get(`${API_URL}auth/logout`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Error en logout:", error);
+    } finally {
+      isAuthenticated.value = false;
+      loading.value = false;
+    }
+  }
 
   return {
     // Estado
@@ -161,10 +155,10 @@ export function useAuth() {
     // Métodos
     checkAuth,
     login,
-    logout,
     CrearUsuario,
     recuperarCuenta,
     verificacionTocken,
     CambiodeClave,
+    logout,
   };
 }

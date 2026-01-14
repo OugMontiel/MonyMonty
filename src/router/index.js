@@ -4,9 +4,13 @@ import {useAuth} from "../features/auth/logic/useAuth.js";
 import login from "../features/auth/views/LoginView.vue";
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
-import CambioDeClave from "../features/auth/views/CambioDeClave.vue"; 
+import CambioDeClave from "../features/auth/views/CambioDeClave.vue";
 
+// layaut 
 import elTablero from "../features/dashBoard/views/elTablero.vue";
+
+//rutas base 
+import Dashboard from "../features/dashBoard/views/Dashboard.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,35 +60,31 @@ const router = createRouter({
       name: "HomeTablero",
       component: elTablero,
       meta: {requiresAuth: true},
+      children: [
+        {
+          path: "",
+          name: "DashboardView",
+          component: Dashboard,
+        },
+      ],
     },
   ],
 });
 
 // Guard de navegación optimizado
-router.beforeEach(async (to, from, next) => {
-  const {checkAuth, isAuthenticated} = useAuth();
+router.beforeEach(async (to, from) => {
+  const {checkAuth} = useAuth();
 
   // Verificar si la ruta necesita autenticación (por defeczto sí)
   const requiresAuth = to.meta.requiresAuth !== false;
+  const authValid = await checkAuth();
 
-  if (requiresAuth) {
-    // Verificar autenticación solo si no sabemos el estado actual
-    if (!isAuthenticated.value) {
-      const authValid = await checkAuth();
-      if (!authValid) {
-        next("/");
-        return;
-      }
-    }
-    next();
-  } else {
-    // Ruta pública
-    // Si está autenticado y va al login, redirigir al tablero
-    if (to.path === "/" && isAuthenticated.value) {
-      next("/tablero");
-      return;
-    }
-    next();
+  if (requiresAuth && !authValid) {
+    return {name: "Login"};
+  }
+
+  if (to.name === "Login" && authValid) {
+    return {name: "HomeTablero"};
   }
 });
 
