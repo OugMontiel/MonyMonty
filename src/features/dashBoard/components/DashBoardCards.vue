@@ -11,7 +11,18 @@ const {Cars} = dataMovimientos();
 const dataDashBoard = ref({});
 const isLoading = ref(true);
 
-//redireciones
+// Formatear moneda
+const formatearMoneda = (valor) => {
+  if (valor === undefined || valor === null) return "$0";
+  if (typeof valor !== "number") return valor; // Si no es un número (ej: fecha), retornar tal cual
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(valor);
+};
+
 //redireciones
 const redirectToIngresos = () =>
   toast.add({
@@ -102,7 +113,7 @@ const stats = computed(() => [
           </span>
           <span v-else>
             <Message severity="success" variant="simple">
-              {{ item.value }}
+              {{ formatearMoneda(item.value) }}
             </Message>
           </span>
         </h2>

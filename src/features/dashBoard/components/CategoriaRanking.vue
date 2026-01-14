@@ -73,7 +73,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="categoria-ranking shadow-sm border-0 bg-white overflow-hidden">
+  <Card class="categoria-ranking !shadow-none !border-none bg-transparent overflow-hidden">
     <template #title>
       <div class="flex items-center gap-2 text-xl font-bold text-gray-900 border-b border-gray-100 pb-4 mb-4">
         <i class="pi pi-chart-bar text-blue-500"></i>
