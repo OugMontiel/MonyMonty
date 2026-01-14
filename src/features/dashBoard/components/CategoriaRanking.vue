@@ -1,5 +1,6 @@
 <script setup>
 import {computed, ref, onMounted} from "vue";
+import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 
 const {getRankingCategorias} = dataMovimientos();
@@ -42,19 +43,18 @@ const toggleCategoria = (index) => {
     activeCategoryIndex.value = null;
   } else {
     activeCategoryIndex.value = index;
-    irAAnalisis(categoriaData.value[index]);
   }
 };
 
 // Navegar a vista de análisis (con Toast)
 const irAAnalisis = (categoria) => {
   toast.add({
-    severity: "info",
-    summary: "Análisis de Categoría",
-    detail: `Explorando detalles de ${categoria.labelCategoria}`,
+    severity: "warn",
+    summary: "En desarrollo",
+    detail: `La vista de análisis detallado para ${categoria.labelCategoria} estará disponible pronto.`,
     life: 3000,
   });
-  console.log("Análisis de:", categoria);
+  console.log("Análisis (en desarrollo) de:", categoria);
 };
 
 // Formatear moneda
@@ -121,7 +121,7 @@ onMounted(() => {
                     color: categoria.colorCategoria || '#3B82F6',
                   }"
                 >
-                  <span class="text-2xl drop-shadow-sm">{{ categoria.iconoCategoria || "📊" }}</span>
+                  <Icon :icon="categoria.iconoCategoria || 'ion:pie-chart-outline'" class="text-2xl drop-shadow-sm" />
                 </div>
 
                 <div>
@@ -157,9 +157,18 @@ onMounted(() => {
                 v-if="activeCategoryIndex === index"
                 class="mt-4 border-t border-blue-100 pt-4 animate-in slide-in-from-top-2 duration-300"
               >
-                <div class="flex items-center gap-2 mb-3">
-                  <i class="pi pi-list-check text-blue-400 text-xs"></i>
-                  <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Detalle de subcategorías</p>
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-list-check text-blue-400 text-xs"></i>
+                    <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Detalle de subcategorías</p>
+                  </div>
+
+                  <Button
+                    icon="pi pi-chart-line"
+                    label="Ver Análisis"
+                    class="p-button-text p-button-sm p-button-info !py-1 !px-2 !text-[10px] !font-bold uppercase tracking-wider"
+                    @click.stop="irAAnalisis(categoria)"
+                  />
                 </div>
                 <div class="grid gap-2">
                   <div
