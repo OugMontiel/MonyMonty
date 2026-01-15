@@ -2,12 +2,14 @@
 import {ref} from "vue";
 import {Icon} from "@iconify/vue";
 import CreateMovimientoModal from "../modals/CreateMovimientoModal.vue";
+import CreateEntidadModal from "../modals/CreateEntidadModal.vue";
 
 import {useToast} from "primevue/usetoast";
 
 const toast = useToast();
 
 const isModalCreateMovimientoOpen = ref(false);
+const isModalCreateEntidadOpen = ref(false);
 
 // Items for SpeedDial
 const items = ref([
@@ -19,6 +21,13 @@ const items = ref([
     },
   },
   {
+    label: "Nueva Cuenta",
+    icon: "ion:wallet-outline",
+    command: () => {
+      isModalCreateEntidadOpen.value = true;
+    },
+  },
+  {
     label: "Nueva Categoría",
     icon: "ion:pricetag-outline",
     command: () => {
@@ -26,18 +35,6 @@ const items = ref([
         severity: "info",
         summary: "Add",
         detail: "Data Added",
-        life: 3000,
-      });
-    },
-  },
-  {
-    label: "Nueva Cuenta",
-    icon: "ion:wallet-outline",
-    command: () => {
-      toast.add({
-        severity: "success",
-        summary: "Update",
-        detail: "Data Updated",
         life: 3000,
       });
     },
@@ -80,6 +77,7 @@ const items = ref([
     </SpeedDial>
 
     <CreateMovimientoModal v-model:visible="isModalCreateMovimientoOpen" />
+    <CreateEntidadModal v-model:visible="isModalCreateEntidadOpen"/>
   </div>
 </template>
 
