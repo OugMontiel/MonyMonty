@@ -21,6 +21,13 @@ const items = ref([
     },
   },
   {
+    label: "Nueva Cuenta",
+    icon: "ion:wallet-outline",
+    command: () => {
+      isModalCreateEntidadOpen.value = true;
+    },
+  },
+  {
     label: "Nueva Categoría",
     icon: "ion:pricetag-outline",
     command: () => {
@@ -30,13 +37,6 @@ const items = ref([
         detail: "Data Added",
         life: 3000,
       });
-    },
-  },
-  {
-    label: "Nueva Cuenta",
-    icon: "ion:wallet-outline",
-    command: () => {
-      isModalCreateEntidadOpen.value = true;
     },
   },
   {
