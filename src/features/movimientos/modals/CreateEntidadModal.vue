@@ -24,7 +24,7 @@ const {divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
 const entidadTipos = ref([
   {label: "Banco", value: "BANCO"},
   {label: "Efectivo", value: "EFECTIVO"},
-  {label: "Billetera", value: "BILLETERA"},
+  {label: "Cooperativa", value: "COOPERATIVA"},
 ]);
 
 onMounted(() => {
@@ -126,7 +126,7 @@ const onFormSubmit = async ({valid, values}) => {
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="saldoInicial">Saldo Actual</label>
-          <InputNumber name="saldoInicial" mode="decimal" :minFractionDigits="2" placeholder="0.00" fluid />
+          <InputNumber name="saldoInicial" mode="currency" currency="USD" locale="en-US" placeholder="0.00" fluid />
           <Message v-if="$form.saldoInicial?.invalid" severity="error" size="small" variant="simple">{{
             $form.saldoInicial.error?.message
           }}</Message>
