@@ -94,10 +94,10 @@ const onFormSubmit = async ({valid, values}) => {
       nombre: values.nombre.trim(),
       apellido: values.apellido.trim(),
       fechaNacimiento: values.fechaNacimiento,
-      genero: values.genero,
+      genero: values.genero.value,
       email: values.email.trim(),
       password: values.password,
-      plan: values.plan,
+      plan: values.plan.value.toLowerCase(),
     });
 
     if (result.success) {
@@ -189,15 +189,7 @@ const irACondiciones = () => router.push("/condiciones");
           <div class="flex gap-4">
             <FormField v-slot="$field" name="plan" class="flex-1">
               <FloatLabel variant="on" class="w-full">
-                <AutoComplete
-                  v-bind="$field.props"
-                  :suggestions="planes"
-                  optionLabel="label"
-                  optionValue="value"
-                  dropdown
-                  :disabled="loading"
-                  class="w-full"
-                />
+                <Select v-bind="$field.props" :options="planes" optionLabel="label" :disabled="loading" class="w-full" />
                 <label for="plan">Selecciona un plan</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
@@ -206,15 +198,7 @@ const irACondiciones = () => router.push("/condiciones");
             </FormField>
             <FormField v-slot="$field" name="genero" class="flex-1">
               <FloatLabel variant="on" class="w-full">
-                <AutoComplete
-                  v-bind="$field.props"
-                  :suggestions="generos"
-                  optionLabel="label"
-                  optionValue="value"
-                  dropdown
-                  :disabled="loading"
-                  class="w-full"
-                />
+                <Select v-bind="$field.props" :options="generos" optionLabel="label" :disabled="loading" class="w-full" />
                 <label for="genero">Selecciona un género</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
