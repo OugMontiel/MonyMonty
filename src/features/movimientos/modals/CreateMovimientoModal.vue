@@ -47,26 +47,34 @@ const initialValues = ref({
   destinoEntidadId: null,
   monto: null,
   fecha: new Date(),
-  concepto: {
-    titulo: "",
-    detalle: "",
-  },
+  titulo: "",
+  detalle: "",
   categoriaId: null,
   subcategoriaId: null,
   tags: [],
   divisaId: null,
+  // Meta info
+  referencia: "",
+  createdAt: null,
+  updatedAt: null,
+  creadoPor: "",
+  actualizadoPor: "",
+  estado: "COMPLETADO",
 });
 
 watch(
   () => props.visible,
   async (newVal) => {
     if (newVal) {
-      fetchOptions();
+      await fetchOptions();
       if (props.mode !== "CREATE" && props.movementId) {
         fetchingData.value = true;
         try {
           const res = await getMovimiento(props.movementId);
+          console.log("Movimiento encontrado:", res);
           const data = res.data;
+
+          // Mapeo cuidadoso de valores iniciales
           initialValues.value = {
             tipo: data.tipo,
             entidadId: data.entidadId,
@@ -74,17 +82,22 @@ watch(
             destinoEntidadId: data.transferencia?.destinoEntidadId,
             monto: data.monto,
             fecha: new Date(data.fecha),
-            concepto: {
-              titulo: data.concepto?.titulo || "",
-              detalle: data.concepto?.detalle || "",
-            },
+            titulo: data.concepto?.titulo || "",
+            detalle: data.concepto?.detalle || "",
             categoriaId: data.categoriaId,
             subcategoriaId: data.subcategoriaId,
             tags: data.tags || [],
             divisaId: data.divisaId,
+            // Info adicional para VIEW
+            referencia: data.referencia,
+            createdAt: data.createdAt ? new Date(data.createdAt).toLocaleString() : "—",
+            updatedAt: data.updatedAt ? new Date(data.updatedAt).toLocaleString() : "—",
+            creadoPor: data.auditoria?.creadoPor?.nombre || "—",
+            actualizadoPor: data.auditoria?.actualizadoPor?.nombre || "—",
           };
+
           if (data.categoriaId) {
-            onCategoryChange(data.categoriaId);
+            onCategoryChange({value: data.categoriaId});
           }
         } catch (error) {
           toast.add({
@@ -105,10 +118,8 @@ watch(
           destinoEntidadId: null,
           monto: null,
           fecha: new Date(),
-          concepto: {
-            titulo: "",
-            detalle: "",
-          },
+          titulo: "",
+          detalle: "",
           categoriaId: null,
           subcategoriaId: null,
           tags: [],
@@ -126,10 +137,8 @@ const schema = z
     tipo: z.string({required_error: "El tipo de movimiento es obligatorio"}),
     monto: z.number({invalid_type_error: "El monto es obligatorio"}).min(0.01, "El monto debe ser mayor a 0"),
     fecha: z.date({required_error: "La fecha es obligatoria"}),
-    concepto: z.object({
-      titulo: z.string().optional(),
-      detalle: z.string().optional(),
-    }),
+    titulo: z.string().optional(),
+    detalle: z.string().optional(),
     categoriaId: z.string().optional().nullable(),
     subcategoriaId: z.string().optional().nullable(),
     tags: z.array(z.string()).optional(),
@@ -217,9 +226,15 @@ const onFormSubmit = async ({valid, values}) => {
   try {
     const payload = {
       ...values,
+      concepto: {
+        titulo: values.titulo || "",
+        detalle: values.detalle || "",
+      },
       origen: "MANUAL",
       estado: "COMPLETADO",
     };
+    delete payload.titulo;
+    delete payload.detalle;
 
     // Clean up payload based on type
     if (values.tipo === "TRANSFERENCIA") {
@@ -315,12 +330,47 @@ const isReadOnly = () => props.mode === "VIEW" || props.mode === "DELETE";
       :resolver="resolver"
       :initialValues="initialValues"
       @submit="onFormSubmit"
+      :key="movementId"
       class="flex flex-col gap-4"
     >
       <!-- Tipo -->
       <div v-if="mode === 'DELETE'" class="bg-red-50 p-4 border border-red-200 rounded-lg mb-2">
         <p class="text-red-700 font-medium">¿Estás seguro de que deseas eliminar este movimiento?</p>
         <p class="text-red-600 text-sm">Esta acción no se puede deshacer.</p>
+      </div>
+
+      <!-- Info de Auditoría y Referencia (Solo en VIEW) -->
+      <div v-if="mode === 'VIEW'" class="grid grid-cols-2 gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg mb-2 text-sm">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 font-semibold uppercase text-xs">Referencia</span>
+          <span class="text-gray-800 font-mono">{{ initialValues.referencia }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 font-semibold uppercase text-xs">Estado</span>
+          <Tag :value="initialValues.estado || 'COMPLETADO'" severity="success" class="w-fit" />
+        </div>
+        <div class="flex flex-col gap-1 border-t border-gray-200 pt-2 cursor-help" v-tooltip="'Fecha de registro en el sistema'">
+          <span class="text-gray-500 font-semibold uppercase text-xs">Creado el</span>
+          <span class="text-gray-700 italic">{{ initialValues.createdAt }}</span>
+        </div>
+        <div class="flex flex-col gap-1 border-t border-gray-200 pt-2">
+          <span class="text-gray-500 font-semibold uppercase text-xs">Por</span>
+          <span class="text-gray-700">{{ initialValues.creadoPor }}</span>
+        </div>
+        <div
+          v-if="initialValues.updatedAt && initialValues.updatedAt !== initialValues.createdAt"
+          class="flex flex-col gap-1 border-t border-gray-100 pt-2 col-span-1"
+        >
+          <span class="text-gray-500 font-semibold uppercase text-xs">Última Actualización</span>
+          <span class="text-gray-700 italic">{{ initialValues.updatedAt }}</span>
+        </div>
+        <div
+          v-if="initialValues.actualizadoPor && initialValues.actualizadoPor !== '—'"
+          class="flex flex-col gap-1 border-t border-gray-100 pt-2 col-span-1"
+        >
+          <span class="text-gray-500 font-semibold uppercase text-xs">Editado por</span>
+          <span class="text-gray-700">{{ initialValues.actualizadoPor }}</span>
+        </div>
       </div>
 
       <div class="flex flex-col gap-2">
@@ -413,17 +463,16 @@ const isReadOnly = () => props.mode === "VIEW" || props.mode === "DELETE";
         <Message v-if="$form.fecha?.invalid" severity="error" size="small" variant="simple">{{ $form.fecha.error?.message }}</Message>
       </div>
 
-      <!-- Concepto -->
+      <!-- Título y Detalle -->
       <div class="flex flex-col gap-2">
         <label for="titulo">Título</label>
-        <InputText name="concepto.titulo" placeholder="Ej: Compra supermercado" fluid :disabled="isReadOnly()" />
-        <Message v-if="$form.concepto?.titulo?.invalid" severity="error" size="small" variant="simple">{{
-          $form.concepto.titulo.error?.message
-        }}</Message>
+        <InputText name="titulo" placeholder="Ej: Compra supermercado" fluid :disabled="isReadOnly()" />
+        <Message v-if="$form.titulo?.invalid" severity="error" size="small" variant="simple">{{ $form.titulo.error?.message }}</Message>
       </div>
       <div class="flex flex-col gap-2">
         <label for="detalle">Detalle</label>
-        <Textarea name="concepto.detalle" rows="3" autoResize fluid :disabled="isReadOnly()" />
+        <Textarea name="detalle" rows="3" autoResize fluid :disabled="isReadOnly()" />
+        <Message v-if="$form.detalle?.invalid" severity="error" size="small" variant="simple">{{ $form.detalle.error?.message }}</Message>
       </div>
 
       <!-- Categoría y Subcategoría -->
