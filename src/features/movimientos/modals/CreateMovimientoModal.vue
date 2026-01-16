@@ -9,14 +9,10 @@ import {useMovimientos} from "../logic/CreateMovimiento";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento";
 
 const toast = useToast();
-const {createMovimiento, loading} = useMovimientos();
+const {createMovimiento, updateMovimiento, deleteMovimiento, loading} = useMovimientos();
 const {movementTypes, entidades, categorias, divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
 
 const subcategories = ref([]);
-
-onMounted(() => {
-  fetchOptions();
-});
 
 const onCategoryChange = (e) => {
   const selectedCategoryId = e.value;
@@ -28,6 +24,14 @@ const props = defineProps({
   visible: {
     type: Boolean,
     required: true,
+  },
+  mode: {
+    type: String,
+    default: "CREATE", // CREATE, EDIT, VIEW, DELETE
+  },
+  initialData: {
+    type: Object,
+    default: () => null,
   },
 });
 
@@ -50,6 +54,55 @@ const initialValues = ref({
   tags: [],
   divisaId: null,
 });
+
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (newVal) {
+      fetchOptions();
+      if (props.mode !== "CREATE" && props.initialData) {
+        const data = props.initialData;
+        initialValues.value = {
+          tipo: data.tipo,
+          entidadId: data.entidadId,
+          origenEntidadId: data.transferencia?.origenEntidadId,
+          destinoEntidadId: data.transferencia?.destinoEntidadId,
+          monto: data.monto,
+          fecha: new Date(data.fecha),
+          concepto: {
+            titulo: data.concepto?.titulo || "",
+            detalle: data.concepto?.detalle || "",
+          },
+          categoriaId: data.categoriaId,
+          subcategoriaId: data.subcategoriaId,
+          tags: data.tags || [],
+          divisaId: data.divisaId,
+        };
+        if (data.categoriaId) {
+          onCategoryChange(data.categoriaId);
+        }
+      } else {
+        initialValues.value = {
+          tipo: "EGRESO",
+          entidadId: null,
+          origenEntidadId: null,
+          destinoEntidadId: null,
+          monto: null,
+          fecha: new Date(),
+          concepto: {
+            titulo: "",
+            detalle: "",
+          },
+          categoriaId: null,
+          subcategoriaId: null,
+          tags: [],
+          divisaId: null,
+        };
+        subcategories.value = [];
+      }
+    }
+  }
+);
 
 // Zod Schema
 const schema = z
@@ -125,6 +178,16 @@ const close = () => {
 };
 
 const onFormSubmit = async ({valid, values}) => {
+  if (props.mode === "VIEW") {
+    close();
+    return;
+  }
+
+  if (props.mode === "DELETE") {
+    confirmDelete();
+    return;
+  }
+
   if (!valid) {
     toast.add({
       severity: "warn",
@@ -138,11 +201,8 @@ const onFormSubmit = async ({valid, values}) => {
   try {
     const payload = {
       ...values,
-      // usuarioId: "TODO_USER_ID", // TODO: Se Gestiona en backend
-      // referencia: crypto.randomUUID(), // TODO: Se Gestiona en backend
       origen: "MANUAL",
       estado: "COMPLETADO",
-      // isDeleted: false, // TODO: Add if needed
     };
 
     // Clean up payload based on type
@@ -159,14 +219,23 @@ const onFormSubmit = async ({valid, values}) => {
       delete payload.destinoEntidadId;
     }
 
-    await createMovimiento(payload);
-
-    toast.add({
-      severity: "success",
-      summary: "Éxito",
-      detail: "Movimiento creado correctamente",
-      life: 3000,
-    });
+    if (props.mode === "EDIT") {
+      await updateMovimiento(props.initialData._id, payload);
+      toast.add({
+        severity: "success",
+        summary: "Éxito",
+        detail: "Movimiento actualizado correctamente",
+        life: 3000,
+      });
+    } else {
+      await createMovimiento(payload);
+      toast.add({
+        severity: "success",
+        summary: "Éxito",
+        detail: "Movimiento creado correctamente",
+        life: 3000,
+      });
+    }
 
     emit("saved");
     close();
@@ -174,11 +243,41 @@ const onFormSubmit = async ({valid, values}) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: error.response?.data?.message || "No se pudo crear el movimiento. Intenta nuevamente.",
+      detail: error.response?.data?.message || `No se pudo ${props.mode === "EDIT" ? "actualizar" : "crear"} el movimiento.`,
       life: 4000,
     });
   }
 };
+
+const confirmDelete = async () => {
+  try {
+    await deleteMovimiento(props.initialData._id);
+    toast.add({
+      severity: "success",
+      summary: "Eliminado",
+      detail: "Movimiento eliminado correctamente",
+      life: 3000,
+    });
+    emit("saved");
+    close();
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: error.response?.data?.message || "No se pudo eliminar el movimiento.",
+      life: 4000,
+    });
+  }
+};
+
+const modalHeader = {
+  CREATE: "Nuevo Movimiento",
+  EDIT: "Editar Movimiento",
+  VIEW: "Ver Movimiento",
+  DELETE: "Eliminar Movimiento",
+};
+
+const isReadOnly = () => props.mode === "VIEW" || props.mode === "DELETE";
 </script>
 
 <template>
@@ -186,7 +285,7 @@ const onFormSubmit = async ({valid, values}) => {
     :visible="visible"
     @update:visible="emit('update:visible', $event)"
     modal
-    header="Nuevo Movimiento"
+    :header="modalHeader[mode]"
     :style="{width: '50vw'}"
     :breakpoints="{'960px': '75vw', '641px': '90vw'}"
   >
@@ -203,23 +302,52 @@ const onFormSubmit = async ({valid, values}) => {
       class="flex flex-col gap-4"
     >
       <!-- Tipo -->
+      <div v-if="mode === 'DELETE'" class="bg-red-50 p-4 border border-red-200 rounded-lg mb-2">
+        <p class="text-red-700 font-medium">¿Estás seguro de que deseas eliminar este movimiento?</p>
+        <p class="text-red-600 text-sm">Esta acción no se puede deshacer.</p>
+      </div>
+
       <div class="flex flex-col gap-2">
         <label for="tipo">Tipo de Movimiento</label>
-        <Select name="tipo" :options="movementTypes" optionLabel="label" optionValue="value" placeholder="Seleccione el tipo" fluid />
+        <Select
+          name="tipo"
+          :options="movementTypes"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione el tipo"
+          fluid
+          :disabled="isReadOnly() || mode === 'EDIT'"
+        />
       </div>
 
       <!-- Entidad / Origen-Destino -->
       <div v-if="$form.tipo?.value === 'TRANSFERENCIA'" class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="origen">Origen</label>
-          <Select name="origenEntidadId" :options="entidades" optionLabel="label" optionValue="value" placeholder="Cuenta Origen" fluid />
+          <Select
+            name="origenEntidadId"
+            :options="entidades"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Cuenta Origen"
+            fluid
+            :disabled="isReadOnly()"
+          />
           <Message v-if="$form.origenEntidadId?.invalid" severity="error" size="small" variant="simple">{{
             $form.origenEntidadId.error?.message
           }}</Message>
         </div>
         <div class="flex flex-col gap-2">
           <label for="destino">Destino</label>
-          <Select name="destinoEntidadId" :options="entidades" optionLabel="label" optionValue="value" placeholder="Cuenta Destino" fluid />
+          <Select
+            name="destinoEntidadId"
+            :options="entidades"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Cuenta Destino"
+            fluid
+            :disabled="isReadOnly()"
+          />
           <Message v-if="$form.destinoEntidadId?.invalid" severity="error" size="small" variant="simple">{{
             $form.destinoEntidadId.error?.message
           }}</Message>
@@ -227,7 +355,15 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
       <div v-else class="flex flex-col gap-2">
         <label for="entidad">Entidad / Cuenta</label>
-        <Select name="entidadId" :options="entidades" optionLabel="label" optionValue="value" placeholder="Seleccione la cuenta" fluid />
+        <Select
+          name="entidadId"
+          :options="entidades"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione la cuenta"
+          fluid
+          :disabled="isReadOnly()"
+        />
         <Message v-if="$form.entidadId?.invalid" severity="error" size="small" variant="simple">{{
           $form.entidadId.error?.message
         }}</Message>
@@ -237,33 +373,41 @@ const onFormSubmit = async ({valid, values}) => {
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-2">
           <label for="monto">Monto</label>
-          <InputNumber name="monto" mode="currency" currency="USD" locale="en-US" placeholder="0.00" fluid />
+          <InputNumber name="monto" mode="currency" currency="USD" locale="en-US" placeholder="0.00" fluid :disabled="isReadOnly()" />
           <Message v-if="$form.monto?.invalid" severity="error" size="small" variant="simple">{{ $form.monto.error?.message }}</Message>
         </div>
         <div class="flex flex-col gap-2">
           <label for="divisa">Divisa</label>
-          <Select name="divisaId" :options="divisas" optionLabel="label" optionValue="value" placeholder="Divisa" fluid />
+          <Select
+            name="divisaId"
+            :options="divisas"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Divisa"
+            fluid
+            :disabled="isReadOnly()"
+          />
         </div>
       </div>
 
       <!-- Fecha -->
       <div class="flex flex-col gap-2">
         <label for="fecha">Fecha</label>
-        <DatePicker name="fecha" showIcon fluid />
+        <DatePicker name="fecha" showIcon fluid :disabled="isReadOnly()" />
         <Message v-if="$form.fecha?.invalid" severity="error" size="small" variant="simple">{{ $form.fecha.error?.message }}</Message>
       </div>
 
       <!-- Concepto -->
       <div class="flex flex-col gap-2">
         <label for="titulo">Título</label>
-        <InputText name="concepto.titulo" placeholder="Ej: Compra supermercado" fluid />
+        <InputText name="concepto.titulo" placeholder="Ej: Compra supermercado" fluid :disabled="isReadOnly()" />
         <Message v-if="$form.concepto?.titulo?.invalid" severity="error" size="small" variant="simple">{{
           $form.concepto.titulo.error?.message
         }}</Message>
       </div>
       <div class="flex flex-col gap-2">
         <label for="detalle">Detalle</label>
-        <Textarea name="concepto.detalle" rows="3" autoResize fluid />
+        <Textarea name="concepto.detalle" rows="3" autoResize fluid :disabled="isReadOnly()" />
       </div>
 
       <!-- Categoría y Subcategoría -->
@@ -277,6 +421,7 @@ const onFormSubmit = async ({valid, values}) => {
             optionValue="value"
             placeholder="Seleccione categoría"
             fluid
+            :disabled="isReadOnly()"
             @change="onCategoryChange"
           />
           <Message v-if="$form.categoriaId?.invalid" severity="error" size="small" variant="simple">{{
@@ -292,6 +437,7 @@ const onFormSubmit = async ({valid, values}) => {
             optionValue="value"
             placeholder="Seleccione subcategoría"
             fluid
+            :disabled="isReadOnly()"
           />
           <Message v-if="$form.subcategoriaId?.invalid" severity="error" size="small" variant="simple">{{
             $form.subcategoriaId.error?.message
@@ -302,12 +448,20 @@ const onFormSubmit = async ({valid, values}) => {
       <!-- Tags -->
       <div v-if="$form.tipo?.value !== 'TRANSFERENCIA'" class="flex flex-col gap-2">
         <label for="tags">Etiquetas</label>
-        <AutoComplete name="tags" multiple :typeahead="false" fluid />
+        <AutoComplete name="tags" multiple :typeahead="false" fluid :disabled="isReadOnly()" />
       </div>
 
       <div class="flex justify-end gap-2 mt-4">
         <Button label="Cancelar" icon="pi pi-times" text @click="close" />
-        <Button type="submit" label="Guardar" icon="pi pi-check" :loading="loading" />
+        <Button v-if="mode === 'VIEW'" label="Cerrar" icon="pi pi-check" @click="close" />
+        <Button
+          v-else
+          type="submit"
+          :label="mode === 'DELETE' ? 'Eliminar' : 'Guardar'"
+          :icon="mode === 'DELETE' ? 'pi pi-trash' : 'pi pi-check'"
+          :severity="mode === 'DELETE' ? 'danger' : 'primary'"
+          :loading="loading"
+        />
       </div>
     </Form>
   </Dialog>

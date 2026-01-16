@@ -3,6 +3,7 @@ import {ref, onMounted} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
+import CreateMovimientoModal from "../../movimientos/modals/CreateMovimientoModal.vue";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
@@ -13,6 +14,10 @@ const lazyParams = ref({
   page: 0,
   rows: 10,
 });
+
+const isModalOpen = ref(false);
+const modalMode = ref("VIEW");
+const selectedMovimiento = ref(null);
 
 const loadMovimientos = async () => {
   loading.value = true;
@@ -47,30 +52,21 @@ onMounted(() => {
 });
 
 const verMovimiento = (data) => {
-  toast.add({
-    severity: "info",
-    summary: "En desarrollo",
-    detail: "Funcionalidad para ver el movimiento ",
-    life: 3000,
-  });
+  selectedMovimiento.value = data;
+  modalMode.value = "VIEW";
+  isModalOpen.value = true;
 };
 
 const editarMovimiento = (data) => {
-  toast.add({
-    severity: "info",
-    summary: "En desarrollo",
-    detail: "Funcionalidad para editar el movimiento ",
-    life: 3000,
-  });
+  selectedMovimiento.value = data;
+  modalMode.value = "EDIT";
+  isModalOpen.value = true;
 };
 
 const eliminarMovimiento = (data) => {
-  toast.add({
-    severity: "info",
-    summary: "En desarrollo",
-    detail: "Funcionalidad para eliminar el movimiento .",
-    life: 3000,
-  });
+  selectedMovimiento.value = data;
+  modalMode.value = "DELETE";
+  isModalOpen.value = true;
 };
 </script>
 
@@ -166,4 +162,6 @@ const eliminarMovimiento = (data) => {
       </template>
     </Column>
   </DataTable>
+
+  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :initialData="selectedMovimiento" @saved="loadMovimientos" />
 </template>
