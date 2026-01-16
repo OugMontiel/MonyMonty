@@ -84,15 +84,16 @@ const onFormSubmit = async ({valid, values}) => {
   try {
     if (values.tipo === "CATEGORIA") {
       await createCategoria({
-        categoria: values.nombre,
+        nombreCategoria: values.nombre,
         icono: values.icono,
         color: values.color,
         nota: values.nota,
       });
     } else {
       await createSubcategoria(values.categoriaId, {
-        subcategoria: values.nombre,
+        nombreSubcategoria: values.nombre,
         icono: values.icono,
+        color: values.color,
         nota: values.nota,
       });
     }
