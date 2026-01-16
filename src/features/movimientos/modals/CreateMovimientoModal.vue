@@ -9,8 +9,10 @@ import {useMovimientos} from "../logic/CreateMovimiento";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento";
 
 const toast = useToast();
-const {createMovimiento, updateMovimiento, deleteMovimiento, loading} = useMovimientos();
+const {getMovimiento, createMovimiento, updateMovimiento, deleteMovimiento, loading} = useMovimientos();
 const {movementTypes, entidades, categorias, divisas, loadingOptions, fetchOptions} = useMovimientoOptions();
+
+const fetchingData = ref(false);
 
 const subcategories = ref([]);
 
@@ -29,9 +31,9 @@ const props = defineProps({
     type: String,
     default: "CREATE", // CREATE, EDIT, VIEW, DELETE
   },
-  initialData: {
-    type: Object,
-    default: () => null,
+  movementId: {
+    type: String,
+    default: null,
   },
 });
 
@@ -57,29 +59,43 @@ const initialValues = ref({
 
 watch(
   () => props.visible,
-  (newVal) => {
+  async (newVal) => {
     if (newVal) {
       fetchOptions();
-      if (props.mode !== "CREATE" && props.initialData) {
-        const data = props.initialData;
-        initialValues.value = {
-          tipo: data.tipo,
-          entidadId: data.entidadId,
-          origenEntidadId: data.transferencia?.origenEntidadId,
-          destinoEntidadId: data.transferencia?.destinoEntidadId,
-          monto: data.monto,
-          fecha: new Date(data.fecha),
-          concepto: {
-            titulo: data.concepto?.titulo || "",
-            detalle: data.concepto?.detalle || "",
-          },
-          categoriaId: data.categoriaId,
-          subcategoriaId: data.subcategoriaId,
-          tags: data.tags || [],
-          divisaId: data.divisaId,
-        };
-        if (data.categoriaId) {
-          onCategoryChange(data.categoriaId);
+      if (props.mode !== "CREATE" && props.movementId) {
+        fetchingData.value = true;
+        try {
+          const res = await getMovimiento(props.movementId);
+          const data = res.data;
+          initialValues.value = {
+            tipo: data.tipo,
+            entidadId: data.entidadId,
+            origenEntidadId: data.transferencia?.origenEntidadId,
+            destinoEntidadId: data.transferencia?.destinoEntidadId,
+            monto: data.monto,
+            fecha: new Date(data.fecha),
+            concepto: {
+              titulo: data.concepto?.titulo || "",
+              detalle: data.concepto?.detalle || "",
+            },
+            categoriaId: data.categoriaId,
+            subcategoriaId: data.subcategoriaId,
+            tags: data.tags || [],
+            divisaId: data.divisaId,
+          };
+          if (data.categoriaId) {
+            onCategoryChange(data.categoriaId);
+          }
+        } catch (error) {
+          toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "No se pudo cargar la información del movimiento.",
+            life: 4000,
+          });
+          close();
+        } finally {
+          fetchingData.value = false;
         }
       } else {
         initialValues.value = {
@@ -220,7 +236,7 @@ const onFormSubmit = async ({valid, values}) => {
     }
 
     if (props.mode === "EDIT") {
-      await updateMovimiento(props.initialData._id, payload);
+      await updateMovimiento(props.movementId, payload);
       toast.add({
         severity: "success",
         summary: "Éxito",
@@ -251,7 +267,7 @@ const onFormSubmit = async ({valid, values}) => {
 
 const confirmDelete = async () => {
   try {
-    await deleteMovimiento(props.initialData._id);
+    await deleteMovimiento(props.movementId);
     toast.add({
       severity: "success",
       summary: "Eliminado",
@@ -289,7 +305,7 @@ const isReadOnly = () => props.mode === "VIEW" || props.mode === "DELETE";
     :style="{width: '50vw'}"
     :breakpoints="{'960px': '75vw', '641px': '90vw'}"
   >
-    <div v-if="loadingOptions" class="flex justify-center items-center p-8">
+    <div v-if="loadingOptions || fetchingData" class="flex justify-center items-center p-8">
       <ProgressSpinner />
     </div>
     <Form

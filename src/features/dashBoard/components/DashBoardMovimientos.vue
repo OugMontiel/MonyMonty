@@ -17,7 +17,7 @@ const lazyParams = ref({
 
 const isModalOpen = ref(false);
 const modalMode = ref("VIEW");
-const selectedMovimiento = ref(null);
+const selectedMovimientoId = ref(null);
 
 const loadMovimientos = async () => {
   loading.value = true;
@@ -52,19 +52,19 @@ onMounted(() => {
 });
 
 const verMovimiento = (data) => {
-  selectedMovimiento.value = data;
+  selectedMovimientoId.value = data._id;
   modalMode.value = "VIEW";
   isModalOpen.value = true;
 };
 
 const editarMovimiento = (data) => {
-  selectedMovimiento.value = data;
+  selectedMovimientoId.value = data._id;
   modalMode.value = "EDIT";
   isModalOpen.value = true;
 };
 
 const eliminarMovimiento = (data) => {
-  selectedMovimiento.value = data;
+  selectedMovimientoId.value = data._id;
   modalMode.value = "DELETE";
   isModalOpen.value = true;
 };
@@ -163,5 +163,5 @@ const eliminarMovimiento = (data) => {
     </Column>
   </DataTable>
 
-  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :initialData="selectedMovimiento" @saved="loadMovimientos" />
+  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :movementId="selectedMovimientoId" @saved="loadMovimientos" />
 </template>

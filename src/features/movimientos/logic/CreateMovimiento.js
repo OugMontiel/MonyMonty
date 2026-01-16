@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import {ref} from "vue";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -51,7 +51,7 @@ export function useMovimientos() {
     }
   }
 
-   /**
+  /**
    * Elimina un movimiento.
    * @param {string} id - El ID del movimiento.
    */
@@ -72,7 +72,30 @@ export function useMovimientos() {
     }
   }
 
+  /**
+   * Obtiene un movimiento por su ID.
+   * @param {string} id - El ID del movimiento.
+   * @returns {Promise<Object>} - Los datos del movimiento.
+   */
+  async function getMovimiento(id) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await axios.get(`${API_URL}movimiento/${id}`, {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error obteniendo movimiento:", err);
+      error.value = err.response?.data?.message || "Error al obtener el movimiento";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
+    getMovimiento,
     createMovimiento,
     updateMovimiento,
     deleteMovimiento,
