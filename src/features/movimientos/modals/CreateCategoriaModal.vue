@@ -1,8 +1,7 @@
 <script setup>
-import {ref, onMounted, computed} from "vue";
+import {ref, computed, watch} from "vue";
 import {z} from "zod";
 import {Icon} from "@iconify/vue";
-
 import {useToast} from "primevue/usetoast";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 
@@ -29,9 +28,18 @@ const typeOptions = ref([
 
 const selectedType = ref("CATEGORIA");
 
-onMounted(() => {
-  fetchOptions();
+watch(selectedType, (newVal) => {
+  initialValues.value.tipo = newVal;
 });
+
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (newVal) {
+      fetchOptions();
+    }
+  }
+);
 
 // Initial Values
 const initialValues = ref({
@@ -178,7 +186,12 @@ const onFormSubmit = async ({valid, values}) => {
           <label for="color">Color</label>
           <div class="flex gap-2">
             <InputText name="color" placeholder="#3B82F6" fluid />
-            <input type="color" v-model="$form.color.value" class="h-10 w-12 border-none bg-transparent cursor-pointer" />
+            <input
+              type="color"
+              :value="$form.color?.value || '#3B82F6'"
+              @input="$form.color.value = $event.target.value"
+              class="h-10 w-12 border-none bg-transparent cursor-pointer"
+            />
           </div>
         </div>
       </div>
