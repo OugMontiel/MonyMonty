@@ -20,7 +20,6 @@ const loadData = async () => {
     loading.value = true;
     const response = await getRankingCategorias();
 
-    console.log("Response:", response);
     if (response?.data) {
       categoriaData.value = response.data.data;
     }
@@ -54,7 +53,6 @@ const irAAnalisis = (categoria) => {
     detail: `La vista de análisis detallado para ${categoria.labelCategoria} estará disponible pronto.`,
     life: 3000,
   });
-  console.log("Análisis (en desarrollo) de:", categoria);
 };
 
 // Formatear moneda

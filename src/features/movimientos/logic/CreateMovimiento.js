@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import {ref} from "vue";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -29,8 +29,76 @@ export function useMovimientos() {
     }
   }
 
+  /**
+   * Actualiza un movimiento existente.
+   * @param {string} id - El ID del movimiento.
+   * @param {Object} data - Los nuevos datos del movimiento.
+   */
+  async function updateMovimiento(id, data) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await axios.put(`${API_URL}movimiento/${id}`, data, {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error actualizando movimiento:", err);
+      error.value = err.response?.data?.message || "Error al actualizar el movimiento";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  /**
+   * Elimina un movimiento.
+   * @param {string} id - El ID del movimiento.
+   */
+  async function deleteMovimiento(id) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await axios.delete(`${API_URL}movimiento/${id}`, {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error eliminando movimiento:", err);
+      error.value = err.response?.data?.message || "Error al eliminar el movimiento";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  /**
+   * Obtiene un movimiento por su ID.
+   * @param {string} id - El ID del movimiento.
+   * @returns {Promise<Object>} - Los datos del movimiento.
+   */
+  async function getMovimiento(id) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await axios.get(`${API_URL}movimiento/${id}`, {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error obteniendo movimiento:", err);
+      error.value = err.response?.data?.message || "Error al obtener el movimiento";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
+    getMovimiento,
     createMovimiento,
+    updateMovimiento,
+    deleteMovimiento,
     loading,
     error,
   };

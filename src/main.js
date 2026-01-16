@@ -30,7 +30,10 @@ import Tooltip from 'primevue/tooltip';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';                   // optional
+import Row from 'primevue/row';  
+import Skeleton from 'primevue/skeleton';
+import Tag from 'primevue/tag';
+import ProgressBar from 'primevue/progressbar';
 
 import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
@@ -82,6 +85,9 @@ app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("ColumnGroup", ColumnGroup);
 app.component("Row", Row);
+app.component("Skeleton", Skeleton);
+app.component("Tag", Tag);
+app.component("ProgressBar", ProgressBar);
 
 app.directive('tooltip', Tooltip);
 
