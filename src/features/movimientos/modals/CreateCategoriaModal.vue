@@ -180,28 +180,25 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Icono y Color -->
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/50 dark:bg-gray-800/20 rounded-xl border border-gray-100 dark:border-gray-800"
-      >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/50 rounded-xl border border-gray-100">
         <!-- Icon Section -->
         <FormField name="icono" v-slot="$field">
           <div class="flex flex-col gap-3">
-            <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <Icon icon="ion:happy-outline" class="text-primary-500" />
               Icono Representativo
             </label>
-            <div
-              class="grid grid-cols-6 gap-2 p-2 border rounded-lg border-gray-200 dark:border-gray-700 max-h-56 overflow-y-auto bg-white dark:bg-gray-900"
+            <div class="grid grid-cols-6 gap-2 p-2 border rounded-lg border-gray-200 max-h-56 overflow-y-auto bg-white">
             >
               <button
                 v-for="icon in FINANCIAL_ICONS"
                 :key="icon"
                 type="button"
                 @click="$field.value = icon"
-                class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-primary-50"
                 :class="{
-                  'bg-primary-500 text-white shadow-md shadow-primary-200 dark:shadow-none pointer-events-none': $field.value === icon,
-                  'text-gray-500 dark:text-gray-400': $field.value !== icon,
+                  'bg-primary-500 text-white shadow-md shadow-primary-200 pointer-events-none': $field.value === icon,
+                  'text-gray-500': $field.value !== icon,
                 }"
                 v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
               >
@@ -214,7 +211,7 @@ const onFormSubmit = async ({valid, values}) => {
         <!-- Color Section -->
         <FormField v-if="selectedType === 'CATEGORIA'" name="color" v-slot="$field">
           <div class="flex flex-col gap-3">
-            <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <Icon icon="ion:color-palette-outline" class="text-primary-500" />
               Color de Identidad
             </label>
@@ -229,13 +226,13 @@ const onFormSubmit = async ({valid, values}) => {
                 class="w-full aspect-square rounded-full border-2 transition-all transform active:scale-95"
                 :style="{backgroundColor: c}"
                 :class="{
-                  'border-primary-500 ring-2 ring-primary-200 dark:ring-primary-900 scale-110 shadow-lg': $field.value === c,
+                  'border-primary-500 ring-2 ring-primary-200  scale-110 shadow-lg': $field.value === c,
                   'border-transparent hover:border-gray-300': $field.value !== c,
                 }"
               />
             </div>
 
-            <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 border rounded-lg border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3 p-3 bg-white border rounded-lg border-gray-200">
               <ColorPicker v-model="$field.value" format="hex" />
               <div class="flex-1">
                 <InputText
