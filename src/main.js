@@ -40,6 +40,7 @@ import InputNumber from "primevue/inputnumber";
 import Textarea from "primevue/textarea";
 import Select from "primevue/select";
 import SelectButton from "primevue/selectbutton";
+import ColorPicker from "primevue/colorpicker";
 
 const app = createApp(App);
 
@@ -82,6 +83,7 @@ app.component("InputNumber", InputNumber);
 app.component("Textarea", Textarea);
 app.component("Select", Select);
 app.component("SelectButton", SelectButton);
+app.component("ColorPicker", ColorPicker);
 app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("ColumnGroup", ColumnGroup);

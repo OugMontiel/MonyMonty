@@ -87,6 +87,19 @@ const financialIcons = [
   "ion:ticket-outline",
 ];
 
+const colorPalette = [
+  "#10B981", // Emerald
+  "#F43F5E", // Rose
+  "#3B82F6", // Blue
+  "#F59E0B", // Amber
+  "#8B5CF6", // Violet
+  "#06B6D4", // Cyan
+  "#6366F1", // Indigo
+  "#EC4899", // Pink
+  "#84CC16", // Lime
+  "#64748B", // Slate
+];
+
 watch(selectedType, (newVal) => {
   initialValues.value.tipo = newVal;
 });
@@ -238,40 +251,76 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Icono y Color -->
-      <div class="flex flex-col gap-4">
-        <label>Selecciona un Icono</label>
-        <div
-          class="grid grid-cols-6 sm:grid-cols-8 gap-2 p-3 border rounded-lg border-gray-200 dark:border-gray-700 max-h-48 overflow-y-auto bg-gray-50 dark:bg-gray-800/50"
-        >
-          <button
-            v-for="icon in financialIcons"
-            :key="icon"
-            type="button"
-            @click="$form.icono.value = icon"
-            class="flex items-center justify-center p-2 rounded-md transition-all hover:bg-primary-100 dark:hover:bg-primary-900/30"
-            :class="{
-              'bg-primary-500 text-white hover:bg-primary-600': $form.icono?.value === icon,
-              'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300': $form.icono?.value !== icon,
-            }"
-            v-tooltip="icon.split(':')[1].replace('-outline', '')"
-          >
-            <Icon :icon="icon" class="w-6 h-6" />
-          </button>
-        </div>
-        <InputText name="icono" class="hidden" />
-
-        <div v-if="selectedType === 'CATEGORIA'" class="flex flex-col gap-2">
-          <label for="color">Color de Identificación</label>
-          <div class="flex items-center gap-4 p-2 border rounded-lg border-gray-200 dark:border-gray-700">
-            <input
-              type="color"
-              :value="$form.color?.value || '#3B82F6'"
-              @input="$form.color.value = $event.target.value"
-              class="h-10 w-12 border-none bg-transparent cursor-pointer rounded overflow-hidden"
-            />
-            <InputText name="color" placeholder="#3B82F6" class="flex-1" />
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/50 dark:bg-gray-800/20 rounded-xl border border-gray-100 dark:border-gray-800"
+      >
+        <!-- Icon Section -->
+        <FormField name="icono" v-slot="$field">
+          <div class="flex flex-col gap-3">
+            <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+              <Icon icon="ion:happy-outline" class="text-primary-500" />
+              Icono Representativo
+            </label>
+            <div
+              class="grid grid-cols-6 gap-2 p-2 border rounded-lg border-gray-200 dark:border-gray-700 max-h-56 overflow-y-auto bg-white dark:bg-gray-900"
+            >
+              <button
+                v-for="icon in financialIcons"
+                :key="icon"
+                type="button"
+                @click="$field.value = icon"
+                class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                :class="{
+                  'bg-primary-500 text-white shadow-md shadow-primary-200 dark:shadow-none pointer-events-none': $field.value === icon,
+                  'text-gray-500 dark:text-gray-400': $field.value !== icon,
+                }"
+                v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
+              >
+                <Icon :icon="icon" class="w-6 h-6" />
+              </button>
+            </div>
           </div>
-        </div>
+        </FormField>
+
+        <!-- Color Section -->
+        <FormField v-if="selectedType === 'CATEGORIA'" name="color" v-slot="$field">
+          <div class="flex flex-col gap-3">
+            <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+              <Icon icon="ion:color-palette-outline" class="text-primary-500" />
+              Color de Identidad
+            </label>
+
+            <!-- Predefined Palette -->
+            <div class="grid grid-cols-5 gap-3 mb-2">
+              <button
+                v-for="c in colorPalette"
+                :key="c"
+                type="button"
+                @click="$field.value = c"
+                class="w-full aspect-square rounded-full border-2 transition-all transform active:scale-95"
+                :style="{backgroundColor: c}"
+                :class="{
+                  'border-primary-500 ring-2 ring-primary-200 dark:ring-primary-900 scale-110 shadow-lg': $field.value === c,
+                  'border-transparent hover:border-gray-300': $field.value !== c,
+                }"
+              />
+            </div>
+
+            <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 border rounded-lg border-gray-200 dark:border-gray-700">
+              <ColorPicker v-model="$field.value" format="hex" />
+              <div class="flex-1">
+                <InputText
+                  :modelValue="$field.value"
+                  @update:modelValue="$field.value = $event"
+                  placeholder="#3B82F6"
+                  fluid
+                  class="border-none !bg-transparent p-0 font-mono text-sm"
+                />
+              </div>
+            </div>
+            <p class="text-[10px] text-gray-500 italic">El color identifica rápidamente los movimientos.</p>
+          </div>
+        </FormField>
       </div>
 
       <!-- Nota -->
