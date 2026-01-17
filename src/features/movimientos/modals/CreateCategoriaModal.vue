@@ -180,7 +180,43 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Icono y Color -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-2 rounded-xl">
+        <!-- Color Section -->
+        <FormField v-if="selectedType === 'CATEGORIA'" name="color" v-slot="$field">
+          <div class="flex flex-col gap-3">
+            <label>Color de Identidad</label>
+
+            <!-- Predefined Palette -->
+            <div class="grid grid-cols-5 gap-2">
+              <button
+                v-for="c in COLOR_PALETTE"
+                :key="c"
+                type="button"
+                @click="$field.value = c"
+                class="w-full aspect-square rounded-full border-2 transition-all transform active:scale-95"
+                :style="{backgroundColor: c}"
+                :class="{
+                  'border-primary-500 ring-2 ring-primary-200  scale-110 shadow-lg': $field.value === c,
+                  'border-transparent': $field.value !== c,
+                }"
+              />
+            </div>
+
+            <div class="flex items-center gap-3 p-3 border rounded-lg">
+              <ColorPicker v-model="$field.value" format="hex" />
+              <div class="flex-1">
+                <InputText
+                  :modelValue="$field.value"
+                  @update:modelValue="$field.value = $event"
+                  placeholder="#3B82F6"
+                  fluid
+                  class="border-none !bg-transparent p-0 font-mono text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </FormField>
+
         <!-- Icon Section -->
         <FormField name="icono" v-slot="$field">
           <div class="flex flex-col gap-3">
@@ -204,45 +240,6 @@ const onFormSubmit = async ({valid, values}) => {
               >
                 <Icon :icon="icon" class="w-6 h-6" />
               </button>
-            </div>
-          </div>
-        </FormField>
-
-        <!-- Color Section -->
-        <FormField v-if="selectedType === 'CATEGORIA'" name="color" v-slot="$field">
-          <div class="flex flex-col gap-3">
-            <label class="text-sm font-semibold flex items-center gap-2">
-              <Icon icon="ion:color-palette-outline" class="text-primary-500" />
-              Color de Identidad
-            </label>
-
-            <!-- Predefined Palette -->
-            <div class="grid grid-cols-5 gap-3 mb-2">
-              <button
-                v-for="c in COLOR_PALETTE"
-                :key="c"
-                type="button"
-                @click="$field.value = c"
-                class="w-full aspect-square rounded-full border-2 transition-all transform active:scale-95"
-                :style="{backgroundColor: c}"
-                :class="{
-                  'border-primary-500 ring-2 ring-primary-200  scale-110 shadow-lg': $field.value === c,
-                  'border-transparent': $field.value !== c,
-                }"
-              />
-            </div>
-
-            <div class="flex items-center gap-3 p-3  border rounded-lg">
-              <ColorPicker v-model="$field.value" format="hex" />
-              <div class="flex-1">
-                <InputText
-                  :modelValue="$field.value"
-                  @update:modelValue="$field.value = $event"
-                  placeholder="#3B82F6"
-                  fluid
-                  class="border-none !bg-transparent p-0 font-mono text-sm"
-                />
-              </div>
             </div>
           </div>
         </FormField>
