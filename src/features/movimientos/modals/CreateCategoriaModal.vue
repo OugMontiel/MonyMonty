@@ -7,7 +7,7 @@ import {zodResolver} from "@primevue/forms/resolvers/zod";
 
 import {useCategorias} from "../logic/CreateCategoria";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento";
-import {FINANCIAL_ICONS, COLOR_PALETTE} from "../logic/MovimientoConstants";
+import {FINANCIAL_ICONS} from "../logic/MovimientoConstants";
 
 const props = defineProps({
   visible: {
@@ -179,117 +179,40 @@ const onFormSubmit = async ({valid, values}) => {
         <Message v-if="$form.nombre?.invalid" severity="error" size="small" variant="simple">{{ $form.nombre.error?.message }}</Message>
       </div>
 
-      <!-- Icono y Color -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-2 rounded-xl">
-        <!-- Color Section -->
-        <FormField v-if="selectedType === 'CATEGORIA'" name="color" v-slot="$field">
-          <div class="flex flex-col gap-3">
-            <label class="font-semibold text-sm text-gray-700">Color de Identidad</label>
-
-            <!-- Palette & Picker Container -->
-            <div class="flex flex-wrap gap-3 items-center">
-              <!-- Predefined Colors -->
-              <button
-                v-for="c in COLOR_PALETTE"
-                :key="c"
-                type="button"
-                @click="$field.value = c"
-                class="w-8 h-8 rounded-full shadow-sm transition-all duration-300 focus:outline-none relative flex items-center justify-center border border-gray-100"
-                :style="{backgroundColor: c}"
-                :class="[
-                  $field.value === c ? 'scale-110 ring-2 ring-offset-2 ring-blue-500 opacity-100 z-10' : '',
-                  $field.value && $field.value !== c
-                    ? 'opacity-40 hover:opacity-100 scale-90 hover:scale-100'
-                    : 'opacity-100 hover:scale-110',
-                ]"
-              >
-                <Transition
-                  enter-active-class="transition duration-200 ease-out"
-                  enter-from-class="opacity-0 scale-50"
-                  enter-to-class="opacity-100 scale-100"
-                >
-                  <i v-if="$field.value === c" class="pi pi-check text-white text-xs drop-shadow-md pointer-events-none"></i>
-                </Transition>
-              </button>
-
-              <!-- Custom Picker Circle -->
-              <div
-                class="w-8 h-8 rounded-full shadow-sm transition-all duration-300 relative flex items-center justify-center border border-gray-200 overflow-hidden bg-white"
-                :class="[
-                  $field.value && !COLOR_PALETTE.includes($field.value)
-                    ? 'scale-110 ring-2 ring-offset-2 ring-blue-500 opacity-100 z-10'
-                    : '',
-                  $field.value && COLOR_PALETTE.includes($field.value)
-                    ? 'opacity-40 hover:opacity-100 scale-90 hover:scale-100'
-                    : 'opacity-100 hover:scale-110',
-                ]"
-              >
-                <!-- Background color preview for custom color -->
-                <div
-                  class="absolute inset-0 w-full h-full"
-                  :style="{backgroundColor: $field.value && !COLOR_PALETTE.includes($field.value) ? $field.value : '#ffffff'}"
-                ></div>
-
-                <!-- Icon -->
-                <i
-                  v-if="!$field.value || COLOR_PALETTE.includes($field.value)"
-                  class="pi pi-palette text-gray-400 text-xs relative z-10 pointer-events-none"
-                ></i>
-                <Transition
-                  enter-active-class="transition duration-200 ease-out"
-                  enter-from-class="opacity-0 scale-50"
-                  enter-to-class="opacity-100 scale-100"
-                >
-                  <i
-                    v-if="$field.value && !COLOR_PALETTE.includes($field.value)"
-                    class="pi pi-check text-white text-xs drop-shadow-md relative z-10 pointer-events-none"
-                  ></i>
-                </Transition>
-
-                <!-- The Actual Picker - Invisible but clickable -->
-                <ColorPicker v-model="$field.value" format="hex" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer" />
-              </div>
-            </div>
-
-            <!-- Hex Input Sync -->
-            <div class="flex items-center gap-2 mt-1 px-1">
-              <span class="text-xs text-gray-400 font-mono tracking-wider">HEX:</span>
-              <InputText
-                v-model="$field.value"
-                placeholder="#000000"
-                class="!bg-transparent !border-0 !border-b !border-gray-200 !rounded-none !px-0 !py-0 font-mono text-sm w-24 focus:!border-blue-500 focus:!ring-0 transition-colors placeholder:text-gray-300 text-gray-600"
-              />
-            </div>
+      <!-- Icon Section -->
+      <FormField name="icono" v-slot="$field">
+        <div class="flex flex-col gap-3">
+          <label for="icono">Icono Representativo</label>
+          <div class="grid grid-cols-6 gap-2 p-2 border rounded-lg max-h-56 overflow-y-auto">
+            <button
+              v-for="icon in FINANCIAL_ICONS"
+              :key="icon"
+              type="button"
+              @click="$field.value = icon"
+              class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-primary-50"
+              :class="{
+                'bg-primary-500 shadow-md shadow-primary-200 pointer-events-none': $field.value === icon,
+                '': $field.value !== icon,
+              }"
+              v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
+            >
+              <Icon :icon="icon" class="w-6 h-6" />
+            </button>
           </div>
-        </FormField>
+        </div>
+      </FormField>
 
-        <!-- Icon Section -->
-        <FormField name="icono" v-slot="$field">
-          <div class="flex flex-col gap-3">
-            <label class="text-sm font-semibold flex items-center gap-2">
-              <Icon icon="ion:happy-outline" class="text-primary-500" />
-              Icono Representativo
-            </label>
-            <div class="grid grid-cols-6 gap-2 p-2 border rounded-lg max-h-56 overflow-y-auto">
-              >
-              <button
-                v-for="icon in FINANCIAL_ICONS"
-                :key="icon"
-                type="button"
-                @click="$field.value = icon"
-                class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-primary-50"
-                :class="{
-                  'bg-primary-500 shadow-md shadow-primary-200 pointer-events-none': $field.value === icon,
-                  '': $field.value !== icon,
-                }"
-                v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
-              >
-                <Icon :icon="icon" class="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-        </FormField>
-      </div>
+      <!-- Color Section -->
+      <FormField name="color" v-slot="$field" class="flex flex-col gap-2">
+        <Label for="color">Color Representativo</Label>
+        <div class="flex items-center gap-4 mt-2">
+          <!-- Color Picker -->
+          <ColorPicker v-model="$field.value" />
+
+          <!-- Color Value Display -->
+          <Message severity="secondary" size="small">{{ $field.value }}</Message>
+        </div>
+      </FormField>
 
       <!-- Nota -->
       <div class="flex flex-col gap-2">

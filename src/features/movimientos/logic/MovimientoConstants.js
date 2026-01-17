@@ -56,16 +56,3 @@ export const FINANCIAL_ICONS = [
   "ion:telescope-outline",
   "ion:ticket-outline",
 ];
-
-export const COLOR_PALETTE = [
-  "#10B981", // Emerald
-  "#F43F5E", // Rose
-  "#3B82F6", // Blue
-  "#F59E0B", // Amber
-  "#8B5CF6", // Violet
-  "#06B6D4", // Cyan
-  "#6366F1", // Indigo
-  "#EC4899", // Pink
-  "#84CC16", // Lime
-  "#64748B", // Slate
-];
