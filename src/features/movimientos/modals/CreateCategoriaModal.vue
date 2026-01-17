@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, watch} from "vue";
+import {ref, computed, watch, onMounted} from "vue";
 import {z} from "zod";
 import {Icon} from "@iconify/vue";
 import {useToast} from "primevue/usetoast";
@@ -26,7 +26,7 @@ const typeOptions = ref([
   {label: "Subcategoría", value: "SUBCATEGORIA"},
 ]);
 
-const selectedType = ref("CATEGORIA");
+const selectedType = ref(null);
 
 const financialIcons = [
   "ion:cash-outline",
@@ -100,6 +100,10 @@ const colorPalette = [
   "#64748B", // Slate
 ];
 
+onMounted(() => {
+  fetchOptions();
+});
+
 watch(selectedType, (newVal) => {
   initialValues.value.tipo = newVal;
 });
@@ -115,34 +119,26 @@ watch(
 
 // Initial Values
 const initialValues = ref({
-  tipo: "CATEGORIA",
+  tipo: null,
   categoriaId: null,
-  nombre: "",
-  icono: "ion:pricetag-outline",
-  color: "#3B82F6",
-  nota: "",
+  nombre: null,
+  icono: null,
+  color: null,
+  nota: null,
 });
 
 // Zod Schema
-const schema = computed(() => {
-  if (selectedType.value === "CATEGORIA") {
-    return z.object({
-      tipo: z.string(),
-      nombre: z.string({required_error: "El nombre es obligatorio"}).min(2, "El nombre debe tener al menos 2 caracteres"),
-      icono: z.string().optional(),
-      color: z.string().optional(),
-      nota: z.string().optional(),
-    });
-  } else {
-    return z.object({
-      tipo: z.string(),
+const schema = computed(() =>
+  z.object({
+    ...(selectedType.value !== "CATEGORIA" && {
       categoriaId: z.string({required_error: "Debe seleccionar una categoría"}),
-      nombre: z.string({required_error: "El nombre es obligatorio"}).min(2, "El nombre debe tener al menos 2 caracteres"),
-      icono: z.string().optional(),
-      nota: z.string().optional(),
-    });
-  }
-});
+    }),
+    nombre: z.string({required_error: "El nombre es obligatorio"}).min(2, "El nombre debe tener al menos 2 caracteres"),
+    nota: z.string({required_error: "La nota es obligatoria"}).min(2, "La nota debe tener al menos 2 caracteres"),
+    icono: z.string().optional(),
+    color: z.string().optional(),
+  })
+);
 
 const resolver = computed(() => zodResolver(schema.value));
 
@@ -162,7 +158,7 @@ const onFormSubmit = async ({valid, values}) => {
   }
 
   try {
-    if (values.tipo === "CATEGORIA") {
+    if (selectedType.value === "CATEGORIA") {
       await createCategoria({
         nombreCategoria: values.nombre,
         icono: values.icono,
@@ -186,7 +182,6 @@ const onFormSubmit = async ({valid, values}) => {
     });
 
     emit("saved");
-    fetchOptions(); // Refresh options
     close();
   } catch (error) {
     toast.add({
