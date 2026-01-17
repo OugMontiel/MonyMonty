@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, watch, onMounted} from "vue";
+import {ref, computed, watch} from "vue";
 import {z} from "zod";
 import {Icon} from "@iconify/vue";
 import {useToast} from "primevue/usetoast";
@@ -7,6 +7,7 @@ import {zodResolver} from "@primevue/forms/resolvers/zod";
 
 import {useCategorias} from "../logic/CreateCategoria";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento";
+import {FINANCIAL_ICONS, COLOR_PALETTE} from "../logic/MovimientoConstants";
 
 const props = defineProps({
   visible: {
@@ -26,86 +27,16 @@ const typeOptions = ref([
   {label: "Subcategoría", value: "SUBCATEGORIA"},
 ]);
 
-const selectedType = ref(null);
+const selectedType = ref("CATEGORIA");
 
-const financialIcons = [
-  "ion:cash-outline",
-  "ion:card-outline",
-  "ion:cart-outline",
-  "ion:fast-food-outline",
-  "ion:car-outline",
-  "ion:home-outline",
-  "ion:medkit-outline",
-  "ion:school-outline",
-  "ion:game-controller-outline",
-  //
-  "ion:paw-outline",
-  "ion:gift-outline",
-  "ion:barbell-outline",
-  "ion:briefcase-outline",
-  "ion:airplane-outline",
-  "ion:water-outline",
-  "ion:fitness-outline",
-  "ion:phone-portrait-outline",
-  "ion:library-outline",
-  //
-  "ion:shirt-outline",
-  "ion:wine-outline",
-  "ion:car-sport-outline",
-  "ion:heart-outline",
-  "ion:star-outline",
-  "ion:flash-outline",
-  "ion:wallet-outline",
-  "ion:beaker-outline",
-  "ion:build-outline",
-  "ion:business-outline",
-  //
-  "ion:hammer-outline",
-  "ion:leaf-outline",
-  "ion:musical-notes-outline",
-  "ion:restaurant-outline",
-  "ion:storefront-outline",
-  "ion:umbrella-outline",
-  "ion:videocam-outline",
-  "ion:watch-outline",
-  //
-  "ion:bus-outline",
-  "ion:bicycle-outline",
-  "ion:cafe-outline",
-  "ion:camera-outline",
-  "ion:construct-outline",
-  "ion:cut-outline",
-  "ion:flask-outline",
-  "ion:ice-cream-outline",
-  "ion:laptop-outline",
-  //
-  "ion:newspaper-outline",
-  "ion:pizza-outline",
-  "ion:pricetag-outline",
-  "ion:rocket-outline",
-  "ion:telescope-outline",
-  "ion:ticket-outline",
-];
-
-const colorPalette = [
-  "#10B981", // Emerald
-  "#F43F5E", // Rose
-  "#3B82F6", // Blue
-  "#F59E0B", // Amber
-  "#8B5CF6", // Violet
-  "#06B6D4", // Cyan
-  "#6366F1", // Indigo
-  "#EC4899", // Pink
-  "#84CC16", // Lime
-  "#64748B", // Slate
-];
-
-onMounted(() => {
-  fetchOptions();
-});
-
-watch(selectedType, (newVal) => {
-  initialValues.value.tipo = newVal;
+// Initial Values
+const getInitialValues = () => ({
+  tipo: "CATEGORIA",
+  categoriaId: null,
+  nombre: "",
+  icono: "",
+  color: "",
+  nota: "",
 });
 
 watch(
@@ -113,13 +44,16 @@ watch(
   (newVal) => {
     if (newVal) {
       fetchOptions();
+      // Reset values
+      initialValues.value = getInitialValues();
+      selectedType.value = "CATEGORIA";
     }
   }
 );
 
 // Initial Values
 const initialValues = ref({
-  tipo: null,
+  tipo: "CATEGORIA",
   categoriaId: null,
   nombre: null,
   icono: null,
@@ -177,7 +111,7 @@ const onFormSubmit = async ({valid, values}) => {
     toast.add({
       severity: "success",
       summary: "Éxito",
-      detail: `${values.tipo === "CATEGORIA" ? "Categoría" : "Subcategoría"} creada correctamente`,
+      detail: `${selectedType.value === "CATEGORIA" ? "Categoría" : "Subcategoría"} creada correctamente`,
       life: 3000,
     });
 
@@ -187,7 +121,7 @@ const onFormSubmit = async ({valid, values}) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: error.response?.data?.message || `No se pudo crear la ${values.tipo === "CATEGORIA" ? "categoría" : "subcategoría"}.`,
+      detail: error.response?.data?.message || `No se pudo crear la ${selectedType.value === "CATEGORIA" ? "categoría" : "subcategoría"}.`,
       life: 4000,
     });
   }
@@ -260,7 +194,7 @@ const onFormSubmit = async ({valid, values}) => {
               class="grid grid-cols-6 gap-2 p-2 border rounded-lg border-gray-200 dark:border-gray-700 max-h-56 overflow-y-auto bg-white dark:bg-gray-900"
             >
               <button
-                v-for="icon in financialIcons"
+                v-for="icon in FINANCIAL_ICONS"
                 :key="icon"
                 type="button"
                 @click="$field.value = icon"
@@ -288,7 +222,7 @@ const onFormSubmit = async ({valid, values}) => {
             <!-- Predefined Palette -->
             <div class="grid grid-cols-5 gap-3 mb-2">
               <button
-                v-for="c in colorPalette"
+                v-for="c in COLOR_PALETTE"
                 :key="c"
                 type="button"
                 @click="$field.value = c"
