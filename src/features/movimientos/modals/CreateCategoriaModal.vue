@@ -184,35 +184,81 @@ const onFormSubmit = async ({valid, values}) => {
         <!-- Color Section -->
         <FormField v-if="selectedType === 'CATEGORIA'" name="color" v-slot="$field">
           <div class="flex flex-col gap-3">
-            <label>Color de Identidad</label>
+            <label class="font-semibold text-sm text-gray-700">Color de Identidad</label>
 
-            <!-- Predefined Palette -->
-            <div class="grid grid-cols-5 gap-2">
+            <!-- Palette & Picker Container -->
+            <div class="flex flex-wrap gap-3 items-center">
+              <!-- Predefined Colors -->
               <button
                 v-for="c in COLOR_PALETTE"
                 :key="c"
                 type="button"
                 @click="$field.value = c"
-                class="w-full aspect-square rounded-full border-2 transition-all transform active:scale-95"
+                class="w-8 h-8 rounded-full shadow-sm transition-all duration-300 focus:outline-none relative flex items-center justify-center border border-gray-100"
                 :style="{backgroundColor: c}"
-                :class="{
-                  'border-primary-500 ring-2 ring-primary-200  scale-110 shadow-lg': $field.value === c,
-                  'border-transparent': $field.value !== c,
-                }"
-              />
+                :class="[
+                  $field.value === c ? 'scale-110 ring-2 ring-offset-2 ring-blue-500 opacity-100 z-10' : '',
+                  $field.value && $field.value !== c
+                    ? 'opacity-40 hover:opacity-100 scale-90 hover:scale-100'
+                    : 'opacity-100 hover:scale-110',
+                ]"
+              >
+                <Transition
+                  enter-active-class="transition duration-200 ease-out"
+                  enter-from-class="opacity-0 scale-50"
+                  enter-to-class="opacity-100 scale-100"
+                >
+                  <i v-if="$field.value === c" class="pi pi-check text-white text-xs drop-shadow-md pointer-events-none"></i>
+                </Transition>
+              </button>
+
+              <!-- Custom Picker Circle -->
+              <div
+                class="w-8 h-8 rounded-full shadow-sm transition-all duration-300 relative flex items-center justify-center border border-gray-200 overflow-hidden bg-white"
+                :class="[
+                  $field.value && !COLOR_PALETTE.includes($field.value)
+                    ? 'scale-110 ring-2 ring-offset-2 ring-blue-500 opacity-100 z-10'
+                    : '',
+                  $field.value && COLOR_PALETTE.includes($field.value)
+                    ? 'opacity-40 hover:opacity-100 scale-90 hover:scale-100'
+                    : 'opacity-100 hover:scale-110',
+                ]"
+              >
+                <!-- Background color preview for custom color -->
+                <div
+                  class="absolute inset-0 w-full h-full"
+                  :style="{backgroundColor: $field.value && !COLOR_PALETTE.includes($field.value) ? $field.value : '#ffffff'}"
+                ></div>
+
+                <!-- Icon -->
+                <i
+                  v-if="!$field.value || COLOR_PALETTE.includes($field.value)"
+                  class="pi pi-palette text-gray-400 text-xs relative z-10 pointer-events-none"
+                ></i>
+                <Transition
+                  enter-active-class="transition duration-200 ease-out"
+                  enter-from-class="opacity-0 scale-50"
+                  enter-to-class="opacity-100 scale-100"
+                >
+                  <i
+                    v-if="$field.value && !COLOR_PALETTE.includes($field.value)"
+                    class="pi pi-check text-white text-xs drop-shadow-md relative z-10 pointer-events-none"
+                  ></i>
+                </Transition>
+
+                <!-- The Actual Picker - Invisible but clickable -->
+                <ColorPicker v-model="$field.value" format="hex" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer" />
+              </div>
             </div>
 
-            <div class="flex items-center gap-3 p-3 border rounded-lg">
-              <ColorPicker v-model="$field.value" format="hex" />
-              <div class="flex-1">
-                <InputText
-                  :modelValue="$field.value"
-                  @update:modelValue="$field.value = $event"
-                  placeholder="#3B82F6"
-                  fluid
-                  class="border-none !bg-transparent p-0 font-mono text-sm"
-                />
-              </div>
+            <!-- Hex Input Sync -->
+            <div class="flex items-center gap-2 mt-1 px-1">
+              <span class="text-xs text-gray-400 font-mono tracking-wider">HEX:</span>
+              <InputText
+                v-model="$field.value"
+                placeholder="#000000"
+                class="!bg-transparent !border-0 !border-b !border-gray-200 !rounded-none !px-0 !py-0 font-mono text-sm w-24 focus:!border-blue-500 focus:!ring-0 transition-colors placeholder:text-gray-300 text-gray-600"
+              />
             </div>
           </div>
         </FormField>
