@@ -28,6 +28,65 @@ const typeOptions = ref([
 
 const selectedType = ref("CATEGORIA");
 
+const financialIcons = [
+  "ion:cash-outline",
+  "ion:card-outline",
+  "ion:cart-outline",
+  "ion:fast-food-outline",
+  "ion:car-outline",
+  "ion:home-outline",
+  "ion:medkit-outline",
+  "ion:school-outline",
+  "ion:game-controller-outline",
+  //
+  "ion:paw-outline",
+  "ion:gift-outline",
+  "ion:barbell-outline",
+  "ion:briefcase-outline",
+  "ion:airplane-outline",
+  "ion:water-outline",
+  "ion:fitness-outline",
+  "ion:phone-portrait-outline",
+  "ion:library-outline",
+  //
+  "ion:shirt-outline",
+  "ion:wine-outline",
+  "ion:car-sport-outline",
+  "ion:heart-outline",
+  "ion:star-outline",
+  "ion:flash-outline",
+  "ion:wallet-outline",
+  "ion:beaker-outline",
+  "ion:build-outline",
+  "ion:business-outline",
+  //
+  "ion:hammer-outline",
+  "ion:leaf-outline",
+  "ion:musical-notes-outline",
+  "ion:restaurant-outline",
+  "ion:storefront-outline",
+  "ion:umbrella-outline",
+  "ion:videocam-outline",
+  "ion:watch-outline",
+  //
+  "ion:bus-outline",
+  "ion:bicycle-outline",
+  "ion:cafe-outline",
+  "ion:camera-outline",
+  "ion:construct-outline",
+  "ion:cut-outline",
+  "ion:flask-outline",
+  "ion:ice-cream-outline",
+  "ion:laptop-outline",
+  //
+  "ion:newspaper-outline",
+  "ion:pizza-outline",
+  "ion:pricetag-outline",
+  "ion:rocket-outline",
+  "ion:telescope-outline",
+  "ion:ticket-outline",
+];
+
 watch(selectedType, (newVal) => {
   initialValues.value.tipo = newVal;
 });
@@ -143,8 +202,15 @@ const onFormSubmit = async ({valid, values}) => {
       <!-- Selector de Tipo -->
       <div class="flex flex-col gap-2">
         <label>¿Qué deseas crear?</label>
-        <SelectButton v-model="selectedType" :options="typeOptions" optionLabel="label" optionValue="value" class="w-full" />
-        <input type="hidden" name="tipo" :value="selectedType" />
+        <SelectButton
+          v-model="selectedType"
+          :options="typeOptions"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+          @change="$form.tipo.value = $event.value"
+        />
+        <InputText name="tipo" class="hidden" />
       </div>
 
       <!-- Selección de Categoría Padre (Solo para Subcategoría) -->
@@ -172,26 +238,38 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Icono y Color -->
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label for="icono">Icono (Iconify)</label>
-          <div class="flex gap-2">
-            <InputText name="icono" placeholder="ion:tag-outline" fluid />
-            <div class="flex items-center justify-center p-2 border rounded border-gray-300 dark:border-gray-600">
-              <Icon :icon="$form.icono?.value || 'ion:help-outline'" class="w-6 h-6" />
-            </div>
-          </div>
+      <div class="flex flex-col gap-4">
+        <label>Selecciona un Icono</label>
+        <div
+          class="grid grid-cols-6 sm:grid-cols-8 gap-2 p-3 border rounded-lg border-gray-200 dark:border-gray-700 max-h-48 overflow-y-auto bg-gray-50 dark:bg-gray-800/50"
+        >
+          <button
+            v-for="icon in financialIcons"
+            :key="icon"
+            type="button"
+            @click="$form.icono.value = icon"
+            class="flex items-center justify-center p-2 rounded-md transition-all hover:bg-primary-100 dark:hover:bg-primary-900/30"
+            :class="{
+              'bg-primary-500 text-white hover:bg-primary-600': $form.icono?.value === icon,
+              'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300': $form.icono?.value !== icon,
+            }"
+            v-tooltip="icon.split(':')[1].replace('-outline', '')"
+          >
+            <Icon :icon="icon" class="w-6 h-6" />
+          </button>
         </div>
+        <InputText name="icono" class="hidden" />
+
         <div v-if="selectedType === 'CATEGORIA'" class="flex flex-col gap-2">
-          <label for="color">Color</label>
-          <div class="flex gap-2">
-            <InputText name="color" placeholder="#3B82F6" fluid />
+          <label for="color">Color de Identificación</label>
+          <div class="flex items-center gap-4 p-2 border rounded-lg border-gray-200 dark:border-gray-700">
             <input
               type="color"
               :value="$form.color?.value || '#3B82F6'"
               @input="$form.color.value = $event.target.value"
-              class="h-10 w-12 border-none bg-transparent cursor-pointer"
+              class="h-10 w-12 border-none bg-transparent cursor-pointer rounded overflow-hidden"
             />
+            <InputText name="color" placeholder="#3B82F6" class="flex-1" />
           </div>
         </div>
       </div>
