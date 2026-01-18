@@ -180,31 +180,35 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Icon Section -->
-      <FormField name="icono" v-slot="$field">
-        <div class="flex flex-col gap-3">
-          <label for="icono">Icono Representativo</label>
-          <div class="grid grid-cols-6 gap-2 p-2 border rounded-lg max-h-56 overflow-y-auto">
-            <button
-              v-for="icon in FINANCIAL_ICONS"
-              :key="icon"
-              type="button"
-              @click="$field.value = icon"
-              class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-primary-50"
-              :class="{
-                'bg-primary-500 shadow-md shadow-primary-200 pointer-events-none': $field.value === icon,
-                '': $field.value !== icon,
-              }"
-              v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
-            >
-              <Icon :icon="icon" class="w-6 h-6" />
-            </button>
-          </div>
+      <div class="flex flex-col gap-3">
+        <label for="icono">Icono Representativo</label>
+        <div class="grid grid-cols-6 gap-2 p-2 border rounded-lg max-h-56 overflow-y-auto">
+          <button
+            v-for="icon in FINANCIAL_ICONS"
+            :key="icon"
+            type="button"
+            @click="$form.icono.value = icon"
+            class="flex items-center justify-center p-2 rounded-lg transition-all transform active:scale-90 hover:bg-gray-200 border-2"
+            :class="{
+              'bg-gray-100 border-2': $form.icono?.value === icon,
+              'border-transparent': $form.icono?.value !== icon,
+            }"
+            v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
+          >
+            <Icon
+              :icon="icon"
+              class="w-6 h-6"
+              :style="{color: $form.icono?.value === icon ? $form.color?.value : '#6b7280'}"
+            />
+          </button>
         </div>
-      </FormField>
+        <InputText name="icono" class="hidden" />
+        <Message v-if="$form.icono?.invalid" severity="error" size="small" variant="simple">{{ $form.icono.error?.message }}</Message>
+      </div>
 
       <!-- Color Section -->
       <FormField name="color" v-slot="$field" class="flex flex-col gap-2">
-        <Label for="color">Color Representativo</Label>
+        <label for="color">Color Representativo</label>
         <div class="flex items-center gap-4 mt-2">
           <!-- Color Picker -->
           <ColorPicker v-model="$field.value" />
