@@ -195,11 +195,7 @@ const onFormSubmit = async ({valid, values}) => {
             }"
             v-tooltip.top="icon.split(':')[1].replace('-outline', '')"
           >
-            <Icon
-              :icon="icon"
-              class="w-6 h-6"
-              :style="{color: $form.icono?.value === icon ? $form.color?.value : '#6b7280'}"
-            />
+            <Icon :icon="icon" class="w-6 h-6" :style="{color: $form.icono?.value === icon ? $form.color?.value : '#6b7280'}" />
           </button>
         </div>
         <InputText name="icono" class="hidden" />
@@ -207,16 +203,16 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Color Section -->
-      <div class="flex flex-col gap-2">
+      <FormField v-slot="$field" name="color" class="flex flex-col gap-2">
         <label for="color">Color Representativo</label>
         <div class="flex items-center gap-4 mt-2">
           <!-- Color Picker -->
-          <ColorPicker v-model="$form.color.value" />
+          <ColorPicker v-bind="$field.props" />
 
           <!-- Color Value Display -->
-          <Message severity="secondary" size="small">{{ $form.color.value }}</Message>
+          <Message severity="secondary" size="small">#{{ $field.value }}</Message>
         </div>
-      </div>
+      </FormField>
 
       <!-- Nota -->
       <div class="flex flex-col gap-2">
