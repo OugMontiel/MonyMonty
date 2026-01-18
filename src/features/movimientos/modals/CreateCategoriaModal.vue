@@ -96,14 +96,14 @@ const onFormSubmit = async ({valid, values}) => {
       await createCategoria({
         nombreCategoria: values.nombre,
         icono: values.icono,
-        color: values.color,
+        color: "#" + values.color,
         nota: values.nota,
       });
     } else {
       await createSubcategoria(values.categoriaId, {
         nombreSubcategoria: values.nombre,
         icono: values.icono,
-        color: values.color,
+        color: "#" + values.color,
         nota: values.nota,
       });
     }
@@ -207,16 +207,16 @@ const onFormSubmit = async ({valid, values}) => {
       </div>
 
       <!-- Color Section -->
-      <FormField name="color" v-slot="$field" class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2">
         <label for="color">Color Representativo</label>
         <div class="flex items-center gap-4 mt-2">
           <!-- Color Picker -->
-          <ColorPicker v-model="$field.value" />
+          <ColorPicker v-model="$form.color.value" />
 
           <!-- Color Value Display -->
-          <Message severity="secondary" size="small">{{ $field.value }}</Message>
+          <Message severity="secondary" size="small">{{ $form.color.value }}</Message>
         </div>
-      </FormField>
+      </div>
 
       <!-- Nota -->
       <div class="flex flex-col gap-2">
