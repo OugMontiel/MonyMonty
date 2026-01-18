@@ -22,24 +22,25 @@ import ProgressSpinner from "primevue/progressspinner";
 import Avatar from "primevue/avatar";
 import Badge from "primevue/badge";
 import Toast from "primevue/toast";
-import AutoComplete from 'primevue/autocomplete';
-import MultiSelect from 'primevue/multiselect';
-import Drawer from 'primevue/drawer';
-import SpeedDial from 'primevue/speeddial';
-import Tooltip from 'primevue/tooltip';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';  
-import Skeleton from 'primevue/skeleton';
-import Tag from 'primevue/tag';
-import ProgressBar from 'primevue/progressbar';
+import AutoComplete from "primevue/autocomplete";
+import MultiSelect from "primevue/multiselect";
+import Drawer from "primevue/drawer";
+import SpeedDial from "primevue/speeddial";
+import Tooltip from "primevue/tooltip";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import ColumnGroup from "primevue/columngroup"; // optional
+import Row from "primevue/row";
+import Skeleton from "primevue/skeleton";
+import Tag from "primevue/tag";
+import ProgressBar from "primevue/progressbar";
 
 import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
 import Textarea from "primevue/textarea";
 import Select from "primevue/select";
-
+import SelectButton from "primevue/selectbutton";
+import ColorPicker from "primevue/colorpicker";
 
 const app = createApp(App);
 
@@ -81,6 +82,8 @@ app.component("Dialog", Dialog);
 app.component("InputNumber", InputNumber);
 app.component("Textarea", Textarea);
 app.component("Select", Select);
+app.component("SelectButton", SelectButton);
+app.component("ColorPicker", ColorPicker);
 app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("ColumnGroup", ColumnGroup);
@@ -89,6 +92,6 @@ app.component("Skeleton", Skeleton);
 app.component("Tag", Tag);
 app.component("ProgressBar", ProgressBar);
 
-app.directive('tooltip', Tooltip);
+app.directive("tooltip", Tooltip);
 
 app.mount("#app");
