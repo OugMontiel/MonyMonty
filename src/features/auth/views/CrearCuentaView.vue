@@ -30,8 +30,8 @@ const planes = ref([
   {label: "Premium", value: "Premium"},
 ]);
 const generos = ref([
-  {label: "Mujer", value: "Mujer"},
-  {label: "Hombre", value: "Hombre"},
+  {label: "Femenino", value: "Femenino"},
+  {label: "Masculino", value: "Masculino"},
 ]);
 
 // variables para los selects
@@ -65,7 +65,7 @@ const resolver = zodResolver(
           label: z.string(),
           value: z.string(),
         })
-        .refine((v) => ["Mujer", "Hombre"].includes(v.value), {
+        .refine((v) => ["Femenino", "Masculino"].includes(v.value), {
           message: "Opción no válida",
         }),
       plan: z
