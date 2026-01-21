@@ -10,6 +10,7 @@ const toast = useToast();
 const {cargarUsuario, usuario: cachedUsuario} = userData();
 const isLoading = ref(false);
 const usuario = ref(cachedUsuario ? cachedUsuario.value : null);
+const userMenuPopover = ref();
 
 const displayName = computed(() => {
   if (!usuario.value) return "";
@@ -28,6 +29,34 @@ const planSeverity = computed(() => {
   if (plan.includes("free") || plan.includes("gratuito")) return "info";
   return "secondary";
 });
+
+// Toggle del popover
+const toggleUserMenu = (event) => {
+  userMenuPopover.value.toggle(event);
+};
+
+// Handlers para las acciones del menú
+const handleMenuAction = (action) => {
+  userMenuPopover.value.hide();
+
+  toast.add({
+    severity: "info",
+    summary: "En Desarrollo",
+    detail: `La funcionalidad "${action}" está en desarrollo`,
+    life: 3000,
+  });
+};
+
+const handleLogout = () => {
+  userMenuPopover.value.hide();
+
+  toast.add({
+    severity: "info",
+    summary: "En Desarrollo",
+    detail: "La funcionalidad de Cerrar sesión está en desarrollo",
+    life: 3000,
+  });
+};
 
 onMounted(async () => {
   // Si ya hay datos del usuario
@@ -85,10 +114,13 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- User profile -->
-        <div
+        <!-- User profile - Clickable -->
+        <button
           v-else
-          class="inline-flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-4 py-3 shadow-sm sm:items-center sm:px-3 sm:py-2 md:flex-row"
+          type="button"
+          class="inline-flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary/30 hover:bg-white sm:items-center sm:px-3 sm:py-2 md:flex-row cursor-pointer"
+          @click="toggleUserMenu"
+          aria-label="Abrir menú de usuario"
         >
           <div class="text-right sm:text-right">
             <p class="m-0 text-xs uppercase tracking-[0.12em] text-slate-400">Tu cuenta</p>
@@ -107,8 +139,131 @@ onMounted(async () => {
             shape="circle"
             class="shadow-md ring-2 ring-primary/15 ring-offset-2"
           />
-        </div>
+        </button>
+
+        <!-- User Menu Popover -->
+        <Popover ref="userMenuPopover" class="user-menu-popover">
+          <div class="w-72">
+            <!-- User Info Section (Read-only) -->
+            <div class="px-4 py-4 border-b border-slate-200">
+              <div class="flex items-center gap-3 mb-3">
+                <Avatar
+                  :label="avatarLabel"
+                  :image="usuario?.avatar"
+                  icon="pi pi-user"
+                  size="large"
+                  shape="circle"
+                  class="shadow-sm ring-2 ring-primary/10"
+                />
+                <div class="flex-1 min-w-0">
+                  <h4 class="m-0 text-base font-semibold text-slate-900 truncate">{{ displayName }}</h4>
+                  <p class="m-0 text-sm text-slate-600 truncate">{{ usuario?.correo }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500">Plan:</span>
+                <Tag :value="planLabel" :severity="planSeverity" class="text-xs py-1 px-2 font-medium" rounded />
+              </div>
+            </div>
+
+            <!-- Menu Actions -->
+            <div class="py-2">
+              <!-- Mi perfil -->
+              <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 focus:outline-none focus:bg-slate-50"
+                @click="handleMenuAction('Mi perfil')"
+              >
+                <Icon icon="ion:person-outline" class="w-5 h-5 text-slate-600" />
+                <span class="text-sm font-medium text-slate-700">Mi perfil</span>
+              </button>
+
+              <!-- Seguridad -->
+              <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 focus:outline-none focus:bg-slate-50"
+                @click="handleMenuAction('Seguridad')"
+              >
+                <Icon icon="ion:shield-checkmark-outline" class="w-5 h-5 text-slate-600" />
+                <span class="text-sm font-medium text-slate-700">Seguridad</span>
+              </button>
+
+              <!-- Configuración -->
+              <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 focus:outline-none focus:bg-slate-50"
+                @click="handleMenuAction('Configuración')"
+              >
+                <Icon icon="ion:settings-outline" class="w-5 h-5 text-slate-600" />
+                <span class="text-sm font-medium text-slate-700">Configuración</span>
+              </button>
+
+              <!-- Plan y facturación -->
+              <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 focus:outline-none focus:bg-slate-50"
+                @click="handleMenuAction('Plan y facturación')"
+              >
+                <Icon icon="ion:card-outline" class="w-5 h-5 text-slate-600" />
+                <span class="text-sm font-medium text-slate-700">Plan y facturación</span>
+              </button>
+            </div>
+
+            <!-- Logout Section -->
+            <div class="border-t border-slate-200 py-2">
+              <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-red-50 focus:outline-none focus:bg-red-50"
+                @click="handleLogout"
+              >
+                <Icon icon="ion:log-out-outline" class="w-5 h-5 text-red-600" />
+                <span class="text-sm font-medium text-red-600">Cerrar sesión</span>
+              </button>
+            </div>
+          </div>
+        </Popover>
       </div>
     </div>
   </header>
 </template>
+
+<style scoped>
+/* Popover animations */
+:deep(.p-popover) {
+  animation: popoverFadeIn 0.2s ease-out;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+:deep(.p-popover-enter-from) {
+  opacity: 0;
+  transform: scale(0.95) translateY(-8px);
+}
+
+:deep(.p-popover-enter-active) {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:deep(.p-popover-leave-to) {
+  opacity: 0;
+  transform: scale(0.95) translateY(-8px);
+}
+
+:deep(.p-popover-leave-active) {
+  transition: all 0.15s cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+</style>
