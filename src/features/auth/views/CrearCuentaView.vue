@@ -97,7 +97,7 @@ const onFormSubmit = async ({valid, values}) => {
       genero: values.genero.value,
       email: values.email.trim(),
       password: values.password,
-      plan: values.plan.value.toLowerCase(),
+      planId: values.plan.value.toLowerCase(),
     });
 
     if (result.success) {
