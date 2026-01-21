@@ -4,9 +4,7 @@ import {useRouter, useRoute} from "vue-router";
 import {Icon} from "@iconify/vue";
 
 import logo from "../../../../assets/img/MonyMontySinFondo3.png";
-import {useAuth} from "../../../auth/logic/useAuth.js"
 
-const {logout} = useAuth()
 const router = useRouter();
 const route = useRoute();
 const visible = ref(false);
@@ -66,13 +64,6 @@ const close = () => {
   visible.value = false;
 };
 
-// Función para manejar el logout
-const handleLogout = () => {
-  logout()
-  goTo("/")
-  visible.value = false;
-};
-
 // Exponer visible y métodos para control seguro desde el componente padre
 defineExpose({visible, open, close});
 </script>
@@ -104,15 +95,6 @@ defineExpose({visible, open, close});
         </nav>
       </div>
     </div>
-
-    <!-- Logout Button -->
-    <template #footer>
-      <Button label="Logout" @click="handleLogout" text severity="danger" >
-        <template #icon>
-          <Icon icon="ion:log-out-outline" class="w-5 h-5" />
-        </template>
-      </Button>
-    </template>
   </Drawer>
 </template>
 
