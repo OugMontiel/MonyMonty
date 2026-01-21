@@ -60,7 +60,7 @@ onMounted(async () => {
       <div v-else class="flex items-center gap-4 sm:flex-col-reverse sm:gap-2 md:flex-row">
         <div class="flex flex-col gap-1 text-right sm:text-center">
           <h3 class="m-0 text-lg sm:text-base font-semibold">{{ usuario?.nombre }} {{ usuario?.apellido }}</h3>
-          <Tag :value=usuario?.planId severity="info" class="text-xs py-0.5 px-2 font-normal" rounded></Tag>
+          <Tag :value="usuario?.planId" severity="info" class="text-xs py-0.5 px-2 font-normal" rounded></Tag>
         </div>
 
         <Avatar :label="usuario?.nombre[0]" :image="usuario?.avatar" icon="pi pi-user" size="large" shape="circle" />
