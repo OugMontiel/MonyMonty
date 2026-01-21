@@ -1,12 +1,16 @@
 <script setup>
 import {useToast} from "primevue/usetoast";
 import {computed, onMounted, ref} from "vue";
+import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
 
 import {userData} from "../../logic/user.js";
+import {useAuth} from "../../../auth/logic/useAuth.js";
 
 // Estados reactivos para mejor control
 const toast = useToast();
+const router = useRouter();
+const {logout} = useAuth();
 const {cargarUsuario, usuario: cachedUsuario} = userData();
 const isLoading = ref(false);
 const usuario = ref(cachedUsuario ? cachedUsuario.value : null);
@@ -47,15 +51,11 @@ const handleMenuAction = (action) => {
   });
 };
 
+// Función para manejar el logout (movida desde sidebar.vue)
 const handleLogout = () => {
   userMenuPopover.value.hide();
-
-  toast.add({
-    severity: "info",
-    summary: "En Desarrollo",
-    detail: "La funcionalidad de Cerrar sesión está en desarrollo",
-    life: 3000,
-  });
+  logout();
+  router.push("/");
 };
 
 onMounted(async () => {
@@ -144,28 +144,6 @@ onMounted(async () => {
         <!-- User Menu Popover -->
         <Popover ref="userMenuPopover" class="user-menu-popover">
           <div class="w-72">
-            <!-- User Info Section (Read-only) -->
-            <div class="px-4 py-4 border-b border-slate-200">
-              <div class="flex items-center gap-3 mb-3">
-                <Avatar
-                  :label="avatarLabel"
-                  :image="usuario?.avatar"
-                  icon="pi pi-user"
-                  size="large"
-                  shape="circle"
-                  class="shadow-sm ring-2 ring-primary/10"
-                />
-                <div class="flex-1 min-w-0">
-                  <h4 class="m-0 text-base font-semibold text-slate-900 truncate">{{ displayName }}</h4>
-                  <p class="m-0 text-sm text-slate-600 truncate">{{ usuario?.correo }}</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-500">Plan:</span>
-                <Tag :value="planLabel" :severity="planSeverity" class="text-xs py-1 px-2 font-medium" rounded />
-              </div>
-            </div>
-
             <!-- Menu Actions -->
             <div class="py-2">
               <!-- Mi perfil -->
@@ -228,7 +206,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* Popover animations */
+/* Animaciones del Popover */
 :deep(.p-popover) {
   animation: popoverFadeIn 0.2s ease-out;
   box-shadow:
