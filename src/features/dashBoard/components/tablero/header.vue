@@ -156,16 +156,6 @@ onMounted(async () => {
                 <span class="text-sm font-medium text-slate-700">Mi perfil</span>
               </button>
 
-              <!-- Seguridad -->
-              <button
-                type="button"
-                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 focus:outline-none focus:bg-slate-50"
-                @click="handleMenuAction('Seguridad')"
-              >
-                <Icon icon="ion:shield-checkmark-outline" class="w-5 h-5 text-slate-600" />
-                <span class="text-sm font-medium text-slate-700">Seguridad</span>
-              </button>
-
               <!-- Configuración -->
               <button
                 type="button"
