@@ -64,9 +64,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header
-    class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/70 shadow-sm"
-  >
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/70 shadow-sm">
     <div class="flex items-center justify-between gap-4 px-4 py-3 lg:px-6 xl:px-8">
       <button
         type="button"
@@ -90,18 +88,13 @@ onMounted(async () => {
         <!-- User profile -->
         <div
           v-else
-          class="inline-flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-4 py-3 shadow-sm sm:flex-col sm:items-end sm:px-3 sm:py-2 md:flex-row"
+          class="inline-flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-4 py-3 shadow-sm sm:items-center sm:px-3 sm:py-2 md:flex-row"
         >
           <div class="text-right sm:text-right">
             <p class="m-0 text-xs uppercase tracking-[0.12em] text-slate-400">Tu cuenta</p>
             <h3 class="m-0 text-lg font-semibold text-slate-900 sm:text-base">{{ displayName }}</h3>
             <div class="mt-1 flex items-center justify-end gap-2">
-              <Tag
-                :value="planLabel"
-                :severity="planSeverity"
-                class="text-[11px] py-0.5 px-2 font-medium"
-                rounded
-              />
+              <Tag :value="planLabel" :severity="planSeverity" class="text-[11px] py-0.5 px-2 font-medium" rounded />
               <span class="text-[11px] text-slate-500" v-if="usuario?.correo">{{ usuario.correo }}</span>
             </div>
           </div>
