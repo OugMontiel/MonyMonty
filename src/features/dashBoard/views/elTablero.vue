@@ -5,25 +5,24 @@ import HeaderView from "../components/tablero/header.vue";
 import SidebarView from "../components/tablero/sidebar.vue";
 import FloatingMenu from "../../movimientos/components/FloatingMenu.vue";
 
-const drawerRef = ref(null);
+const sidebarRef = ref(null);
 
-const openDrawer = () => {
-  if (drawerRef.value?.open) {
-    drawerRef.value.open();
-  } else {
-    drawerRef.value.visible = true;
+const toggleSidebar = () => {
+  if (sidebarRef.value) {
+    sidebarRef.value.visible = !sidebarRef.value.visible;
   }
 };
 </script>
 
 <template>
+  <!-- Sidebar -->
+  <SidebarView ref="sidebarRef" />
+  
   <div class="min-h-screen flex flex-col">
     <!-- Header -->
-    <HeaderView @open-drawer="openDrawer" />
+    <HeaderView @toggle-menu="toggleSidebar" />
 
     <div class="flex flex-1">
-      <!-- Sidebar -->
-      <SidebarView ref="drawerRef" />
 
       <!-- Main Content / Background -->
 
