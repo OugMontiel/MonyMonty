@@ -70,7 +70,8 @@ const ContainerComponent = computed(() => (isDesktop.value ? "div" : Drawer));
 const containerProps = computed(() => {
   if (isDesktop.value) {
     return {
-      class: "h-auto min-h-full bg-white border-r border-surface-200 dark:border-surface-700 flex flex-col justify-between px-4 py-3 w-64",
+      class:
+        "sticky top-0 h-screen overflow-y-auto bg-white border-r border-surface-200 dark:border-surface-700 flex flex-col justify-between px-4 py-3 w-64 z-20",
     };
   }
   return {
@@ -93,14 +94,48 @@ defineExpose({visible});
 </script>
 
 <template>
-  <!-- Renderizar condicionalmente solo si es desktop O si es mobile y está visible (Drawer maneja su propia visibilidad con v-model) -->
-  <!-- Nota: Drawer usa 'visible' prop, div usa v-if explícito si queremos ocultarlo, pero aquí el div desktop siempre está presente si isDesktop && visible es true desde el padre, pero el padre controla el layout.
-        En Desktop: Sidebar siempre visible (Static).
-        En Mobile: Sidebar controlado por visible. -->
+  <!-- Desktop Sidebar -->
+  <Transition name="layout-sidebar">
+    <div
+      v-if="isDesktop && visible"
+      class="sticky top-0 h-screen overflow-y-auto bg-white border-r border-surface-200 dark:border-surface-700 flex flex-col justify-between px-4 py-3 w-64 z-20"
+    >
+      <div class="flex flex-col h-full w-full overflow-hidden">
+        <!-- Logo -->
+        <div class="flex items-center justify-between w-full mb-6">
+          <span class="inline-flex items-center">
+            <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
+          </span>
+        </div>
 
-  <component :is="ContainerComponent" v-bind="containerProps" v-if="isDesktop ? visible : true">
-    <!-- Header Shared Code -->
-    <template #header v-if="!isDesktop">
+        <!-- Navigation Menu -->
+        <div class="flex-1">
+          <nav class="flex-1">
+            <ul class="list-none p-0 m-0">
+              <li v-for="item in menuItems" :key="item.id" class="py-2">
+                <Button
+                  :label="item.title"
+                  @click="goTo(item.path)"
+                  text
+                  :severity="activeItem?.id === item.id ? 'primary' : 'secondary'"
+                  class="w-full justify-start whitespace-nowrap"
+                >
+                  <template #icon>
+                    <Icon :icon="item.icon" class="w-5 h-5 min-w-5 mr-3" />
+                  </template>
+                </Button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Mobile Drawer -->
+  <Drawer v-if="!isDesktop" v-model:visible="visible" class="flex flex-col justify-between px-4 py-3">
+    <!-- Header -->
+    <template #header>
       <div class="flex items-center justify-between w-full">
         <span class="inline-flex items-center">
           <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
@@ -108,41 +143,52 @@ defineExpose({visible});
       </div>
     </template>
 
-    <!-- Content Wrapper -->
-    <div class="flex flex-col h-full w-full">
-      <!-- Logo for Desktop (inside flow) -->
-      <div v-if="isDesktop" class="flex items-center justify-between w-full mb-6">
-        <span class="inline-flex items-center">
-          <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
-        </span>
-      </div>
-
-      <!-- Navigation Menu (The 'const' logic) -->
-      <div class="flex-1">
-        <nav class="flex-1">
-          <ul class="list-none p-0 m-0">
-            <li v-for="item in menuItems" :key="item.id" class="py-2">
-              <Button
-                :label="item.title"
-                @click="goTo(item.path)"
-                text
-                :severity="activeItem?.id === item.id ? 'primary' : 'secondary'"
-                class="w-full justify-start"
-              >
-                <template #icon>
-                  <Icon :icon="item.icon" class="w-5 h-5" />
-                </template>
-              </Button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+    <!-- Navigation Menu -->
+    <div class="flex-1 pt-4">
+      <nav class="flex-1">
+        <ul class="list-none p-0 m-0">
+          <li v-for="item in menuItems" :key="item.id" class="py-2">
+            <Button
+              :label="item.title"
+              @click="goTo(item.path)"
+              text
+              :severity="activeItem?.id === item.id ? 'primary' : 'secondary'"
+              class="w-full justify-start whitespace-nowrap"
+            >
+              <template #icon>
+                <Icon :icon="item.icon" class="w-5 h-5 min-w-5 mr-3" />
+              </template>
+            </Button>
+          </li>
+        </ul>
+      </nav>
     </div>
-  </component>
+  </Drawer>
 </template>
 
 <style scoped>
 .login-logo {
   max-width: 9rem;
+}
+
+/* Sidebar Transition */
+.layout-sidebar-enter-active,
+.layout-sidebar-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.layout-sidebar-enter-from,
+.layout-sidebar-leave-to {
+  width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  opacity: 0;
+  border-right: none !important;
+}
+
+.layout-sidebar-enter-to,
+.layout-sidebar-leave-from {
+  width: 16rem; /* w-64 */
+  opacity: 1;
 }
 </style>
