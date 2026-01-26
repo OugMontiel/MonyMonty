@@ -75,8 +75,14 @@ onUnmounted(() => {
 defineExpose({visible});
 
 const Titulo = () => {
-  return h("div", {class: "flex items-center justify-between w-full"}, [
-    h("span", {class: "inline-flex items-center"}, [h("img", {src: logo, alt: "Icono de la aplicación", class: "login-logo"})]),
+  return h("div", {class: "flex items-center justify-between w-full py-3 px-4"}, [
+    h("span", {class: "inline-flex items-center"}, [
+      h("img", {
+        src: logo,
+        alt: "Icono de la aplicación",
+        class: "max-w-[9rem]", // Replaced scoped class with Tailwind
+      }),
+    ]),
   ]);
 };
 
@@ -95,7 +101,7 @@ const Menu = () => {
               onClick: () => goTo(item.path),
               text: true,
               severity: activeItem.value?.id === item.id ? "primary" : "secondary",
-              class: "w-full justify-start whitespace-nowrap",
+              class: "w-full !justify-start whitespace-nowrap",
             },
             {
               icon: () => h(Icon, {icon: item.icon, class: "w-5 h-5 min-w-5 mr-3"}),
@@ -111,16 +117,13 @@ const Menu = () => {
 <template>
   <!-- Desktop Sidebar -->
   <Transition name="layout-sidebar">
-    <div
-      v-if="isDesktop && visible"
-      class="sticky top-0 h-screen overflow-y-auto border-r border-surface-200 dark:border-surface-700 flex flex-col justify-between px-4 py-3 w-64 z-20"
-    >
+    <div v-if="isDesktop && visible" class="sticky top-0 h-screen overflow-y-auto flex flex-col justify-between px-4 py-3">
       <div class="flex flex-col h-full w-full overflow-hidden">
         <!-- Logo -->
         <Titulo />
 
         <!-- Navigation Menu -->
-        <div class="flex-1">
+        <div class="flex-1 py-4 px-2">
           <Menu />
         </div>
       </div>
@@ -142,10 +145,6 @@ const Menu = () => {
 </template>
 
 <style scoped>
-.login-logo {
-  max-width: 9rem;
-}
-
 /* Sidebar Transition */
 .layout-sidebar-enter-active,
 .layout-sidebar-leave-active {
@@ -163,7 +162,7 @@ const Menu = () => {
 
 .layout-sidebar-enter-to,
 .layout-sidebar-leave-from {
-  width: 16rem; /* w-64 */
+  width: 13rem; /* w-64 */
   opacity: 1;
 }
 </style>
