@@ -15,27 +15,28 @@ const toggleSidebar = () => {
 </script>
 
 <template>
-  <!-- Sidebar -->
-  <SidebarView ref="sidebarRef" />
-  
-  <div class="min-h-screen flex flex-col">
-    <!-- Header -->
-    <HeaderView @toggle-menu="toggleSidebar" />
+  <div class="flex min-h-screen relative">
+    <!-- Sidebar (Left) -->
+    <SidebarView ref="sidebarRef" />
 
-    <div class="flex flex-1">
+    <!-- Main Column (Right) - Header + Content -->
+    <div class="flex flex-col flex-1 min-w-0 transition-all duration-300">
+      <!-- Header -->
+      <HeaderView @toggle-menu="toggleSidebar" />
 
-      <!-- Main Content / Background -->
+      <!-- Main Content -->
+      <div class="flex flex-1 relative">
+        <main class="flex-1 relative">
+          <router-view v-slot="{Component}">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
 
-      <main class="flex-1 relative">
-        <router-view v-slot="{Component}">
-          <keep-alive>
-            <component :is="Component" />
-          </keep-alive>
-        </router-view>
-        
-        <!-- Floating Action Button -->
-        <FloatingMenu />
-      </main>
+          <!-- Floating Action Button -->
+          <FloatingMenu />
+        </main>
+      </div>
     </div>
   </div>
 </template>
