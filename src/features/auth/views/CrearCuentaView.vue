@@ -21,7 +21,6 @@ import FooterAuth from "../components/FooterAuth.vue";
 import Checkbox from "primevue/checkbox";
 import Drawer from "primevue/drawer";
 
-
 const toast = useToast();
 const router = useRouter();
 const {CrearUsuario, loading} = useAuth();
@@ -82,14 +81,9 @@ const resolver = zodResolver(
           message: "Opción no válida",
         }),
 
-      acceptLegal: z
-        .object({
-          value: z.boolean(),
-        })
-        .refine((data) => data.acceptLegal === true, {
-          message: "Debes aceptar los términos y la política de privacidad para continuar",
-          path: ["acceptLegal"],
-        }),
+      acceptLegal: z.boolean({required_error: "Debes aceptar los términos"}).refine((val) => val === true, {
+        message: "Debes aceptar los términos y la política de privacidad para continuar",
+      }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Las contraseñas no coinciden",
@@ -112,6 +106,7 @@ const onFormSubmit = async ({valid, values}) => {
       email: values.email.trim(),
       password: values.password,
       plan: values.plan.value.toLowerCase(),
+      acceptLegal: values.acceptLegal,
     });
 
     if (result.success) {
@@ -119,7 +114,7 @@ const onFormSubmit = async ({valid, values}) => {
         severity: "success",
         summary: "Éxito",
         detail: result.message || "Se ha creado el Usuario.",
-        life: 3000,
+        life: 4500,
       });
       irALogin();
     } else {
@@ -127,7 +122,7 @@ const onFormSubmit = async ({valid, values}) => {
         severity: "error",
         summary: "Error",
         detail: result.error || "Error en Crear Cuenta",
-        life: 4000,
+        life: 4500,
       });
     }
   } catch {
@@ -143,23 +138,23 @@ const onFormSubmit = async ({valid, values}) => {
 // Redirecciones
 
 const irALogin = () => router.push("/");
-const irAPrivacidad = () => router.push("/privacidad");
-const irACondiciones = () => router.push("/condiciones");
-
 
 // Controles de visibilidad (locales a esta vista)
-const showPrivacidad   = ref(false)
-const showCondiciones  = ref(false)
+const showPrivacidad = ref(false);
+const showCondiciones = ref(false);
 
 // Reemplaza las funciones de router por estas:
-const abrirPrivacidad  = () => { showPrivacidad.value  = true }
-const abrirCondiciones = () => { showCondiciones.value = true }
+const abrirPrivacidad = () => {
+  showPrivacidad.value = true;
+};
+const abrirCondiciones = () => {
+  showCondiciones.value = true;
+};
 
-const cerrarTodo       = () => {
-  showPrivacidad.value  = false
-  showCondiciones.value = false
-}
-
+const cerrarTodo = () => {
+  showPrivacidad.value = false;
+  showCondiciones.value = false;
+};
 </script>
 
 <template>
@@ -290,13 +285,11 @@ const cerrarTodo       = () => {
           <FormField v-slot="$field" name="acceptLegal" class="mt-2">
             <div class="flex items-start gap-2">
               <Checkbox
-                v-model="$field.value"
                 inputId="acceptLegal"
                 :binary="true"
-                 
+                v-bind="$field.props"
                 :disabled="loading"
                 :invalid="submitted && $field?.invalid"
-                @update:modelValue="$field.onChange"
               />
               <label for="acceptLegal" class="text-sm text-gray-600 dark:text-gray-400 leading-snug">
                 Acepto los
@@ -317,13 +310,17 @@ const cerrarTodo       = () => {
                 </button>
                 de MonyMonty.
               </label>
+              <br>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
             </div>
           </FormField>
 
-          <Button type="submit" label="Registrarte" severity="primary" :loading="loading" ></Button>
+          <Button type="submit" label="Registrarte" severity="primary" :loading="loading"></Button>
         </Form>
 
-        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" ></Button>
+        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading"></Button>
       </div>
     </div>
 
@@ -332,19 +329,12 @@ const cerrarTodo       = () => {
 
   <!-- ──────────── Drawer Política de Privacidad ──────────── -->
 
-  <drawer 
-    v-model:visible="showPrivacidad" 
-    position="full" 
-    :modal="true" 
-    :showCloseIcon="true" 
-    :dismissable="true"
-  >
-    
+  <drawer v-model:visible="showPrivacidad" position="full" :modal="true" :showCloseIcon="true" :dismissable="true">
     <div class="w-full max-w-8xl mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24">
-       <!-- Encabezado -->
+      <!-- Encabezado -->
       <div class="text-center mb-10 md:mb-12">
         <h1 class="text-3xl md:text-4xl lg:text-5x1 font-bold text-gray-800">Política de Privacidad</h1>
-        <p class="mt-3 text-gray-600 ">Última actualización: 24 de enero de 2026</p>
+        <p class="mt-3 text-gray-600">Última actualización: 24 de enero de 2026</p>
       </div>
 
       <!-- Contenido principal -->
@@ -427,43 +417,27 @@ const cerrarTodo       = () => {
 
   <!-- ──────────── Drawer Términos y Condiciones ──────────── -->
 
-  <drawer 
-    v-model:visible="showCondiciones" 
-    position="full" 
-    :modal="true" 
-    :showCloseIcon="true" 
-    :dismissable="true"
-  >
-
+  <drawer v-model:visible="showCondiciones" position="full" :modal="true" :showCloseIcon="true" :dismissable="true">
     <div class="w-full max-w-8xl mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24">
       <!-- Encabezado -->
       <div class="text-center mb-10">
         <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Términos y Condiciones</h1>
-        <p class="mt-3 text-gray-600 ">Última actualización: 24 de enero de 2026</p>
+        <p class="mt-3 text-gray-600">Última actualización: 24 de enero de 2026</p>
       </div>
 
       <!-- Contenido principal -->
       <div class="prose prose-lg prose-gray max-w-none text-justify">
         <p class="sm:pt-2 md:pt-4 lg:pt-6 xl:pt-8">
-          Al acceder, descargar, instalar o usar la aplicación <strong>Mony Monty</strong>, ya sea en versión móvil,
-          web o cualquier otro medio, aceptas estar vinculado por estos <strong>Términos y Condiciones de Uso</strong>,
-          la <strong>Política de Privacidad</strong> y cualquier otra política o norma que publiquemos en la Plataforma.
+          Al acceder, descargar, instalar o usar la aplicación <strong>Mony Monty</strong>, ya sea en versión móvil, web o cualquier otro
+          medio, aceptas estar vinculado por estos <strong>Términos y Condiciones de Uso</strong>, la
+          <strong>Política de Privacidad</strong> y cualquier otra política o norma que publiquemos en la Plataforma.
         </p>
 
-        <p class="py-4 md:py-4">
-          Si no estás de acuerdo con estos Términos, <strong> no uses la Plataforma</strong>.
-        </p>
-       
+        <p class="py-4 md:py-4">Si no estás de acuerdo con estos Términos, <strong> no uses la Plataforma</strong>.</p>
 
         <h2>1. Descripción del Servicio</h2>
         <p>
           MonyMonty es una herramienta digital de <strong>gestión de finanzas personales</strong> que permite a los usuarios:<br />
-
-          <ul>
-            <li>Primer elemento</li>
-            <li>Segundo elemento</li>
-            <li>Tercer elemento</li>
-          </ul>
 
           <strong>Responsable:</strong> [Nombre completo de la empresa o persona natural]<br />
           <strong>NIT / CC:</strong> [Tu NIT o documento]<br />
@@ -471,6 +445,11 @@ const cerrarTodo       = () => {
           <strong>Correo electrónico:</strong> [privacidad@tuapp.com o el que uses]<br />
           <strong>Sitio web:</strong> [www.tuapp.com]
         </p>
+        <ul>
+          <li>Primer elemento</li>
+          <li>Segundo elemento</li>
+          <li>Tercer elemento</li>
+        </ul>
 
         <h2>2. Datos que Recolectamos</h2>
         <p>Recolectamos los siguientes tipos de datos:</p>
