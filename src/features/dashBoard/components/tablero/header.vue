@@ -93,7 +93,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/70 shadow-sm">
+  <header class="sticky top-0 z-30 backdrop-blur-xl">
     <div class="flex items-center justify-between gap-4 px-4 py-3 lg:px-6 xl:px-8">
       <button
         type="button"
