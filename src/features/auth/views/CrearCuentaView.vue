@@ -33,8 +33,8 @@ const planes = ref([
   {label: "Premium", value: "Premium"},
 ]);
 const generos = ref([
-  {label: "Mujer", value: "Mujer"},
-  {label: "Hombre", value: "Hombre"},
+  {label: "Femenino", value: "Femenino"},
+  {label: "Masculino", value: "Masculino"},
 ]);
 
 // variables para los selects
@@ -68,7 +68,7 @@ const resolver = zodResolver(
           label: z.string(),
           value: z.string(),
         })
-        .refine((v) => ["Mujer", "Hombre", ""].includes(v.value), {
+        .refine((v) => ["Femenino", "Masculino"].includes(v.value), {
           message: "Opción no válida",
           path: ["genero"],
         }),
@@ -105,7 +105,7 @@ const onFormSubmit = async ({valid, values}) => {
       genero: values.genero.value,
       email: values.email.trim(),
       password: values.password,
-      plan: values.plan.value.toLowerCase(),
+      planId: values.plan.value.toLowerCase(),
       acceptLegal: values.acceptLegal,
     });
 
