@@ -61,6 +61,7 @@ export function useAuth() {
         return {success: true, ...response};
       }
     } catch (error) {
+
       return {
         success: false,
         error: error.response?.data?.message || "Error en la creación de usuario",
