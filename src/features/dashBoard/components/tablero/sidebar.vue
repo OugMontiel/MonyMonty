@@ -2,7 +2,6 @@
 import {ref, computed, onMounted, onUnmounted, h, resolveComponent} from "vue";
 import {useRouter, useRoute} from "vue-router";
 import {Icon} from "@iconify/vue";
-import Drawer from "primevue/drawer";
 
 import logo from "../../../../assets/img/MonyMontySinFondo3.png";
 
