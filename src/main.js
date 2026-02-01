@@ -34,6 +34,7 @@ import Row from "primevue/row";
 import Skeleton from "primevue/skeleton";
 import Tag from "primevue/tag";
 import ProgressBar from "primevue/progressbar";
+import Popover from "primevue/popover";
 
 import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
@@ -91,6 +92,7 @@ app.component("Row", Row);
 app.component("Skeleton", Skeleton);
 app.component("Tag", Tag);
 app.component("ProgressBar", ProgressBar);
+app.component("Popover", Popover);
 
 app.directive("tooltip", Tooltip);
 
