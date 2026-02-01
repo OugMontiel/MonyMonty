@@ -3,17 +3,19 @@ import Drawer from "primevue/drawer";
 </script>
 
 <template>
-  <drawer v-model:visible="showPrivacy" position="full" :modal="true" :showCloseIcon="true">
-    
-    <div class="w-full max-w-4xl mx-auto px-4 py-8 md:py-12">
+  
+  <!-- ──────────── Drawer Política de Privacidad ──────────── -->
+
+  <drawer v-model:visible="showPrivacidad" position="full" :modal="true" :showCloseIcon="true" :dismissable="true">
+    <div class="w-full max-w-8xl mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24">
       <!-- Encabezado -->
-      <div class="text-center mb-10">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100">Política de Privacidad</h1>
-        <p class="mt-3 text-gray-600 dark:text-gray-400">Última actualización: 24 de enero de 2026</p>
+      <div class="text-center mb-10 md:mb-12">
+        <h1 class="text-3xl md:text-4xl lg:text-5x1 font-bold text-gray-800">Política de Privacidad</h1>
+        <p class="mt-3 text-gray-600">Última actualización: 24 de enero de 2026</p>
       </div>
 
       <!-- Contenido principal -->
-      <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
+      <div class="prose prose-lg prose-gray max-w-none text-justify">
         <p>
           En <strong>[Nombre de tu Empresa / Aplicación]</strong> (en adelante “nosotros”, “nuestra” o “la Plataforma”), valoramos tu
           privacidad y nos comprometemos a proteger tus datos personales de acuerdo con la legislación colombiana vigente, en particular la
@@ -86,16 +88,6 @@ import Drawer from "primevue/drawer";
           <strong>Email:</strong> [privacidad@tuapp.com]<br />
           <strong>Dirección:</strong> Bucaramanga, Santander – Colombia
         </p>
-      </div>
-
-      <!-- Botón de volver (opcional) -->
-      <div class="mt-12 text-center">
-        <router-link
-          to="/dashboard"
-          class="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-        >
-          Volver al Dashboard
-        </router-link>
       </div>
     </div>
   </drawer>

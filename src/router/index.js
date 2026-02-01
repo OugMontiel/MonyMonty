@@ -6,10 +6,6 @@ import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
 import CambioDeClave from "../features/auth/views/CambioDeClave.vue";
 
-//legal
-import Privacidad from "../features/legal/views/politicaPrivacidad.vue";
-import Condiciones from "../features/legal/views/terminosCondiciones.vue";
-
 // layaut 
 import elTablero from "../features/dashBoard/views/elTablero.vue";
 
@@ -48,20 +44,6 @@ const router = createRouter({
       meta: {requiresAuth: false},
     },
 
-    //legal
-    {
-      path: "/privacidad",
-      name: "privacidad",
-      component: Privacidad,
-      meta: {requiresAuth: false},
-    },
-     {
-      path: "/condiciones",
-      name: "condiciones",
-      component: Condiciones,
-      meta: {requiresAuth: false},
-    },
-
     // Ruta 404
     {
       path: "/:pathMatch(.*)*",
@@ -69,7 +51,6 @@ const router = createRouter({
       redirect: "/",
       meta: {requiresAuth: false},
     },
-
 
     /**
      *  Rutas protegidas

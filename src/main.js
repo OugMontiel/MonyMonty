@@ -42,6 +42,7 @@ import Textarea from "primevue/textarea";
 import Select from "primevue/select";
 import SelectButton from "primevue/selectbutton";
 import ColorPicker from "primevue/colorpicker";
+import Checkbox from "primevue/checkbox";
 
 const app = createApp(App);
 
@@ -76,6 +77,7 @@ app.component("Badge", Badge);
 app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
 app.component("MultiSelect", MultiSelect);
+app.component("Checkbox", Checkbox);
 app.component("Drawer", Drawer);
 app.component("SpeedDial", SpeedDial);
 app.component("Tooltip", Tooltip);
@@ -93,6 +95,7 @@ app.component("Skeleton", Skeleton);
 app.component("Tag", Tag);
 app.component("ProgressBar", ProgressBar);
 app.component("Popover", Popover);
+
 
 app.directive("tooltip", Tooltip);
 
