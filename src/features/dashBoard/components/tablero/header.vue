@@ -93,13 +93,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/70 shadow-sm">
+  <header class="sticky top-0 z-30 backdrop-blur-xl">
     <div class="flex items-center justify-between gap-4 px-4 py-3 lg:px-6 xl:px-8">
       <button
         type="button"
         class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white/80 p-2 text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         aria-label="Abrir menú lateral"
-        @click="$emit('open-drawer')"
+        @click="$emit('toggle-menu')"
       >
         <Icon icon="ion:menu-outline" class="w-6 h-6" />
       </button>
