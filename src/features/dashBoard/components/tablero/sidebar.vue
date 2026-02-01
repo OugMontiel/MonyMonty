@@ -12,40 +12,34 @@ const isDesktop = ref(false);
 
 const menuItems = [
   {
-    id: "dashboard",
+    id: "overview",
     icon: "ion:grid-outline",
-    title: "Dashboard",
+    title: "Mi Estado Actual",
     path: "/tablero",
   },
   {
-    id: "customers",
-    icon: "ion:people-outline",
-    title: "Customers",
-    path: "/customers",
+    id: "expenses",
+    icon: "ion:card-outline",
+    title: "Mis Gastos",
+    path: "/gastos",
   },
   {
-    id: "messages",
-    icon: "ion:chatbubble-outline",
-    title: "Messages",
-    path: "/messages",
+    id: "income",
+    icon: "ion:trending-up-outline",
+    title: "Mis Ingresos",
+    path: "/ingresos",
   },
   {
-    id: "help",
-    icon: "ion:help-outline",
-    title: "Help",
-    path: "/help",
+    id: "budget",
+    icon: "ion:wallet-outline",
+    title: "Mi Presupuesto",
+    path: "/presupuesto",
   },
   {
-    id: "settings",
-    icon: "ion:settings-outline",
-    title: "Settings",
-    path: "/settings",
-  },
-  {
-    id: "password",
-    icon: "ion:lock-closed-outline",
-    title: "Password",
-    path: "/password",
+    id: "debts",
+    icon: "ion:cash-outline",
+    title: "Mis Deudas",
+    path: "/deudas",
   },
 ];
 
