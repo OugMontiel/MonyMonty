@@ -3,6 +3,7 @@ import {ref, onMounted, computed} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
+import {PERIOD_FILTERS, getCardDescription} from "../logic/dashBoardConstants.js";
 import {dataMovimientos} from "../logic/movimientos.js";
 
 const toast = useToast();
@@ -10,6 +11,12 @@ const toast = useToast();
 const {Cars} = dataMovimientos();
 const dataDashBoard = ref({});
 const isLoading = ref(true);
+
+// Estado para el filtro de tiempo (Por defecto: MES)
+const currentPeriod = ref(PERIOD_FILTERS.MES);
+
+// Obtener descripciones dinámicas
+const cardInfo = computed(() => getCardDescription(currentPeriod.value));
 
 // Formatear moneda
 const formatearMoneda = (valor) => {
@@ -53,7 +60,7 @@ onMounted(async () => {
 const stats = computed(() => [
   {
     label: "Ingresos",
-    description: "Acumulado del mes",
+    description: cardInfo.value.description,
     value: dataDashBoard.value.totalIngresado,
     icon: "ion:cash-outline",
     action: () => redireccionar("ingresos"),
@@ -65,7 +72,7 @@ const stats = computed(() => [
   },
   {
     label: "Gastos",
-    description: "Salidas registradas",
+    description: cardInfo.value.description,
     value: dataDashBoard.value.totalEgresado,
     icon: "ion:card-outline",
     action: () => redireccionar("egresos"),
@@ -77,7 +84,7 @@ const stats = computed(() => [
   },
   {
     label: "Disponible",
-    description: "Balance actual",
+    description: cardInfo.value.description,
     value: dataDashBoard.value.totalDisponible,
     icon: "ion:wallet-outline",
     action: () => redireccionar("egresos"),
