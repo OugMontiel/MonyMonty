@@ -10,11 +10,11 @@ export const PERIOD_FILTERS = {
 export const CARD_PERIOD_DESCRIPTIONS = {
   [PERIOD_FILTERS.DIA]: {
     label: "Hoy",
-    description: "Movimientos del día",
+    description: "Acumulado del día",
   },
   [PERIOD_FILTERS.SEMANA]: {
     label: "Esta Semana",
-    description: "Resumen semanal",
+    description: "Acumulado de la semana",
   },
   [PERIOD_FILTERS.MES]: {
     label: "Este Mes",
@@ -22,15 +22,15 @@ export const CARD_PERIOD_DESCRIPTIONS = {
   },
   [PERIOD_FILTERS.TRIMESTRE]: {
     label: "Este Trimestre",
-    description: "Resumen trimestral",
+    description: "Acumulado del trimestre",
   },
   [PERIOD_FILTERS.SEMESTRE]: {
     label: "Este Semestre",
-    description: "Acumulado semestral",
+    description: "Acumulado del semestre",
   },
   [PERIOD_FILTERS.ANO]: {
     label: "Este Año",
-    description: "Balance anual",
+    description: "Acumulado del año",
   },
 };
 

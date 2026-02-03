@@ -12,8 +12,8 @@ const {Cars} = dataMovimientos();
 const dataDashBoard = ref({});
 const isLoading = ref(true);
 
-// Estado para el filtro de tiempo (Por defecto: MES)
-const currentPeriod = ref(PERIOD_FILTERS.MES);
+// Estado para el filtro de tiempo
+const currentPeriod = ref(PERIOD_FILTERS.ANO);
 
 // Obtener descripciones dinámicas
 const cardInfo = computed(() => getCardDescription(currentPeriod.value));
