@@ -18,8 +18,8 @@ import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
 
-import TerminosCondicionesDrawer from '@/features/legal/views/terminosCondiciones.vue'
-import PoliticaPrivacidadDrawer from '@/features/legal/views/politicaPrivacidad.vue'
+import TerminosCondicionesDrawer from "@/features/auth/components/modales/terminosCondiciones.vue";
+import PoliticaPrivacidadDrawer from "@/features/auth/components/modales/politicaPrivacidad.vue";
 
 const toast = useToast();
 const router = useRouter();

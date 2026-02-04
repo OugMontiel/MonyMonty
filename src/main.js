@@ -25,6 +25,10 @@ import Toast from "primevue/toast";
 import AutoComplete from "primevue/autocomplete";
 import MultiSelect from "primevue/multiselect";
 import Drawer from "primevue/drawer";
+import Accordion from "primevue/accordion";
+import AccordionPanel from "primevue/accordionpanel";
+import AccordionHeader from "primevue/accordionheader";
+import AccordionContent from "primevue/accordioncontent";
 import SpeedDial from "primevue/speeddial";
 import Tooltip from "primevue/tooltip";
 import DataTable from "primevue/datatable";
@@ -79,6 +83,10 @@ app.component("AutoComplete", AutoComplete);
 app.component("MultiSelect", MultiSelect);
 app.component("Checkbox", Checkbox);
 app.component("Drawer", Drawer);
+app.component("Accordion", Accordion);
+app.component("AccordionPanel", AccordionPanel);
+app.component("AccordionHeader", AccordionHeader);
+app.component("AccordionContent", AccordionContent);
 app.component("SpeedDial", SpeedDial);
 app.component("Tooltip", Tooltip);
 app.component("Dialog", Dialog);
@@ -95,7 +103,6 @@ app.component("Skeleton", Skeleton);
 app.component("Tag", Tag);
 app.component("ProgressBar", ProgressBar);
 app.component("Popover", Popover);
-
 
 app.directive("tooltip", Tooltip);
 
