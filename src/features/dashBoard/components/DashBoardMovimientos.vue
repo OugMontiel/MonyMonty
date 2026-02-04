@@ -1,9 +1,10 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, onMounted, watch} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 import CreateMovimientoModal from "../../movimientos/modals/CreateMovimientoModal.vue";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
@@ -14,6 +15,7 @@ const lazyParams = ref({
   page: 0,
   rows: 10,
 });
+const {globalDataRefreshTrigger} = useGlobalState();
 
 const isModalOpen = ref(false);
 const modalMode = ref("VIEW");
@@ -48,6 +50,10 @@ const onPage = (event) => {
 };
 
 onMounted(() => {
+  loadMovimientos();
+});
+
+watch(globalDataRefreshTrigger, () => {
   loadMovimientos();
 });
 

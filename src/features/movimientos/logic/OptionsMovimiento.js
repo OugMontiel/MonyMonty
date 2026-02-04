@@ -1,7 +1,8 @@
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import axios from "axios";
 import {_} from "lodash";
 import {useToast} from "primevue/usetoast";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,6 +18,7 @@ const divisas = ref([]);
 export function useMovimientoOptions() {
   const loadingOptions = ref(false);
   const toast = useToast();
+  const {globalDataRefreshTrigger} = useGlobalState();
 
   const fetchOptions = async () => {
     loadingOptions.value = true;
@@ -47,6 +49,10 @@ export function useMovimientoOptions() {
       loadingOptions.value = false;
     }
   };
+
+  watch(globalDataRefreshTrigger, () => {
+    fetchOptions();
+  });
 
   return {
     movementTypes,

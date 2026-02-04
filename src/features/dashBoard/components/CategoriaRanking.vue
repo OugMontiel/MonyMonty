@@ -1,7 +1,8 @@
 <script setup>
-import {computed, ref, onMounted} from "vue";
+import {computed, ref, onMounted, watch} from "vue";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const {getRankingCategorias} = dataMovimientos();
 
@@ -13,6 +14,7 @@ const toast = useToast();
 const categoriaData = ref([]);
 const loading = ref(true);
 const activeCategoryIndex = ref(null);
+const {globalDataRefreshTrigger} = useGlobalState();
 
 // Cargar datos
 const loadData = async () => {
@@ -66,6 +68,10 @@ const formatearMoneda = (valor) => {
 };
 
 onMounted(() => {
+  loadData();
+});
+
+watch(globalDataRefreshTrigger, () => {
   loadData();
 });
 </script>
