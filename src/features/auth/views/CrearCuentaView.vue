@@ -18,6 +18,9 @@ import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
 
+import TerminosCondicionesDrawer from "@/features/auth/components/modales/terminosCondiciones.vue";
+import PoliticaPrivacidadDrawer from "@/features/auth/components/modales/politicaPrivacidad.vue";
+
 const toast = useToast();
 const router = useRouter();
 const {CrearUsuario, loading} = useAuth();
@@ -67,6 +70,7 @@ const resolver = zodResolver(
         })
         .refine((v) => ["Femenino", "Masculino"].includes(v.value), {
           message: "Opción no válida",
+          path: ["genero"],
         }),
       plan: z
         .object({
@@ -76,6 +80,10 @@ const resolver = zodResolver(
         .refine((v) => ["Free", "Basic", "Premium"].includes(v.value), {
           message: "Opción no válida",
         }),
+
+      acceptLegal: z.boolean({required_error: "Debes aceptar los términos"}).refine((val) => val === true, {
+        message: "Debes aceptar los términos y la política de privacidad para continuar",
+      }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Las contraseñas no coinciden",
@@ -98,6 +106,7 @@ const onFormSubmit = async ({valid, values}) => {
       email: values.email.trim(),
       password: values.password,
       planId: values.plan.value.toLowerCase(),
+      acceptLegal: values.acceptLegal,
     });
 
     if (result.success) {
@@ -105,7 +114,7 @@ const onFormSubmit = async ({valid, values}) => {
         severity: "success",
         summary: "Éxito",
         detail: result.message || "Se ha creado el Usuario.",
-        life: 3000,
+        life: 4500,
       });
       irALogin();
     } else {
@@ -113,7 +122,7 @@ const onFormSubmit = async ({valid, values}) => {
         severity: "error",
         summary: "Error",
         detail: result.error || "Error en Crear Cuenta",
-        life: 4000,
+        life: 4500,
       });
     }
   } catch {
@@ -129,8 +138,11 @@ const onFormSubmit = async ({valid, values}) => {
 // Redirecciones
 
 const irALogin = () => router.push("/");
-const irAPrivacidad = () => router.push("/privacidad");
-const irACondiciones = () => router.push("/condiciones");
+
+// Controles de visibilidad (locales a esta vista)
+const showPrivacidad = ref(false);
+const showCondiciones = ref(false);
+
 </script>
 
 <template>
@@ -257,18 +269,48 @@ const irACondiciones = () => router.push("/condiciones");
               }}</Message>
             </FormField>
           </div>
-          <Button type="submit" label="Registrarte" severity="primary" :loading="loading" />
+
+          <FormField v-slot="$field" name="acceptLegal" class="mt-2">
+            <div class="flex items-start gap-2">
+              <Checkbox
+                inputId="acceptLegal"
+                :binary="true"
+                v-bind="$field.props"
+                :disabled="loading"
+                :invalid="submitted && $field?.invalid"
+              />
+              <label for="acceptLegal" class="text-sm text-gray-600 dark:text-gray-400 leading-snug">
+                Acepto los
+                <button
+                  type="button"
+                  class="text-primary underline hover:text-primary-300 cursor-pointer transition"
+                  @click="showCondiciones = true"
+                >
+                  Términos y Condiciones
+                </button>
+                <TerminosCondicionesDrawer v-model:visible="showCondiciones" />
+                y la
+                <button
+                  type="button"
+                  class="text-primary underline hover:text-primary-700 cursor-pointer transition"
+                  @click="showPrivacidad = true"
+                >
+                  Política de Privacidad
+                </button>
+                <PoliticaPrivacidadDrawer v-model:visible="showPrivacidad" />
+                de MonyMonty.
+              </label>
+              <br>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
+            </div>
+          </FormField>
+
+          <Button type="submit" label="Registrarte" severity="primary" :loading="loading"></Button>
         </Form>
 
-        <Message severity="secondary" variant="simple" class="text-xs leading-snug">
-          Al hacer clic en "Registrarte", aceptas nuestros
-          <Button label="Términos y Condiciones" variant="text" @click="irACondiciones" size="small" />
-          y nuestra
-          <Button label="Política de Privacidad" variant="text" @click="irAPrivacidad" size="small" />.
-        </Message>
-
-        <!--  Ya tienes Cuenta -->
-        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading" />
+        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading"></Button>
       </div>
     </div>
 

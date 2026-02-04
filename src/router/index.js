@@ -43,6 +43,7 @@ const router = createRouter({
       component: CambioDeClave,
       meta: {requiresAuth: false},
     },
+
     // Ruta 404
     {
       path: "/:pathMatch(.*)*",
@@ -50,6 +51,7 @@ const router = createRouter({
       redirect: "/",
       meta: {requiresAuth: false},
     },
+
     /**
      *  Rutas protegidas
      *
