@@ -1,52 +1,45 @@
 <script setup>
-import {ref, computed} from "vue";
+import {ref, computed, onMounted, onUnmounted, h, resolveComponent} from "vue";
 import {useRouter, useRoute} from "vue-router";
 import {Icon} from "@iconify/vue";
 
 import logo from "../../../../assets/img/MonyMontySinFondo3.png";
-import {useAuth} from "../../../auth/logic/useAuth.js"
 
-const {logout} = useAuth()
 const router = useRouter();
 const route = useRoute();
 const visible = ref(false);
+const isDesktop = ref(false);
 
 const menuItems = [
   {
-    id: "dashboard",
+    id: "overview",
     icon: "ion:grid-outline",
-    title: "Dashboard",
+    title: "Mi Estado Actual",
     path: "/tablero",
   },
   {
-    id: "customers",
-    icon: "ion:people-outline",
-    title: "Customers",
-    path: "/customers",
+    id: "expenses",
+    icon: "ion:card-outline",
+    title: "Mis Gastos",
+    path: "/gastos",
   },
   {
-    id: "messages",
-    icon: "ion:chatbubble-outline",
-    title: "Messages",
-    path: "/messages",
+    id: "income",
+    icon: "ion:trending-up-outline",
+    title: "Mis Ingresos",
+    path: "/ingresos",
   },
   {
-    id: "help",
-    icon: "ion:help-outline",
-    title: "Help",
-    path: "/help",
+    id: "budget",
+    icon: "ion:wallet-outline",
+    title: "Mi Presupuesto",
+    path: "/presupuesto",
   },
   {
-    id: "settings",
-    icon: "ion:settings-outline",
-    title: "Settings",
-    path: "/settings",
-  },
-  {
-    id: "password",
-    icon: "ion:lock-closed-outline",
-    title: "Password",
-    path: "/password",
+    id: "debts",
+    icon: "ion:cash-outline",
+    title: "Mis Deudas",
+    path: "/deudas",
   },
 ];
 
@@ -58,67 +51,111 @@ const goTo = (path) => {
   router.push(path);
 };
 
-//abrir/cerrar el drawer desde el padre.
-const open = () => {
-  visible.value = true;
-};
-const close = () => {
-  visible.value = false;
+// Control de responsive
+const checkScreenSize = () => {
+  isDesktop.value = window.matchMedia("(min-width: 1024px)").matches;
 };
 
-// Función para manejar el logout
-const handleLogout = () => {
-  logout()
-  goTo("/")
-  visible.value = false;
+onMounted(() => {
+  checkScreenSize();
+  window.addEventListener("resize", checkScreenSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", checkScreenSize);
+});
+
+defineExpose({visible});
+
+const Titulo = () => {
+  return h("div", {class: "flex items-center justify-between w-full py-3 px-4"}, [
+    h("span", {class: "inline-flex items-center"}, [
+      h("img", {
+        src: logo,
+        alt: "Icono de la aplicación",
+        class: "max-w-[9rem]", // Replaced scoped class with Tailwind
+      }),
+    ]),
+  ]);
 };
 
-// Exponer visible y métodos para control seguro desde el componente padre
-defineExpose({visible, open, close});
+const Menu = () => {
+  const Button = resolveComponent("Button");
+  return h("nav", {class: "flex-1"}, [
+    h(
+      "ul",
+      {class: "list-none p-0 m-0"},
+      menuItems.map((item) =>
+        h("li", {key: item.id, class: "py-2"}, [
+          h(
+            Button,
+            {
+              label: item.title,
+              onClick: () => goTo(item.path),
+              text: true,
+              severity: activeItem.value?.id === item.id ? "primary" : "secondary",
+              class: "w-full !justify-start whitespace-nowrap",
+            },
+            {
+              icon: () => h(Icon, {icon: item.icon, class: "w-5 h-5 min-w-5 mr-3"}),
+            }
+          ),
+        ])
+      )
+    ),
+  ]);
+};
 </script>
 
 <template>
-  <Drawer v-model:visible="visible" class="flex flex-col justify-between px-4 py-3">
-    <!-- Header -->
-    <template #header>
-      <div class="flex items-center justify-between w-full">
-        <span class="inline-flex items-center">
-          <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
-        </span>
-      </div>
-    </template>
+  <!-- Desktop Sidebar -->
+  <Transition name="layout-sidebar">
+    <div v-if="isDesktop && visible" class="sticky top-0 h-screen overflow-y-auto flex flex-col justify-between px-4 py-3">
+      <div class="flex flex-col h-full w-full overflow-hidden">
+        <!-- Logo -->
+        <Titulo />
 
-    <!-- Navigation -->
-    <div class="flex-1 pt-8">
-      <div class="flex flex-col justify-between h-full">
-        <nav class="flex-1">
-          <ul class="list-none p-0 m-0">
-            <li v-for="item in menuItems" :key="item.id" class="py-2">
-              <Button :label="item.title" @click="goTo(item.path)" text :severity="activeItem?.id === item.id ? 'primary' : 'secondary'">
-                <template #icon>
-                  <Icon :icon="item.icon" class="w-5 h-5" />
-                </template>
-              </Button>
-            </li>
-          </ul>
-        </nav>
+        <!-- Navigation Menu -->
+        <div class="flex-1 py-4 px-2">
+          <Menu />
+        </div>
       </div>
     </div>
+  </Transition>
 
-    <!-- Logout Button -->
-    <template #footer>
-      <Button label="Logout" @click="handleLogout" text severity="danger" >
-        <template #icon>
-          <Icon icon="ion:log-out-outline" class="w-5 h-5" />
-        </template>
-      </Button>
+  <!-- Mobile Drawer -->
+  <Drawer v-if="!isDesktop" v-model:visible="visible" class="flex flex-col justify-between px-4 py-3">
+    <!-- Header -->
+    <template #header>
+      <Titulo />
     </template>
+
+    <!-- Navigation Menu -->
+    <div class="flex-1 pt-4">
+      <Menu />
+    </div>
   </Drawer>
 </template>
 
 <style scoped>
-/* Sección derecha */
-.login-logo {
-  max-width: 9rem;
+/* Sidebar Transition */
+.layout-sidebar-enter-active,
+.layout-sidebar-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.layout-sidebar-enter-from,
+.layout-sidebar-leave-to {
+  width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  opacity: 0;
+  border-right: none !important;
+}
+
+.layout-sidebar-enter-to,
+.layout-sidebar-leave-from {
+  width: 13rem; /* w-64 */
+  opacity: 1;
 }
 </style>
