@@ -1,11 +1,13 @@
 import {ref} from "vue";
 import axios from "axios";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useEntidades() {
   const loading = ref(false);
   const error = ref(null);
+  const {triggerGlobalRefresh} = useGlobalState();
 
   /**
    * Crea una nueva entidad financiera.
@@ -19,6 +21,7 @@ export function useEntidades() {
       const response = await axios.post(`${API_URL}entidad/`, data, {
         withCredentials: true,
       });
+      triggerGlobalRefresh();
       return response.data;
     } catch (err) {
       console.error("Error creando entidad:", err);

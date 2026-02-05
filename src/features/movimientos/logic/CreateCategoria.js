@@ -1,11 +1,13 @@
 import {ref} from "vue";
 import axios from "axios";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useCategorias() {
   const loading = ref(false);
   const error = ref(null);
+  const {triggerGlobalRefresh} = useGlobalState();
 
   /**
    * Crea una nueva categoría.
@@ -19,6 +21,7 @@ export function useCategorias() {
       const response = await axios.post(`${API_URL}categoria/`, data, {
         withCredentials: true,
       });
+      triggerGlobalRefresh();
       return response.data;
     } catch (err) {
       console.error("Error creando categoría:", err);
@@ -42,6 +45,7 @@ export function useCategorias() {
       const response = await axios.post(`${API_URL}categoria/${categoriaId}/subcategoria`, data, {
         withCredentials: true,
       });
+      triggerGlobalRefresh();
       return response.data;
     } catch (err) {
       console.error("Error creando subcategoría:", err);

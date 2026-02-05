@@ -26,7 +26,11 @@ export function dataMovimientos() {
   };
   const Cars = () => request("movimiento/Dashboard");
   const getRankingCategorias = () => request("movimiento/ranking");
-  const getAllMovimientos = (page = 1, limit = 10) => request(`movimiento/?page=${page}&limit=${limit}`);
+  const getAllMovimientos = (page = 1, limit = 10, filters = {}) => {
+    let query = `movimiento/?page=${page}&limit=${limit}`;
+    if (filters.tipo) query += `&tipo=${filters.tipo}`;
+    return request(query);
+  };
 
   return {
     Cars,

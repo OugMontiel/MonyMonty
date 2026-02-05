@@ -1,43 +1,43 @@
 <script setup>
-import {ref, onMounted, watch} from "vue";
+import {ref, onMounted} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
-import CreateMovimientoModal from "../../movimientos/modals/CreateMovimientoModal.vue";
-import {useGlobalState} from "@/composables/useGlobalState";
 import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
+
+// Note: We might reuse CreateMovimientoModal if it supports Transfer viewing,
+// othewise we might need to adjust it. Assuming it handles it.
+import CreateMovimientoModal from "../../movimientos/modals/CreateMovimientoModal.vue";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
-const movimientos = ref([]);
+const transferencias = ref([]);
 const loading = ref(false);
 const totalRecords = ref(0);
 const lazyParams = ref({
   page: 0,
-  rows: 3,
+  rows: 4, // Limit requested
 });
-const {globalDataRefreshTrigger} = useGlobalState();
 
 const isModalOpen = ref(false);
 const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
-const loadMovimientos = async () => {
+const loadTransferencias = async () => {
   loading.value = true;
   try {
-    const page = lazyParams.value.page + 1; // PrimeVue paginator is 0-indexed
+    const page = lazyParams.value.page + 1;
     const limit = lazyParams.value.rows;
-    const resMovs = await getAllMovimientos(page, limit, {tipo: "STANDARD"});
+    // Request only TRANSFERENCIA
+    const resMovs = await getAllMovimientos(page, limit, {tipo: "TRANSFERENCIA"});
 
-    // The backend now returns { data: [], total: number, page: number, ... }
-    // inside resMovs.data.data
-    movimientos.value = resMovs.data.data.data;
+    transferencias.value = resMovs.data.data.data;
     totalRecords.value = resMovs.data.data.total;
   } catch (error) {
     toast.add({
       severity: "error",
       summary: "Error de conexión",
-      detail: "Inténtalo de nuevo cargar los movimientos.",
+      detail: "Inténtalo de nuevo cargar las transferencias.",
       life: 4000,
     });
   } finally {
@@ -47,15 +47,11 @@ const loadMovimientos = async () => {
 
 const onPage = (event) => {
   lazyParams.value = event;
-  loadMovimientos();
+  loadTransferencias();
 };
 
 onMounted(() => {
-  loadMovimientos();
-});
-
-watch(globalDataRefreshTrigger, () => {
-  loadMovimientos();
+  loadTransferencias();
 });
 
 const verMovimiento = (data) => {
@@ -78,17 +74,17 @@ const eliminarMovimiento = (data) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between mb-4">
+  <div class="flex items-center justify-between mb-4 mt-6">
     <h3 class="text-xl font-semibold flex items-end gap-2 flex-wrap">
-      <i class="pi pi-list"></i>
-      Movimientos
+      <i class="pi pi-arrow-right-arrow-left"></i>
+      Transferencias
       <span class="text-xs font-normal text-gray-400">
-        {{ MOVEMENTS_HELP_TEXT.STANDARD }}
+        {{ MOVEMENTS_HELP_TEXT.TRANSFERENCIA }}
       </span>
     </h3>
   </div>
   <DataTable
-    :value="movimientos"
+    :value="transferencias"
     :lazy="true"
     :paginator="true"
     :rows="lazyParams.rows"
@@ -97,33 +93,29 @@ const eliminarMovimiento = (data) => {
     @page="onPage"
     responsiveLayout="scroll"
     class="text-sm bg-transparent"
-    :rowClass="
-      (data) => [
-        'rounded-lg',
-        'shadow-sm',
-        'mb-2',
-        'bg-white',
-        data.tipo === 'EGRESO' ? 'border-l-4 border-red-500' : '',
-        data.tipo === 'INGRESO' ? 'border-l-4 border-green-500' : '',
-      ]
-    "
+    :rowClass="() => ['rounded-lg', 'shadow-sm', 'mb-2', 'bg-white', 'border-l-4', 'border-blue-300']"
   >
     <template #empty>
       <div class="text-center py-6 text-gray-400">
-        <i class="pi pi-inbox text-3xl mb-2"></i>
-        <p>No hay movimientos recientes</p>
+        <i class="pi pi-refresh text-3xl mb-2"></i>
+        <p>No hay transferencias recientes</p>
       </div>
     </template>
 
-    <Column header="Movimiento">
+    <Column header="Origen / Destino">
       <template #body="{data}">
         <div class="flex flex-col">
-          <span class="font-semibold text-gray-800">
-            {{ data.entidad?.nombre || "Transferencia" }}
-          </span>
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-gray-800">
+              {{ data.transferenciaDetalle?.origen?.nombre || "Origen desc." }}
+            </span>
+            <i class="pi pi-arrow-right text-xs text-gray-400"></i>
+            <span class="font-semibold text-gray-800">
+              {{ data.transferenciaDetalle?.destino?.nombre || "Destino desc." }}
+            </span>
+          </div>
           <span class="text-xs text-gray-500">
-            {{ data.categoria?.categoria }} · {{ data.subcategoria?.subcategoria }} ·
-            {{ data.concepto?.titulo }}
+            {{ data.concepto?.titulo || "Sin concepto" }}
           </span>
         </div>
       </template>
@@ -132,10 +124,7 @@ const eliminarMovimiento = (data) => {
     <Column header="Monto" class="text-center" sortable field="fecha">
       <template #body="{data}">
         <div class="flex flex-col items-center">
-          <span class="text-lg font-bold" :class="data.tipo === 'EGRESO' ? 'text-red-600' : 'text-green-600'">
-            {{ data.tipo === "EGRESO" ? "-" : "+" }}
-            {{ data.monto.toLocaleString() }} {{ data.divisaId }}
-          </span>
+          <span class="text-lg font-bold text-gray-700"> {{ data.monto.toLocaleString() }} {{ data.divisaId }} </span>
           <span class="text-xs text-gray-400">
             {{ new Date(data.fecha).toLocaleDateString() }}
           </span>
@@ -173,5 +162,5 @@ const eliminarMovimiento = (data) => {
     </Column>
   </DataTable>
 
-  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :movementId="selectedMovimientoId" @saved="loadMovimientos" />
+  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :movementId="selectedMovimientoId" @saved="loadTransferencias" />
 </template>
