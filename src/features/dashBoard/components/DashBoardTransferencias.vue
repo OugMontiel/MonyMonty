@@ -3,6 +3,7 @@ import {ref, onMounted} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
+import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
 
 // Note: We might reuse CreateMovimientoModal if it supports Transfer viewing,
 // othewise we might need to adjust it. Assuming it handles it.
@@ -74,9 +75,12 @@ const eliminarMovimiento = (data) => {
 
 <template>
   <div class="flex items-center justify-between mb-4 mt-6">
-    <h3 class="text-xl font-semibold flex items-center gap-2">
+    <h3 class="text-xl font-semibold flex items-end gap-2 flex-wrap">
       <i class="pi pi-arrow-right-arrow-left"></i>
       Transferencias
+      <span class="text-xs font-normal text-gray-400">
+        {{ MOVEMENTS_HELP_TEXT.TRANSFERENCIA }}
+      </span>
     </h3>
   </div>
   <DataTable

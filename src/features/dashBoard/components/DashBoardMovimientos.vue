@@ -4,6 +4,7 @@ import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 import CreateMovimientoModal from "../../movimientos/modals/CreateMovimientoModal.vue";
+import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
@@ -72,9 +73,12 @@ const eliminarMovimiento = (data) => {
 
 <template>
   <div class="flex items-center justify-between mb-4">
-    <h3 class="text-xl font-semibold flex items-center gap-2">
+    <h3 class="text-xl font-semibold flex items-end gap-2 flex-wrap">
       <i class="pi pi-list"></i>
       Movimientos
+      <span class="text-xs font-normal text-gray-400">
+        {{ MOVEMENTS_HELP_TEXT.STANDARD }}
+      </span>
     </h3>
   </div>
   <DataTable

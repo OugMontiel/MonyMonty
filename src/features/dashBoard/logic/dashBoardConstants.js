@@ -37,3 +37,8 @@ export const CARD_PERIOD_DESCRIPTIONS = {
 export const getCardDescription = (period) => {
   return CARD_PERIOD_DESCRIPTIONS[period];
 };
+
+export const MOVEMENTS_HELP_TEXT = {
+  STANDARD: "Operaciones de Ingresos y Egresos.",
+  TRANSFERENCIA: "Movimientos entre tus cuentas sin efecto en el balance neto.",
+};
