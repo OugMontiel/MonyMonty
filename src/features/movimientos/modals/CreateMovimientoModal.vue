@@ -488,7 +488,39 @@ const isReadOnly = () => props.mode === "VIEW" || props.mode === "DELETE";
             fluid
             :disabled="isReadOnly()"
             @change="onCategoryChange"
-          />
+            :pt="{
+              root: ({props, state}) => ({
+                class: categorias.find((c) => c.value === props.modelValue)?.isPrivate ? '!bg-orange-50/30' : '',
+              }),
+            }"
+          >
+            <template #value="{value, placeholder}">
+              <div v-if="value" class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-2">
+                  <span>{{ categorias.find((c) => c.value === value)?.label }}</span>
+                </div>
+                <!-- Tag Sutil -->
+                <span
+                  v-if="categorias.find((c) => c.value === value)?.isPrivate"
+                  class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-orange-100/50 text-orange-600 border border-orange-200/50"
+                >
+                  Personal
+                </span>
+              </div>
+              <span v-else>{{ placeholder }}</span>
+            </template>
+            <template #option="{option}">
+              <div class="flex items-center justify-between w-full p-1 -m-1 rounded-sm" :class="option.isPrivate ? 'bg-orange-50/50' : ''">
+                <span>{{ option.label }}</span>
+                <span
+                  v-if="option.isPrivate"
+                  class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white text-orange-600 border border-orange-100 shadow-sm"
+                >
+                  Personal
+                </span>
+              </div>
+            </template>
+          </Select>
           <Message v-if="$form.categoriaId?.invalid" severity="error" size="small" variant="simple">{{
             $form.categoriaId.error?.message
           }}</Message>
