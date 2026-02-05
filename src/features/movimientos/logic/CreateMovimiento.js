@@ -1,11 +1,13 @@
 import {ref} from "vue";
 import axios from "axios";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useMovimientos() {
   const loading = ref(false);
   const error = ref(null);
+  const {triggerGlobalRefresh} = useGlobalState();
 
   /**
    * Crea un nuevo movimiento bancario.
@@ -19,6 +21,7 @@ export function useMovimientos() {
       const response = await axios.post(`${API_URL}movimiento/`, data, {
         withCredentials: true,
       });
+      triggerGlobalRefresh();
       return response.data;
     } catch (err) {
       console.error("Error creando movimiento:", err);
@@ -41,6 +44,7 @@ export function useMovimientos() {
       const response = await axios.put(`${API_URL}movimiento/${id}`, data, {
         withCredentials: true,
       });
+      triggerGlobalRefresh();
       return response.data;
     } catch (err) {
       console.error("Error actualizando movimiento:", err);
@@ -62,6 +66,7 @@ export function useMovimientos() {
       const response = await axios.delete(`${API_URL}movimiento/${id}`, {
         withCredentials: true,
       });
+      triggerGlobalRefresh();
       return response.data;
     } catch (err) {
       console.error("Error eliminando movimiento:", err);

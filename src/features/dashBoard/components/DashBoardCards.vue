@@ -1,16 +1,18 @@
 <script setup>
-import {ref, onMounted, computed} from "vue";
+import {ref, onMounted, computed, watch} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
 import {PERIOD_FILTERS, getCardDescription} from "../logic/dashBoardConstants.js";
 import {dataMovimientos} from "../logic/movimientos.js";
+import {useGlobalState} from "@/composables/useGlobalState";
 
 const toast = useToast();
 // const router = useRouter(); De momento no se usa por que no hay rutas ... pero se Usara
 const {Cars} = dataMovimientos();
 const dataDashBoard = ref({});
 const isLoading = ref(true);
+const {globalDataRefreshTrigger} = useGlobalState();
 
 // Estado para el filtro de tiempo
 const currentPeriod = ref(PERIOD_FILTERS.ANO);
@@ -40,7 +42,7 @@ const redireccionar = (ruta) => {
   });
 };
 
-onMounted(async () => {
+const loadDashboardData = async () => {
   isLoading.value = true;
   try {
     const {data} = await Cars();
@@ -55,6 +57,14 @@ onMounted(async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+onMounted(() => {
+  loadDashboardData();
+});
+
+watch(globalDataRefreshTrigger, () => {
+  loadDashboardData();
 });
 
 const stats = computed(() => [
