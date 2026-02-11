@@ -5,8 +5,8 @@ import {z} from "zod";
 import {useToast} from "primevue/usetoast";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 
-import {useMovimientos} from "../logic/CreateMovimiento";
-import {useMovimientoOptions} from "../logic/OptionsMovimiento";
+import {useMovimientos} from "../../logic/CreateMovimiento";
+import {useMovimientoOptions} from "../../logic/OptionsMovimiento";
 
 const toast = useToast();
 const {getMovimiento, createMovimiento, updateMovimiento, deleteMovimiento, loading} = useMovimientos();
