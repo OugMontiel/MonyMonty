@@ -14,14 +14,16 @@ import {useRouter} from "vue-router";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 import {z} from "zod";
 
+import { useAuthStore } from '../../../stores/autenticacion/authStore'
 import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
 import FooterAuth from "../components/FooterAuth.vue";
 
+const authStore = useAuthStore()
 const toast = useToast();
 const router = useRouter();
-const {login, loading, isAuthenticated} = useAuth();
+const {login, loading} = useAuth();
 
 const submitted = ref(false);
 
@@ -72,7 +74,7 @@ const redirectToTablero = () => router.push("/tablero");
 
 // Verificar si ya está autenticado al montar el componente
 onMounted(() => {
-  if (isAuthenticated.value) {
+  if (authStore.isAuthenticated) {
     redirectToTablero();
   }
 });

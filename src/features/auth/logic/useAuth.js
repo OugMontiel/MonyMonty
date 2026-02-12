@@ -1,11 +1,14 @@
 import {ref, computed} from "vue";
 import axios from "axios";
 
-const isAuthenticated = ref(false);
+import { useAuthStore } from '../../../stores/autenticacion/authStore'
+
 const loading = ref(false);
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useAuth() {
+  const authStore = useAuthStore()
+
   // Verificar autenticación
   async function checkAuth() {
     loading.value = true;
@@ -13,18 +16,12 @@ export function useAuth() {
       const response = await axios.get(`${API_URL}auth/check`, {
         withCredentials: true,
       });
-
-      if (response.status === 200) {
-        isAuthenticated.value = response.data.authenticated;
-        return true;
-      }
+      authStore.setAuthenticated(response.data.authenticated);
     } catch (error) {
-      console.error("Error verificando autenticación:", error);
-      isAuthenticated.value = false;
+      authStore.logout();
     } finally {
       loading.value = false;
     }
-    return false;
   }
 
   // Login
@@ -139,17 +136,16 @@ export function useAuth() {
       await axios.get(`${API_URL}auth/logout`, {
         withCredentials: true,
       });
+      authStore.logout()
     } catch (error) {
       console.error("Error en logout:", error);
     } finally {
-      isAuthenticated.value = false;
       loading.value = false;
     }
   }
 
   return {
     // Estado
-    isAuthenticated: computed(() => isAuthenticated.value),
     loading: computed(() => loading.value),
 
     // Métodos
