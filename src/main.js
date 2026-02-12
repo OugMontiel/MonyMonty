@@ -1,4 +1,5 @@
 import {createApp} from "vue";
+import { createPinia } from 'pinia'
 import App from "./App.vue";
 
 // .use
@@ -48,8 +49,10 @@ import SelectButton from "primevue/selectbutton";
 import ColorPicker from "primevue/colorpicker";
 import Checkbox from "primevue/checkbox";
 
+const pinia = createPinia()
 const app = createApp(App);
 
+app.use(pinia)
 app.use(router);
 app.use(PrimeVue, {
   ripple: true,
