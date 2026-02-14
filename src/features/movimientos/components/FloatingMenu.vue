@@ -1,9 +1,9 @@
 <script setup>
 import {ref} from "vue";
 import {Icon} from "@iconify/vue";
-import CreateMovimientoModal from "../modals/CreateMovimientoModal.vue";
-import CreateEntidadModal from "../modals/CreateEntidadModal.vue";
-import CreateCategoriaModal from "../modals/CreateCategoriaModal.vue";
+import CreateMovimientoModal from "../components/modals/CreateMovimientoModal.vue";
+import CreateEntidadModal from "../components/modals/CreateEntidadModal.vue";
+import CreateCategoriaModal from "../components/modals/CreateCategoriaModal.vue";
 
 import {useToast} from "primevue/usetoast";
 

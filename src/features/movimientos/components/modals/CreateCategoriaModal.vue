@@ -5,9 +5,9 @@ import {Icon} from "@iconify/vue";
 import {useToast} from "primevue/usetoast";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 
-import {useCategorias} from "../logic/CreateCategoria";
-import {useMovimientoOptions} from "../logic/OptionsMovimiento";
-import {FINANCIAL_ICONS} from "../logic/MovimientoConstants";
+import {useCategorias} from "../../logic/CreateCategoria";
+import {useMovimientoOptions} from "../../logic/OptionsMovimiento";
+import {FINANCIAL_ICONS} from "../../logic/MovimientoConstants";
 
 const props = defineProps({
   visible: {

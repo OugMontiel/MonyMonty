@@ -7,7 +7,7 @@ import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
 
 // Note: We might reuse CreateMovimientoModal if it supports Transfer viewing,
 // othewise we might need to adjust it. Assuming it handles it.
-import CreateMovimientoModal from "../../movimientos/modals/CreateMovimientoModal.vue";
+import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
