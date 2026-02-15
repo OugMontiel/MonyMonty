@@ -136,29 +136,15 @@ export function useAuth() {
       await axios.get(`${API_URL}auth/logout`, {
         withCredentials: true,
       });
-<<<<<<< HEAD
       authStore.logout();
     } catch (error) {
       console.error("Error en logout:", error);
     } finally {
       loadingStore.auth = false;
-=======
-      authStore.logout()
-    } catch (error) {
-      console.error("Error en logout:", error);
-    } finally {
-      loading.value = false;
->>>>>>> 4a7319cc7dc6af0ab01053e48fc11ec4242d8a54
     }
   }
 
   return {
-<<<<<<< HEAD
-=======
-    // Estado
-    loading: computed(() => loading.value),
-
->>>>>>> 4a7319cc7dc6af0ab01053e48fc11ec4242d8a54
     // Métodos
     checkAuth,
     login,
