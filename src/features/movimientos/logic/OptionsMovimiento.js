@@ -3,6 +3,7 @@ import axios from "axios";
 import {_} from "lodash";
 import {useToast} from "primevue/usetoast";
 import {useGlobalState} from "@/composables/useGlobalState";
+import {useLoadingStore} from "@/stores/loadingStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -16,12 +17,12 @@ const categorias = ref([]);
 const divisas = ref([]);
 
 export function useMovimientoOptions() {
-  const loadingOptions = ref(false);
+  const loadingStore = useLoadingStore();
   const toast = useToast();
   const {globalDataRefreshTrigger} = useGlobalState();
 
   const fetchOptions = async () => {
-    loadingOptions.value = true;
+    loadingStore.optionsMovimiento = true;
     try {
       // TODO: Verify endpoints. Assuming standard REST structure based on resource names.
       const [entidadesRes, categoriasRes, divisasRes] = await Promise.all([
@@ -46,7 +47,7 @@ export function useMovimientoOptions() {
         life: 4000,
       });
     } finally {
-      loadingOptions.value = false;
+      loadingStore.optionsMovimiento = false;
     }
   };
 
@@ -55,11 +56,12 @@ export function useMovimientoOptions() {
   });
 
   return {
+    // Datos
     movementTypes,
     entidades,
     categorias,
     divisas,
+    // Métodos
     fetchOptions,
-    loadingOptions,
   };
 }
