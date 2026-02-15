@@ -6,12 +6,13 @@ import {Icon} from "@iconify/vue";
 import {PERIOD_FILTERS, getCardDescription} from "../logic/dashBoardConstants.js";
 import {dataMovimientos} from "../logic/movimientos.js";
 import {useGlobalState} from "@/composables/useGlobalState";
+import {useLoadingStore} from "@/stores/loadingStore";
 
 const toast = useToast();
 // const router = useRouter(); De momento no se usa por que no hay rutas ... pero se Usara
 const {Cars} = dataMovimientos();
 const dataDashBoard = ref({});
-const isLoading = ref(true);
+const loadingStore = useLoadingStore();
 const {globalDataRefreshTrigger} = useGlobalState();
 
 // Estado para el filtro de tiempo
@@ -43,7 +44,7 @@ const redireccionar = (ruta) => {
 };
 
 const loadDashboardData = async () => {
-  isLoading.value = true;
+  loadingStore.dashboardCards = true;
   try {
     const {data} = await Cars();
     dataDashBoard.value = data.data;
@@ -55,7 +56,7 @@ const loadDashboardData = async () => {
       life: 4000,
     });
   } finally {
-    isLoading.value = false;
+    loadingStore.dashboardCards = false;
   }
 };
 
@@ -139,7 +140,7 @@ const stats = computed(() => [
 
           <!-- Value -->
           <div class="mt-1">
-            <Skeleton v-if="isLoading" width="70%" height="2rem" borderRadius="8px" />
+            <Skeleton v-if="loadingStore.dashboardCards" width="70%" height="2rem" borderRadius="8px" />
             <h3
               v-else
               class="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight text-ellipsis overflow-hidden whitespace-nowrap"

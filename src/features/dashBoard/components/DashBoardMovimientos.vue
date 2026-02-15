@@ -6,11 +6,12 @@ import {dataMovimientos} from "../logic/movimientos.js";
 import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
 import {useGlobalState} from "@/composables/useGlobalState";
 import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
+import {useLoadingStore} from "@/stores/loadingStore";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
 const movimientos = ref([]);
-const loading = ref(false);
+const loadingStore = useLoadingStore();
 const totalRecords = ref(0);
 const lazyParams = ref({
   page: 0,
@@ -23,7 +24,7 @@ const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
 const loadMovimientos = async () => {
-  loading.value = true;
+  loadingStore.dashboardMovimientos = true;
   try {
     const page = lazyParams.value.page + 1; // PrimeVue paginator is 0-indexed
     const limit = lazyParams.value.rows;
@@ -41,7 +42,7 @@ const loadMovimientos = async () => {
       life: 4000,
     });
   } finally {
-    loading.value = false;
+    loadingStore.dashboardMovimientos = false;
   }
 };
 
@@ -93,7 +94,7 @@ const eliminarMovimiento = (data) => {
     :paginator="true"
     :rows="lazyParams.rows"
     :totalRecords="totalRecords"
-    :loading="loading"
+    :loading="loadingStore.dashboardMovimientos"
     @page="onPage"
     responsiveLayout="scroll"
     class="text-sm bg-transparent"

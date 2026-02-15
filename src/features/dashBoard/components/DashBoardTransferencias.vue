@@ -4,6 +4,7 @@ import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
+import {useLoadingStore} from "@/stores/loadingStore";
 
 // Note: We might reuse CreateMovimientoModal if it supports Transfer viewing,
 // othewise we might need to adjust it. Assuming it handles it.
@@ -12,7 +13,7 @@ import CreateMovimientoModal from "../../movimientos/components/modals/CreateMov
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();
 const transferencias = ref([]);
-const loading = ref(false);
+const loadingStore = useLoadingStore();
 const totalRecords = ref(0);
 const lazyParams = ref({
   page: 0,
@@ -24,7 +25,7 @@ const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
 const loadTransferencias = async () => {
-  loading.value = true;
+  loadingStore.dashboardTransferencias = true;
   try {
     const page = lazyParams.value.page + 1;
     const limit = lazyParams.value.rows;
@@ -41,7 +42,7 @@ const loadTransferencias = async () => {
       life: 4000,
     });
   } finally {
-    loading.value = false;
+    loadingStore.dashboardTransferencias = false;
   }
 };
 
@@ -89,7 +90,7 @@ const eliminarMovimiento = (data) => {
     :paginator="true"
     :rows="lazyParams.rows"
     :totalRecords="totalRecords"
-    :loading="loading"
+    :loading="loadingStore.dashboardTransferencias"
     @page="onPage"
     responsiveLayout="scroll"
     class="text-sm bg-transparent"

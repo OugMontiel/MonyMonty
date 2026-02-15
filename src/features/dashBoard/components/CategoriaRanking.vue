@@ -1,8 +1,9 @@
 <script setup>
-import {computed, ref, onMounted, watch} from "vue";
+import {ref, onMounted, watch} from "vue";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 import {useGlobalState} from "@/composables/useGlobalState";
+import {useLoadingStore} from "@/stores/loadingStore";
 
 const {getRankingCategorias} = dataMovimientos();
 
@@ -12,14 +13,14 @@ const toast = useToast();
 
 // Estado
 const categoriaData = ref([]);
-const loading = ref(true);
+const loadingStore = useLoadingStore();
 const activeCategoryIndex = ref(null);
 const {globalDataRefreshTrigger} = useGlobalState();
 
 // Cargar datos
 const loadData = async () => {
   try {
-    loading.value = true;
+    loadingStore.categorias = true;
     const response = await getRankingCategorias();
 
     if (response?.data) {
@@ -28,7 +29,7 @@ const loadData = async () => {
   } catch (error) {
     console.error("Error cargando datos:", error);
   } finally {
-    loading.value = false;
+    loadingStore.categorias = false;
   }
 };
 
@@ -87,7 +88,7 @@ watch(globalDataRefreshTrigger, () => {
 
     <template #content>
       <!-- Loading state with Skeleton -->
-      <div v-if="loading" class="space-y-6">
+      <div v-if="loadingStore.categorias" class="space-y-6">
         <div v-for="i in 3" :key="i" class="p-4 rounded-lg border border-gray-50">
           <div class="flex justify-between mb-4">
             <div class="flex gap-3">
