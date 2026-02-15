@@ -1,35 +1,32 @@
-import {ref, computed} from "vue";
 import axios from "axios";
 
-const isAuthenticated = ref(false);
-const loading = ref(false);
+import {useAuthStore} from "../../../stores/autenticacion/authStore";
+import {useLoadingStore} from "../../../stores/loadingStore";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useAuth() {
+  const authStore = useAuthStore();
+  const loadingStore = useLoadingStore();
+
   // Verificar autenticación
   async function checkAuth() {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       const response = await axios.get(`${API_URL}auth/check`, {
         withCredentials: true,
       });
-
-      if (response.status === 200) {
-        isAuthenticated.value = response.data.authenticated;
-        return true;
-      }
+      authStore.setAuthenticated(response.data.authenticated);
     } catch (error) {
-      console.error("Error verificando autenticación:", error);
-      isAuthenticated.value = false;
+      authStore.logout();
     } finally {
-      loading.value = false;
+      loadingStore.auth = false;
     }
-    return false;
   }
 
   // Login
   async function login(credentials) {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       const response = await axios.post(`${API_URL}auth/login`, credentials, {
         withCredentials: true,
@@ -45,13 +42,13 @@ export function useAuth() {
         error: error.response?.data?.message || "Error en el login",
       };
     } finally {
-      loading.value = false;
+      loadingStore.auth = false;
     }
   }
 
   // CrearUsuario
   async function CrearUsuario(userData) {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       const response = await axios.post(`${API_URL}user`, userData, {
         withCredentials: true,
@@ -66,13 +63,13 @@ export function useAuth() {
         error: error.response?.data?.message || "Error en la creación de usuario",
       };
     } finally {
-      loading.value = false;
+      loadingStore.auth = false;
     }
   }
 
   // Lanza Correo para recuperacion
   async function recuperarCuenta(email) {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       const response = await axios.post(`${API_URL}auth/recuperar`, email, {
         withCredentials: true,
@@ -87,13 +84,13 @@ export function useAuth() {
         error: error.response?.data?.message || "Erro al enviar correo",
       };
     } finally {
-      loading.value = false;
+      loadingStore.auth = false;
     }
   }
 
   // Validamos token de recuperar Contraseña
   async function verificacionTocken({token}) {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       const response = await axios.get(`${API_URL}auth/checkToken?token=${token}`, {
         withCredentials: true,
@@ -108,13 +105,13 @@ export function useAuth() {
         error: error.response?.data?.message || "Erro al verificar el token ",
       };
     } finally {
-      loading.value = false;
+      loadingStore.auth = false;
     }
   }
 
   // Cambio de clave
   async function CambiodeClave(credentials) {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       const response = await axios.post(`${API_URL}auth/updatePassword`, credentials, {
         withCredentials: true,
@@ -129,29 +126,25 @@ export function useAuth() {
         error: error.response?.data?.message || "Error en actualizar contraseña",
       };
     } finally {
-      loading.value = false;
+      loadingStore.auth = false;
     }
   }
   // Logout
   async function logout() {
-    loading.value = true;
+    loadingStore.auth = true;
     try {
       await axios.get(`${API_URL}auth/logout`, {
         withCredentials: true,
       });
+      authStore.logout();
     } catch (error) {
       console.error("Error en logout:", error);
     } finally {
-      isAuthenticated.value = false;
-      loading.value = false;
+      loadingStore.auth = false;
     }
   }
 
   return {
-    // Estado
-    isAuthenticated: computed(() => isAuthenticated.value),
-    loading: computed(() => loading.value),
-
     // Métodos
     checkAuth,
     login,
