@@ -44,7 +44,7 @@ const redireccionar = (ruta) => {
 };
 
 const loadDashboardData = async () => {
-  loadingStore.dashboardCards = true;
+  loadingStore.start("dashboardCards");
   try {
     const {data} = await Cars();
     dataDashBoard.value = data.data;
@@ -56,7 +56,7 @@ const loadDashboardData = async () => {
       life: 4000,
     });
   } finally {
-    loadingStore.dashboardCards = false;
+    loadingStore.stop("dashboardCards");
   }
 };
 

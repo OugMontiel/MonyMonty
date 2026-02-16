@@ -22,7 +22,7 @@ export function useMovimientoOptions() {
   const {globalDataRefreshTrigger} = useGlobalState();
 
   const fetchOptions = async () => {
-    loadingStore.optionsMovimiento = true;
+    loadingStore.start("optionsMovimiento");
     try {
       // TODO: Verify endpoints. Assuming standard REST structure based on resource names.
       const [entidadesRes, categoriasRes, divisasRes] = await Promise.all([
@@ -47,7 +47,7 @@ export function useMovimientoOptions() {
         life: 4000,
       });
     } finally {
-      loadingStore.optionsMovimiento = false;
+      loadingStore.stop("optionsMovimiento");
     }
   };
 

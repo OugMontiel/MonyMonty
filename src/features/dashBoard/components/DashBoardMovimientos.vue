@@ -24,8 +24,8 @@ const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
 const loadMovimientos = async () => {
-  loadingStore.dashboardMovimientos = true;
   try {
+    loadingStore.start("dashboardMovimientos");
     const page = lazyParams.value.page + 1; // PrimeVue paginator is 0-indexed
     const limit = lazyParams.value.rows;
     const resMovs = await getAllMovimientos(page, limit, {tipo: "STANDARD"});
@@ -42,7 +42,7 @@ const loadMovimientos = async () => {
       life: 4000,
     });
   } finally {
-    loadingStore.dashboardMovimientos = false;
+    loadingStore.stop("dashboardMovimientos");
   }
 };
 

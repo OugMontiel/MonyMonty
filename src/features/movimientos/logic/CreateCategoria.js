@@ -16,7 +16,7 @@ export function useCategorias() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createCategoria(data) {
-    loadingStore.createCategoria = true;
+    loadingStore.start("createCategoria");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}categoria/`, data, {
@@ -29,7 +29,7 @@ export function useCategorias() {
       error.value = err.response?.data?.message || "Error al crear la categoría";
       throw err;
     } finally {
-      loadingStore.createCategoria = false;
+      loadingStore.stop("createCategoria");
     }
   }
 
@@ -40,7 +40,7 @@ export function useCategorias() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createSubcategoria(categoriaId, data) {
-    loadingStore.createCategoria = true;
+    loadingStore.start("createCategoria");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}categoria/${categoriaId}/subcategoria`, data, {
@@ -53,7 +53,7 @@ export function useCategorias() {
       error.value = err.response?.data?.message || "Error al crear la subcategoría";
       throw err;
     } finally {
-      loadingStore.createCategoria = false;
+      loadingStore.stop("createCategoria");
     }
   }
 

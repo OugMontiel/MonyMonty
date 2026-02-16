@@ -16,7 +16,7 @@ export function useMovimientos() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createMovimiento(data) {
-    loadingStore.createMovimiento = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}movimiento/`, data, {
@@ -29,7 +29,7 @@ export function useMovimientos() {
       error.value = err.response?.data?.message || "Error al crear el movimiento";
       throw err;
     } finally {
-      loadingStore.createMovimiento = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -39,7 +39,7 @@ export function useMovimientos() {
    * @param {Object} data - Los nuevos datos del movimiento.
    */
   async function updateMovimiento(id, data) {
-    loadingStore.createMovimiento = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.put(`${API_URL}movimiento/${id}`, data, {
@@ -52,7 +52,7 @@ export function useMovimientos() {
       error.value = err.response?.data?.message || "Error al actualizar el movimiento";
       throw err;
     } finally {
-      loadingStore.createMovimiento = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -61,7 +61,7 @@ export function useMovimientos() {
    * @param {string} id - El ID del movimiento.
    */
   async function deleteMovimiento(id) {
-    loadingStore.createMovimiento = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.delete(`${API_URL}movimiento/${id}`, {
@@ -74,7 +74,7 @@ export function useMovimientos() {
       error.value = err.response?.data?.message || "Error al eliminar el movimiento";
       throw err;
     } finally {
-      loadingStore.createMovimiento = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -84,7 +84,7 @@ export function useMovimientos() {
    * @returns {Promise<Object>} - Los datos del movimiento.
    */
   async function getMovimiento(id) {
-    loadingStore.createMovimiento = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.get(`${API_URL}movimiento/${id}`, {
@@ -96,7 +96,7 @@ export function useMovimientos() {
       error.value = err.response?.data?.message || "Error al obtener el movimiento";
       throw err;
     } finally {
-      loadingStore.createMovimiento = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 

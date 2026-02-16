@@ -20,7 +20,7 @@ const {globalDataRefreshTrigger} = useGlobalState();
 // Cargar datos
 const loadData = async () => {
   try {
-    loadingStore.categorias = true;
+    loadingStore.start("categorias");
     const response = await getRankingCategorias();
 
     if (response?.data) {
@@ -29,7 +29,7 @@ const loadData = async () => {
   } catch (error) {
     console.error("Error cargando datos:", error);
   } finally {
-    loadingStore.categorias = false;
+    loadingStore.stop("categorias");
   }
 };
 

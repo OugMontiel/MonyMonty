@@ -16,7 +16,7 @@ export function useEntidades() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createEntidad(data) {
-    loadingStore.createEntidad = true;
+    loadingStore.start("createEntidad");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}entidad/`, data, {
@@ -29,7 +29,7 @@ export function useEntidades() {
       error.value = err.response?.data?.message || "Error al crear la entidad";
       throw err;
     } finally {
-      loadingStore.createEntidad = false;
+      loadingStore.stop("createEntidad");
     }
   }
 

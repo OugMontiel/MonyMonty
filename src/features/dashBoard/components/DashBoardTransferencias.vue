@@ -25,8 +25,8 @@ const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
 const loadTransferencias = async () => {
-  loadingStore.dashboardTransferencias = true;
   try {
+    loadingStore.start("dashboardTransferencias");
     const page = lazyParams.value.page + 1;
     const limit = lazyParams.value.rows;
     // Request only TRANSFERENCIA
@@ -42,7 +42,7 @@ const loadTransferencias = async () => {
       life: 4000,
     });
   } finally {
-    loadingStore.dashboardTransferencias = false;
+    loadingStore.stop("dashboardTransferencias");
   }
 };
 
