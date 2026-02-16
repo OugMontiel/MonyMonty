@@ -2,6 +2,7 @@ import axios from "axios";
 
 import {useAuthStore} from "../../../stores/autenticacion/authStore";
 import {useLoadingStore} from "../../../stores/loadingStore";
+import router from "../../../router/index";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -137,6 +138,7 @@ export function useAuth() {
         withCredentials: true,
       });
       authStore.logout();
+      router.push({name: "Login"});
     } catch (error) {
       console.error("Error en logout:", error);
     } finally {
