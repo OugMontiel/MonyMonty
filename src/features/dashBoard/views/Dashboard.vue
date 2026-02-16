@@ -3,10 +3,14 @@ import DashBoardCards from "../components/DashBoardCards.vue";
 import DashBoardMovimientos from "../components/DashBoardMovimientos.vue";
 import DashBoardTransferencias from "../components/DashBoardTransferencias.vue";
 import CategoriaRanking from "../components/CategoriaRanking.vue";
+import DashboardFilters from "../components/DashboardFilters.vue";
 </script>
 
 <template>
   <div class="w-full px-4 py-6 gap-4 flex flex-col">
+    <!-- Filtros Globales -->
+    <DashboardFilters />
+
     <!-- Grid de las Cards -->
     <DashBoardCards />
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
