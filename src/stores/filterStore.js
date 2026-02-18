@@ -1,22 +1,72 @@
-export const useFilterStore = defineStore("filter", () => {
-  const state = reactive({
-    dateRange: [],
-    accounts: [],
-    currencies: [],
-    categories: [],
-  });
+import { defineStore } from "pinia";
+import {DateTime} from "luxon";
+import { transform } from "lodash";
 
-  function setFilters(partial) {
-    Object.assign(state, partial);
-  }
+// ─── Defaults ────────────────────────────────────────────────────────────────
+const defaultState = () => ({
+  dateStart:  DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
+  dateEnd:    DateTime.now().endOf("month").toJSDate(),   // último día  23:59:59
+  accounts:   [],
+  currencies: [],
+  categories: [],
+});
 
-  function resetFilters(defaults) {
-    Object.assign(state, defaults);
-  }
-
-  return {
-    state,
-    setFilters,
-    resetFilters,
+const transformQuery = (state) => {
+  const q = {
+    dateStart: state.dateStart,
+    dateEnd:   state.dateEnd,
   };
+
+  // Solo incluye los filtros opcionales si tienen elementos
+  if (state.accounts.length)   q.accounts   = [...state.accounts];
+  if (state.currencies.length) q.currencies = [...state.currencies];
+  if (state.categories.length) q.categories = [...state.categories];
+
+  return q;
+}
+
+export const useDashboardFilters = defineStore("filter", {
+  state: () => defaultState(),
+  getters: {
+    /**
+     * Query reactivo listo para enviar a la API.
+     * Se recalcula automáticamente cada vez que cambia cualquier filtro.
+     */
+    query: (state) => transformQuery(state),
+  },
+
+  actions: {
+    setDateStart(date) {
+      this.dateStart = date;
+    },
+    setDateEnd(date) {
+      this.dateEnd = date;
+    },
+    setAccounts(accounts = []) {
+      this.accounts = [...accounts];
+    },
+    setCurrencies(currencies = []) {
+      this.currencies = [...currencies];
+    },
+    setCategories(categories = []) {
+      this.categories = [...categories];
+    },
+
+    /**
+     * Actualiza uno o varios filtros en una sola llamada.
+     *
+     * @param {Partial<ReturnType<typeof defaultState>>} partial
+     *
+     * @example
+     * store.setFilters({ currencies: ['USD'], dateStart: new Date() })
+     */
+    setFilters(partial = {}) {
+      Object.assign(this, partial);
+    },
+
+    /** Resetea todos los filtros a sus valores por defecto */
+    resetAllFilters() {
+      Object.assign(this, defaultState());
+    },
+  },
 });
