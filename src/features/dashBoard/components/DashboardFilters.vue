@@ -41,7 +41,7 @@ const dateRange = computed({
     <!-- Controles -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Rango de Fechas -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 w-full">
         <label>Rango de Fechas</label>
         <DatePicker
           v-model="dates"
@@ -51,6 +51,7 @@ const dateRange = computed({
           showIcon
           placeholder="Seleccionar rango"
           class="w-full"
+          input-class="w-full"
         />
       </div>
 
@@ -60,8 +61,8 @@ const dateRange = computed({
         <MultiSelect
           :modelValue="filterStore.cuentas"
           :options="entidades"
-          optionLabel="nombre"
-          optionValue="_id"
+          optionLabel="label"
+          optionValue="value"
           placeholder="Todas las cuentas"
           display="chip"
           class="w-full"
@@ -76,8 +77,8 @@ const dateRange = computed({
         <MultiSelect
           :modelValue="filterStore.monedas"
           :options="divisas"
-          optionLabel="nombre"
-          optionValue="codigo"
+          optionLabel="label"
+          optionValue="value"
           placeholder="Todas las monedas"
           display="chip"
           class="w-full"
@@ -91,8 +92,8 @@ const dateRange = computed({
         <MultiSelect
           :modelValue="filterStore.categorias"
           :options="categorias"
-          optionLabel="nombre"
-          optionValue="_id"
+          optionLabel="label"
+          optionValue="value"
           filter
           placeholder="Todas las categorías"
           display="chip"

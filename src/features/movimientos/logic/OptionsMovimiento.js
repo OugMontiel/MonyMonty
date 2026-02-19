@@ -39,7 +39,7 @@ export function useMovimientoOptions() {
         categorias.value = categoriasRes?.data?.data;
         divisas.value = divisasRes?.data?.data;
       }
-    } catch (error) {
+    } catch {
       toast.add({
         severity: "error",
         summary: "Error",
