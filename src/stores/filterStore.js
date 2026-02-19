@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import {DateTime} from "luxon";
-import { transform } from "lodash";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 const defaultState = () => ({
@@ -11,6 +10,7 @@ const defaultState = () => ({
   categories: [],
 });
 
+// ─── Transform ──────────────────────────────────────────────────────────────
 const transformQuery = (state) => {
   const q = {
     dateStart: state.dateStart,
@@ -25,6 +25,7 @@ const transformQuery = (state) => {
   return q;
 }
 
+// ─── Store ──────────────────────────────────────────────────────────────────
 export const useDashboardFilters = defineStore("filter", {
   state: () => defaultState(),
   getters: {

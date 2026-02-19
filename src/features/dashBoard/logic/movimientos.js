@@ -1,15 +1,21 @@
 import axios from "axios";
 import {useToast} from "primevue/usetoast";
+import {useDashboardFilters} from "@/stores/filterStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function dataMovimientos() {
   const toast = useToast();
 
-  const request = async (endpoint) => {
+  const filterStore = useDashboardFilters(); // Store access
+
+  const request = async (endpoint, payload = {}) => {
+    // Merge params from store
+    const bodyIndex = {...filterStore.query, ...payload};
+
     // lógica aquí
     try {
-      const res = await axios.get(`${API_URL}${endpoint}`, {
+      const res = await axios.post(`${API_URL}${endpoint}`, bodyIndex, {
         withCredentials: true,
       });
       if (res.status === 200) {
@@ -27,9 +33,12 @@ export function dataMovimientos() {
   const Cars = () => request("movimiento/Dashboard");
   const getRankingCategorias = () => request("movimiento/ranking");
   const getAllMovimientos = (page = 1, limit = 10, filters = {}) => {
-    let query = `movimiento/?page=${page}&limit=${limit}`;
-    if (filters.tipo) query += `&tipo=${filters.tipo}`;
-    return request(query);
+    const payload = {
+      page,
+      limit,
+    };
+    if (filters.tipo) payload.tipo = filters.tipo;
+    return request("movimiento/list", payload);
   };
 
   return {
