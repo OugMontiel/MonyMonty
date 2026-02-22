@@ -3,24 +3,24 @@ import {DateTime} from "luxon";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 const defaultState = () => ({
-  dateStart:  DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
-  dateEnd:    DateTime.now().endOf("month").toJSDate(),   // último día  23:59:59
-  accounts:   [],
-  currencies: [],
-  categories: [],
+  fechaInicio:  DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
+  fechaFin:    DateTime.now().endOf("month").toJSDate(),   // último día  23:59:59
+  cuentas:   [],
+  monedas: [],
+  categorias: [],
 });
 
 // ─── Transform ──────────────────────────────────────────────────────────────
 const transformQuery = (state) => {
   const q = {
-    dateStart: state.dateStart,
-    dateEnd:   state.dateEnd,
+    fechaInicio: state.fechaInicio,
+    fechaFin:   state.fechaFin,
   };
 
   // Solo incluye los filtros opcionales si tienen elementos
-  if (state.accounts.length)   q.accounts   = [...state.accounts];
-  if (state.currencies.length) q.currencies = [...state.currencies];
-  if (state.categories.length) q.categories = [...state.categories];
+  if (state.cuentas.length)   q.cuentas   = [...state.cuentas];
+  if (state.monedas.length) q.monedas = [...state.monedas];
+  if (state.categorias.length) q.categorias = [...state.categorias];
 
   return q;
 }
@@ -37,37 +37,25 @@ export const useDashboardFilters = defineStore("filter", {
   },
 
   actions: {
-    setDateStart(date) {
-      this.dateStart = date;
+    setFechaInicio(date) {
+      this.fechaInicio = date;
     },
-    setDateEnd(date) {
-      this.dateEnd = date;
+    setFechaFin(date) {
+      this.fechaFin = date;
     },
-    setAccounts(accounts = []) {
-      this.accounts = [...accounts];
+    setCuentas(accounts = []) {
+      this.cuentas = [...accounts];
     },
-    setCurrencies(currencies = []) {
-      this.currencies = [...currencies];
+    setMonedas(currencies = []) {
+      this.monedas = [...currencies];
     },
-    setCategories(categories = []) {
-      this.categories = [...categories];
-    },
-
-    /**
-     * Actualiza uno o varios filtros en una sola llamada.
-     *
-     * @param {Partial<ReturnType<typeof defaultState>>} partial
-     *
-     * @example
-     * store.setFilters({ currencies: ['USD'], dateStart: new Date() })
-     */
-    setFilters(partial = {}) {
-      Object.assign(this, partial);
+    setCategorias(categories = []) {
+      this.categorias = [...categories];
     },
 
     /** Resetea todos los filtros a sus valores por defecto */
     resetAllFilters() {
-      Object.assign(this, defaultState());
+      this.$patch(defaultState());
     },
   },
 });

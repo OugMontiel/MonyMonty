@@ -10,15 +10,11 @@ const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
 
 onMounted(() => fetchOptions());
 
-//Computed bidireccional para el DatePicker (range → [fechaInicio, fechaFin])
-//  PrimeVue emite [Date, null] mientras el usuario elige el primer día,
-//  y [Date, Date] cuando completa el rango. El setter maneja ambos casos.
-
 const dateRange = computed({
   get: () => [filterStore.fechaInicio, filterStore.fechaFin],
-  set: ([inicio, fin]) => {
-    filterStore.setFechaInicio(inicio);
-    if (fin) filterStore.setFechaFin(fin);
+  set: (val) => { 
+    if (val && val[0]) filterStore.setFechaInicio(val[0]);
+    if (val && val[1]) filterStore.setFechaFin(val[1]);
   },
 });
 </script>
@@ -44,7 +40,7 @@ const dateRange = computed({
       <div class="flex flex-col gap-2 w-full">
         <label>Rango de Fechas</label>
         <DatePicker
-          v-model="dates"
+          v-model="dateRange"
           selectionMode="range"
           :manualInput="false"
           dateFormat="dd/mm/yy"
@@ -66,7 +62,6 @@ const dateRange = computed({
           placeholder="Todas las cuentas"
           display="chip"
           class="w-full"
-          :maxSelectedLabels="2"
           @update:modelValue="filterStore.setCuentas($event)"
         />
       </div>
@@ -98,7 +93,6 @@ const dateRange = computed({
           placeholder="Todas las categorías"
           display="chip"
           class="w-full"
-          :maxSelectedLabels="2"
           @update:modelValue="filterStore.setCategorias($event)"
         />
       </div>
