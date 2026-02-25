@@ -1,5 +1,4 @@
 import axios from "axios";
-import {useToast} from "primevue/usetoast";
 import {useDashboardFilters} from "@/stores/filterStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -12,11 +11,11 @@ export function dataMovimientos() {
     const bodyIndex = {...filterStore.query, ...payload};
 
     // lógica aquí
-      const res = await axios.post(`${API_URL}${endpoint}`, bodyIndex, {
-        withCredentials: true,
-      });
-      if (res.status === 200) {
-        return {...res};
+    const res = await axios.post(`${API_URL}${endpoint}`, bodyIndex, {
+      withCredentials: true,
+    });
+    if (res.status === 200) {
+      return {...res};
     }
   };
   const Cars = () => request("movimiento/Dashboard");

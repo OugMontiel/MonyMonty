@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted} from "vue";
+import {computed, onMounted, watch} from "vue";
 
 import {useDashboardFilters} from "@/stores/filterStore";
 import {useMovimientoOptions} from "@/features/movimientos/logic/OptionsMovimiento";
@@ -21,25 +21,13 @@ const dateRange = computed({
 
 <template>
   <div class="card p-4 mb-4 flex flex-col gap-4 border-none shadow-sm bg-white rounded-xl">
-    <!-- Header -->
-    <div class="flex justify-between items-center">
-      <h2>Filtros Globales</h2>
-      <Button
-        label="Limpiar Filtros"
-        icon="pi pi-filter-slash"
-        text
-        severity="secondary"
-        size="small"
-        @click="filterStore.resetFilters()"
-      />
-    </div>
-
     <!-- Controles -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Rango de Fechas -->
       <div class="flex flex-col gap-2 w-full">
-        <label>Rango de Fechas</label>
+        <label for="RangoFechasFiltro">Rango de Fechas</label>
         <DatePicker
+          id="RangoFechasFiltro"
           v-model="dateRange"
           selectionMode="range"
           :manualInput="false"
@@ -53,8 +41,9 @@ const dateRange = computed({
 
       <!-- Cuentas -->
       <div class="flex flex-col gap-2">
-        <label>Cuentas</label>
+        <label for="CuentasFiltro">Cuentas</label>
         <MultiSelect
+          id="CuentasFiltro"
           :modelValue="filterStore.cuentas"
           :options="entidades"
           optionLabel="label"
@@ -68,8 +57,9 @@ const dateRange = computed({
 
       <!-- Moneda -->
       <div class="flex flex-col gap-2">
-        <label>Moneda</label>
+        <label for="MonedasFiltro">Moneda</label>
         <MultiSelect
+          id="MonedasFiltro"
           :modelValue="filterStore.monedas"
           :options="divisas"
           optionLabel="label"
@@ -83,8 +73,9 @@ const dateRange = computed({
 
       <!-- Categoría -->
       <div class="flex flex-col gap-2">
-        <label>Categoría</label>
+        <label for="CategoriasFiltro">Categoría</label>
         <MultiSelect
+          id="CategoriasFiltro"
           :modelValue="filterStore.categorias"
           :options="categorias"
           optionLabel="label"
@@ -96,6 +87,26 @@ const dateRange = computed({
           @update:modelValue="filterStore.setCategorias($event)"
         />
       </div>
+
+      <!-- Header -->
+    <div class="flex justify-between items-center">
+      <Button
+        label="Limpiar Filtros"
+        icon="pi pi-filter-slash"
+        text
+        severity="secondary"
+        size="small"
+        @click="filterStore.resetAllFilters()"
+      />
+      <Button
+        label="Aplicar Filtros"
+        icon="pi pi-filter"
+        text
+        severity="secondary"
+        size="small"
+        @click="filterStore.applyFilters()"
+      />
+    </div>
     </div>
   </div>
 </template>

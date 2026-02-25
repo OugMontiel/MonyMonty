@@ -1,11 +1,13 @@
-import { defineStore } from "pinia";
+import {defineStore} from "pinia";
 import {DateTime} from "luxon";
+
+import {dataMovimientos} from "../features/dashBoard/logic/movimientos";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 const defaultState = () => ({
-  fechaInicio:  DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
-  fechaFin:    DateTime.now().endOf("month").toJSDate(),   // último día  23:59:59
-  cuentas:   [],
+  fechaInicio: DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
+  fechaFin: DateTime.now().endOf("month").toJSDate(), // último día  23:59:59
+  cuentas: [],
   monedas: [],
   categorias: [],
 });
@@ -14,16 +16,16 @@ const defaultState = () => ({
 const transformQuery = (state) => {
   const q = {
     fechaInicio: state.fechaInicio,
-    fechaFin:   state.fechaFin,
+    fechaFin: state.fechaFin,
   };
 
   // Solo incluye los filtros opcionales si tienen elementos
-  if (state.cuentas.length)   q.cuentas   = [...state.cuentas];
+  if (state.cuentas.length) q.cuentas = [...state.cuentas];
   if (state.monedas.length) q.monedas = [...state.monedas];
   if (state.categorias.length) q.categorias = [...state.categorias];
 
   return q;
-}
+};
 
 // ─── Store ──────────────────────────────────────────────────────────────────
 export const useDashboardFilters = defineStore("filter", {
@@ -56,6 +58,12 @@ export const useDashboardFilters = defineStore("filter", {
     /** Resetea todos los filtros a sus valores por defecto */
     resetAllFilters() {
       this.$patch(defaultState());
+    },
+
+    applyFilters() {
+      dataMovimientos().Cars();
+      dataMovimientos().getRankingCategorias();
+      dataMovimientos().getAllMovimientos();
     },
   },
 });
