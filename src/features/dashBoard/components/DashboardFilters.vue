@@ -1,7 +1,7 @@
 <script setup>
 import {computed, onMounted, watch} from "vue";
 
-import {useDashboardFilters} from "@/stores/filterStore";
+import {useDashboardFilters} from "@/stores/contexto/filterStore";
 import {useMovimientoOptions} from "@/features/movimientos/logic/OptionsMovimiento";
 
 // Store & Options

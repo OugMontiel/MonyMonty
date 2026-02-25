@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useDashboardFilters} from "@/stores/filterStore";
+import {useDashboardFilters} from "@/stores/contexto/filterStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

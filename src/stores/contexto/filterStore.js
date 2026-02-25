@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {DateTime} from "luxon";
 
-import {dataMovimientos} from "../features/dashBoard/logic/movimientos";
+import {dataMovimientos} from "../../features/dashBoard/logic/movimientos";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 const defaultState = () => ({
