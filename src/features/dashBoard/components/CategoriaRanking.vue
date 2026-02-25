@@ -3,7 +3,7 @@ import {ref, onMounted, watch} from "vue";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 import {useGlobalState} from "@/composables/useGlobalState";
-import {useLoadingStore} from "@/stores/loadingStore";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 const {getRankingCategorias} = dataMovimientos();
 

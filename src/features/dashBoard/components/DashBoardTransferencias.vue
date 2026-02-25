@@ -4,7 +4,7 @@ import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
 import {dataMovimientos} from "../logic/movimientos.js";
 import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
-import {useLoadingStore} from "@/stores/loadingStore";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 // Note: We might reuse CreateMovimientoModal if it supports Transfer viewing,
 // othewise we might need to adjust it. Assuming it handles it.

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import {useAuthStore} from "../../../stores/autenticacion/authStore";
-import {useLoadingStore} from "../../../stores/loadingStore";
+import {useLoadingStore} from "../../../stores/contexto/loadingStore";
 import router from "../../../router/index";
 
 const API_URL = import.meta.env.VITE_API_URL;

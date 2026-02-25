@@ -6,7 +6,7 @@ import {dataMovimientos} from "../logic/movimientos.js";
 import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
 import {useGlobalState} from "@/composables/useGlobalState";
 import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
-import {useLoadingStore} from "@/stores/loadingStore";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 const toast = useToast();
 const {getAllMovimientos} = dataMovimientos();

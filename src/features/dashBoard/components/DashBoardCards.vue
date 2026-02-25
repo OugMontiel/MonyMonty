@@ -6,7 +6,7 @@ import {Icon} from "@iconify/vue";
 import {PERIOD_FILTERS, getCardDescription} from "../logic/dashBoardConstants.js";
 import {dataMovimientos} from "../logic/movimientos.js";
 import {useGlobalState} from "@/composables/useGlobalState";
-import {useLoadingStore} from "@/stores/loadingStore";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 const toast = useToast();
 // const router = useRouter(); De momento no se usa por que no hay rutas ... pero se Usara

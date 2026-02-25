@@ -1,7 +1,7 @@
 import {ref} from "vue";
 import axios from "axios";
 import {useGlobalState} from "@/composables/useGlobalState";
-import {useLoadingStore} from "@/stores/loadingStore";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
