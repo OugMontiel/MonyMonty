@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import {dataMovimientos} from "@/features/dashBoard/logic/movimientos";
+import {useLoadingStore} from "./loadingStore";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 const defaultState = () => ({
@@ -28,25 +29,42 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
   // ── Actions ────────────────────────────────────────────────────
   actions: {
     async fetchCards() {
-      const {Cars} = dataMovimientos();
-      this.dataDashBoard.cards = await Cars();
+      const loadingStore = useLoadingStore();
+      const {cars} = dataMovimientos();
+
+      loadingStore.start("dashboardCards");
+      const data = await cars();
+      this.dataDashBoard.cards = data.data.data;
+      loadingStore.stop("dashboardCards");
     },
 
     async fetchRankingCategorias() {
+      const loadingStore = useLoadingStore();
       const {rankingCategorias} = dataMovimientos();
+
+      loadingStore.start("categorias");
       this.dataDashBoard.rankingCategorias = await rankingCategorias();
+      loadingStore.stop("categorias");
     },
 
     async fetchListaMovimientos() {
+      const loadingStore = useLoadingStore();
       const {getAllMovimientos} = dataMovimientos();
+
+      loadingStore.start("dashboardMovimientos");
       const data = await getAllMovimientos(this.body.listaMovimientos.page, this.body.listaMovimientos.limit);
       this.dataDashBoard.listaMovimientos = data.items ?? data;
+      loadingStore.stop("dashboardMovimientos");
     },
 
     async fetchListaTransacciones() {
+      const loadingStore = useLoadingStore();
       const {getAllTransacciones} = dataMovimientos();
+
+      loadingStore.start("dashboardTransferencias");
       const data = await getAllTransacciones(this.body.listaTransacciones.page, this.body.listaTransacciones.limit);
       this.dataDashBoard.listaTransacciones = data.items ?? data;
+      loadingStore.stop("dashboardTransferencias");
     },
 
     async fetchAll() {

@@ -3,9 +3,10 @@ import {defineStore} from "pinia";
 export const useLoadingStore = defineStore("loading", {
   state: () => ({
     auth: false,
-    categorias: false,
+
     // Dashboard specific states
     dashboardCards: false,
+    categorias: false,
     dashboardMovimientos: false,
     dashboardTransferencias: false,
 

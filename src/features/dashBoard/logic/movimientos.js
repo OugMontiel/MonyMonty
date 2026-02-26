@@ -18,7 +18,7 @@ export function dataMovimientos() {
       return {...res};
     }
   };
-  const Cars = () => request("movimiento/Dashboard");
+  const cars = () => request("movimiento/Dashboard");
   const rankingCategorias = () => request("movimiento/ranking");
   const getAllMovimientos = (page = 1, limit = 10, filters = {}) => {
     const payload = {page, limit};
@@ -27,7 +27,7 @@ export function dataMovimientos() {
   };
 
   return {
-    Cars,
+    cars,
     rankingCategorias,
     getAllMovimientos,
   };
