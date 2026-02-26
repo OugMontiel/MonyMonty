@@ -1,9 +1,20 @@
 <script setup>
+import {onMounted} from "vue";
+
 import DashBoardCards from "../components/DashBoardCards.vue";
 import DashBoardMovimientos from "../components/DashBoardMovimientos.vue";
 import DashBoardTransferencias from "../components/DashBoardTransferencias.vue";
 import CategoriaRanking from "../components/CategoriaRanking.vue";
 import DashboardFilters from "../components/DashboardFilters.vue";
+
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
+
+// Stores
+const storeData = dataDashBoardStore()
+
+onMounted(() => {
+  storeData.fetchAll();
+});
 </script>
 
 <template>

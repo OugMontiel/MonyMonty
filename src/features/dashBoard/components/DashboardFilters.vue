@@ -1,12 +1,14 @@
 <script setup>
 import {computed, onMounted} from "vue";
 
-import {useDashboardFilters} from "@/stores/contexto/filterStore";
-import {dataDashBoardStore} from "@/stores/contexto/dataDashBoardStore";
-import {useMovimientoOptions} from "@/features/movimientos/logic/OptionsMovimiento";
+import {useDashboardFilters} from "../../../stores/contexto/filterStore";
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
+
+import {useMovimientoOptions} from "../../../features/movimientos/logic/OptionsMovimiento";
 
 // Store & Options
 const filterStore = useDashboardFilters();
+const storeData = dataDashBoardStore()
 const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
 
 onMounted(() => fetchOptions());
@@ -105,7 +107,7 @@ const dateRange = computed({
         text
         severity="secondary"
         size="small"
-        @click="dataDashBoardStore.fetchAll()"
+        @click="storeData.fetchAll()"
       />
     </div>
     </div>
