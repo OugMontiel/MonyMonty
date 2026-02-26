@@ -1,8 +1,6 @@
 import {defineStore} from "pinia";
 import {DateTime} from "luxon";
 
-import {dataMovimientos} from "../../features/dashBoard/logic/movimientos";
-
 // ─── Defaults ────────────────────────────────────────────────────────────────
 const defaultState = () => ({
   fechaInicio: DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
@@ -58,12 +56,6 @@ export const useDashboardFilters = defineStore("filter", {
     /** Resetea todos los filtros a sus valores por defecto */
     resetAllFilters() {
       this.$patch(defaultState());
-    },
-
-    applyFilters() {
-      dataMovimientos().Cars();
-      dataMovimientos().getRankingCategorias();
-      dataMovimientos().getAllMovimientos();
     },
   },
 });

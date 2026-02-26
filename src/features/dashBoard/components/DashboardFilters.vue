@@ -1,7 +1,8 @@
 <script setup>
-import {computed, onMounted, watch} from "vue";
+import {computed, onMounted} from "vue";
 
 import {useDashboardFilters} from "@/stores/contexto/filterStore";
+import {dataDashBoardStore} from "@/stores/contexto/dataDashBoardStore";
 import {useMovimientoOptions} from "@/features/movimientos/logic/OptionsMovimiento";
 
 // Store & Options
@@ -104,7 +105,7 @@ const dateRange = computed({
         text
         severity="secondary"
         size="small"
-        @click="filterStore.applyFilters()"
+        @click="dataDashBoardStore.fetchAll()"
       />
     </div>
     </div>
