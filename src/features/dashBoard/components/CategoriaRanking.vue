@@ -1,43 +1,21 @@
 <script setup>
-import {ref, onMounted, watch} from "vue";
+import {ref} from "vue";
 import {Icon} from "@iconify/vue";
-import {dataMovimientos} from "../logic/movimientos.js";
-import {useGlobalState} from "@/composables/useGlobalState";
-import {useLoadingStore} from "@/stores/contexto/loadingStore";
-
-const {getRankingCategorias} = dataMovimientos();
-
-// PrimeVue Toast
 import {useToast} from "primevue/usetoast";
+
+// import store
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
+import {useLoadingStore} from "../../../stores/contexto/loadingStore";
+
+// UI PrimeVue 
 const toast = useToast();
 
-// Estado
-const categoriaData = ref([]);
+//store
 const loadingStore = useLoadingStore();
+const storeData = dataDashBoardStore();
+ 
+// Estado
 const activeCategoryIndex = ref(null);
-const {globalDataRefreshTrigger} = useGlobalState();
-
-// Cargar datos
-const loadData = async () => {
-  try {
-    loadingStore.start("categorias");
-    const response = await getRankingCategorias();
-
-    if (response?.data) {
-      categoriaData.value = response.data.data;
-    }
-  } catch (error) {
-    console.error("Error cargando datos:", error);
-  } finally {
-    loadingStore.stop("categorias");
-  }
-};
-
-// Top subcategorías (vienen del backend, solo se muestran)
-const getTopSubcategorias = (subcategorias, limit = 3) => {
-  if (!subcategorias) return [];
-  return subcategorias.slice(0, limit);
-};
 
 // Mostrar subcategorías (inline expansion)
 const toggleCategoria = (index) => {
@@ -67,14 +45,6 @@ const formatearMoneda = (valor) => {
     maximumFractionDigits: 0,
   }).format(valor);
 };
-
-onMounted(() => {
-  loadData();
-});
-
-watch(globalDataRefreshTrigger, () => {
-  loadData();
-});
 </script>
 
 <template>
@@ -105,9 +75,9 @@ watch(globalDataRefreshTrigger, () => {
       </div>
 
       <!-- Ranking List -->
-      <div v-else-if="categoriaData.length > 0" class="space-y-4">
+      <div v-else-if="storeData.hasRankingCategorias" class="space-y-4">
         <div
-          v-for="(categoria, index) in categoriaData"
+          v-for="(categoria, index) in storeData.dataDashBoard.rankingCategorias"
           :key="index"
           class="group relative cursor-pointer rounded-xl border border-gray-100 p-4 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50/50 hover:shadow-lg"
           :class="{'border-blue-300 bg-blue-50 ring-1 ring-blue-100': activeCategoryIndex === index}"

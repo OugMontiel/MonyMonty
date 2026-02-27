@@ -20,11 +20,16 @@ const defaultState = () => ({
       limit: 10,
     },
   },
-})
+});
 
 export const dataDashBoardStore = defineStore("dataDashBoardStore", {
   // ── State ──────────────────────────────────────────────────────
   state: () => defaultState(),
+
+  // ── Getters ────────────────────────────────────────────────────
+  getters: {
+    hasRankingCategorias: (state) => state.dataDashBoard.rankingCategorias.length > 0,
+  },
 
   // ── Actions ────────────────────────────────────────────────────
   actions: {
@@ -43,7 +48,8 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
       const {rankingCategorias} = dataMovimientos();
 
       loadingStore.start("categorias");
-      this.dataDashBoard.rankingCategorias = await rankingCategorias();
+      const data = await rankingCategorias();
+      this.dataDashBoard.rankingCategorias = data.data.data;
       loadingStore.stop("categorias");
     },
 
@@ -69,12 +75,7 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
 
     async fetchAll() {
       try {
-        await Promise.all([
-          this.fetchCards(),
-          this.fetchRankingCategorias(),
-          this.fetchListaMovimientos(),
-          this.fetchListaTransacciones(),
-        ]);
+        await Promise.all([this.fetchCards(), this.fetchRankingCategorias(), this.fetchListaMovimientos(), this.fetchListaTransacciones()]);
       } catch (err) {
         this.error = err.message ?? "Error al cargar movimientos";
       }

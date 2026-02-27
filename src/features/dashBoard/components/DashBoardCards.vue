@@ -1,19 +1,19 @@
 <script setup>
-import {ref, onMounted, computed, watch} from "vue";
+import {ref, computed} from "vue";
 import {useToast} from "primevue/usetoast";
-import {useRouter} from "vue-router";
 import {Icon} from "@iconify/vue";
-import {PERIOD_FILTERS, getCardDescription} from "../logic/dashBoardConstants.js";
-import {dataMovimientos} from "../logic/movimientos.js";
-import {useGlobalState} from "@/composables/useGlobalState";
-import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
+import {PERIOD_FILTERS, getCardDescription} from "../logic/dashBoardConstants.js";
+
+import {useLoadingStore} from "../../../stores/contexto/loadingStore";
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
+
+// UI PrimeVue
 const toast = useToast();
-// const router = useRouter(); De momento no se usa por que no hay rutas ... pero se Usara
-const {Cars} = dataMovimientos();
-const dataDashBoard = ref({});
+
+// Stores
 const loadingStore = useLoadingStore();
-const {globalDataRefreshTrigger} = useGlobalState();
+const storeData = dataDashBoardStore()
 
 // Estado para el filtro de tiempo
 const currentPeriod = ref(PERIOD_FILTERS.ANO);
@@ -43,36 +43,11 @@ const redireccionar = (ruta) => {
   });
 };
 
-const loadDashboardData = async () => {
-  loadingStore.start("dashboardCards");
-  try {
-    const {data} = await Cars();
-    dataDashBoard.value = data.data;
-  } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "No se pudo cargar la información del Dashboard.",
-      life: 4000,
-    });
-  } finally {
-    loadingStore.stop("dashboardCards");
-  }
-};
-
-onMounted(() => {
-  loadDashboardData();
-});
-
-watch(globalDataRefreshTrigger, () => {
-  loadDashboardData();
-});
-
 const stats = computed(() => [
   {
     label: "Ingresos",
     description: cardInfo.value.description,
-    value: dataDashBoard.value.totalIngresado,
+    value: storeData.dataDashBoard.cards.totalIngresado,
     icon: "ion:cash-outline",
     action: () => redireccionar("ingresos"),
     borderClass: "hover:border-emerald-200",
@@ -84,7 +59,7 @@ const stats = computed(() => [
   {
     label: "Gastos",
     description: cardInfo.value.description,
-    value: dataDashBoard.value.totalEgresado,
+    value: storeData.dataDashBoard.cards.totalEgresado,
     icon: "ion:card-outline",
     action: () => redireccionar("egresos"),
     borderClass: "hover:border-rose-200",
@@ -96,7 +71,7 @@ const stats = computed(() => [
   {
     label: "Disponible",
     description: cardInfo.value.description,
-    value: dataDashBoard.value.totalDisponible,
+    value: storeData.dataDashBoard.cards.totalDisponible,
     icon: "ion:wallet-outline",
     action: () => redireccionar("egresos"),
     borderClass: "hover:border-indigo-200",
