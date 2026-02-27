@@ -8,14 +8,14 @@ import {useMovimientoOptions} from "../../../features/movimientos/logic/OptionsM
 
 // Store & Options
 const filterStore = useDashboardFilters();
-const storeData = dataDashBoardStore()
+const storeData = dataDashBoardStore();
 const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
 
 onMounted(() => fetchOptions());
 
 const dateRange = computed({
   get: () => [filterStore.fechaInicio, filterStore.fechaFin],
-  set: (val) => { 
+  set: (val) => {
     if (val && val[0]) filterStore.setFechaInicio(val[0]);
     if (val && val[1]) filterStore.setFechaFin(val[1]);
   },
@@ -90,8 +90,8 @@ const dateRange = computed({
           @update:modelValue="filterStore.setCategorias($event)"
         />
       </div>
-
-      <!-- Header -->
+    </div>
+    <!-- Header -->
     <div class="flex justify-between items-center">
       <Button
         label="Limpiar Filtros"
@@ -101,15 +101,7 @@ const dateRange = computed({
         size="small"
         @click="filterStore.resetAllFilters()"
       />
-      <Button
-        label="Aplicar Filtros"
-        icon="pi pi-filter"
-        text
-        severity="secondary"
-        size="small"
-        @click="storeData.fetchAll()"
-      />
-    </div>
+      <Button label="Aplicar Filtros" icon="pi pi-filter" text severity="secondary" size="small" @click="storeData.fetchAll()" />
     </div>
   </div>
 </template>
