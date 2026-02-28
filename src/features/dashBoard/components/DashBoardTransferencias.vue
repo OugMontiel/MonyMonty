@@ -1,59 +1,37 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
-import {dataMovimientos} from "../logic/movimientos.js";
-import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
-import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
-// Note: We might reuse CreateMovimientoModal if it supports Transfer viewing,
-// othewise we might need to adjust it. Assuming it handles it.
+// Modales
 import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
 
+// Constantes
+import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
+
+// Stores
+import {useLoadingStore} from "../../../stores/contexto/loadingStore";
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
+
+// Ui PrimeVue
 const toast = useToast();
-const {getAllMovimientos} = dataMovimientos();
-const transferencias = ref([]);
+
+// Stores
 const loadingStore = useLoadingStore();
-const totalRecords = ref(0);
-const lazyParams = ref({
-  page: 0,
-  rows: 4, // Limit requested
-});
+const storeData = dataDashBoardStore();
 
 const isModalOpen = ref(false);
 const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
-const loadTransferencias = async () => {
-  try {
-    loadingStore.start("dashboardTransferencias");
-    const page = lazyParams.value.page + 1;
-    const limit = lazyParams.value.rows;
-    // Request only TRANSFERENCIA
-    const resMovs = await getAllMovimientos(page, limit, {tipo: "TRANSFERENCIA"});
+const handlePage = (event) => {
+  storeData.setPaginationListaTransacciones({
+    page: event.page + 1,
+    limit: event.rows,
+  });
 
-    transferencias.value = resMovs.data.data.data;
-    totalRecords.value = resMovs.data.data.total;
-  } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo cargar las transferencias.",
-      life: 4000,
-    });
-  } finally {
-    loadingStore.stop("dashboardTransferencias");
-  }
+  storeData.fetchListaTransacciones();
 };
-
-const onPage = (event) => {
-  lazyParams.value = event;
-  loadTransferencias();
-};
-
-onMounted(() => {
-  loadTransferencias();
-});
 
 const verMovimiento = (data) => {
   selectedMovimientoId.value = data._id;
@@ -85,13 +63,13 @@ const eliminarMovimiento = (data) => {
     </h3>
   </div>
   <DataTable
-    :value="transferencias"
+    :value="storeData.dataDashBoard.listaTransacciones"
     :lazy="true"
     :paginator="true"
-    :rows="lazyParams.rows"
-    :totalRecords="totalRecords"
+    :rows="storeData.pagination.listaTransacciones.limit"
+    :totalRecords="storeData.pagination.listaTransacciones.totalData"
     :loading="loadingStore.dashboardTransferencias"
-    @page="onPage"
+    @page="handlePage"
     responsiveLayout="scroll"
     class="text-sm bg-transparent"
     :rowClass="() => ['rounded-lg', 'shadow-sm', 'mb-2', 'bg-white', 'border-l-4', 'border-blue-300']"
@@ -163,5 +141,10 @@ const eliminarMovimiento = (data) => {
     </Column>
   </DataTable>
 
-  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :movementId="selectedMovimientoId" @saved="loadTransferencias" />
+  <CreateMovimientoModal
+    v-model:visible="isModalOpen"
+    :mode="modalMode"
+    :movementId="selectedMovimientoId"
+    @saved="storeData.fetchListaTransacciones()"
+  />
 </template>

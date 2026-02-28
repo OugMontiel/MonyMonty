@@ -10,7 +10,7 @@ import CreateMovimientoModal from "../../movimientos/components/modals/CreateMov
 import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
 
 // Stores
-import {useLoadingStore} from "@/stores/contexto/loadingStore";
+import {useLoadingStore} from "../../../stores/contexto/loadingStore";
 import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
 
 // UI PrimeVue

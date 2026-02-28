@@ -70,11 +70,14 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
 
     async fetchListaTransacciones() {
       const loadingStore = useLoadingStore();
-      const {getAllTransacciones} = dataMovimientos();
+      const {getAllMovimientos} = dataMovimientos();
 
       loadingStore.start("dashboardTransferencias");
-      const data = await getAllTransacciones(this.pagination.listaTransacciones.page, this.pagination.listaTransacciones.limit);
-      this.dataDashBoard.listaTransacciones = data.items ?? data;
+      const data = await getAllMovimientos(this.pagination.listaTransacciones.page, this.pagination.listaTransacciones.limit, {
+        tipo: "TRANSFERENCIA",
+      });
+      this.dataDashBoard.listaTransacciones = data.data.data.data;
+      this.pagination.listaTransacciones.totalData = data.data.data.total;
       loadingStore.stop("dashboardTransferencias");
     },
 
