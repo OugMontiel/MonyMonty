@@ -1,63 +1,37 @@
 <script setup>
-import {ref, onMounted, watch} from "vue";
+import {ref} from "vue";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
-import {dataMovimientos} from "../logic/movimientos.js";
-import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
-import {useGlobalState} from "@/composables/useGlobalState";
-import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
-import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
+// Modales
+import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
+
+// Constantes
+import {MOVEMENTS_HELP_TEXT} from "../logic/dashBoardConstants.js";
+
+// Stores
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
+
+// UI PrimeVue
 const toast = useToast();
-const {getAllMovimientos} = dataMovimientos();
-const movimientos = ref([]);
+
+// Stores
 const loadingStore = useLoadingStore();
-const totalRecords = ref(0);
-const lazyParams = ref({
-  page: 0,
-  rows: 3,
-});
-const {globalDataRefreshTrigger} = useGlobalState();
+const storeData = dataDashBoardStore();
 
 const isModalOpen = ref(false);
 const modalMode = ref("VIEW");
 const selectedMovimientoId = ref(null);
 
-const loadMovimientos = async () => {
-  try {
-    loadingStore.start("dashboardMovimientos");
-    const page = lazyParams.value.page + 1; // PrimeVue paginator is 0-indexed
-    const limit = lazyParams.value.rows;
-    const resMovs = await getAllMovimientos(page, limit, {tipo: "STANDARD"});
+const handlePage = (event) => {
+  storeData.setPaginationListaMovimientos({
+    page: event.page + 1,
+    limit: event.rows,
+  });
 
-    // The backend now returns { data: [], total: number, page: number, ... }
-    // inside resMovs.data.data
-    movimientos.value = resMovs.data.data.data;
-    totalRecords.value = resMovs.data.data.total;
-  } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo cargar los movimientos.",
-      life: 4000,
-    });
-  } finally {
-    loadingStore.stop("dashboardMovimientos");
-  }
+  storeData.fetchListaMovimientos();
 };
-
-const onPage = (event) => {
-  lazyParams.value = event;
-  loadMovimientos();
-};
-
-onMounted(() => {
-  loadMovimientos();
-});
-
-watch(globalDataRefreshTrigger, () => {
-  loadMovimientos();
-});
 
 const verMovimiento = (data) => {
   selectedMovimientoId.value = data._id;
@@ -89,13 +63,13 @@ const eliminarMovimiento = (data) => {
     </h3>
   </div>
   <DataTable
-    :value="movimientos"
-    :lazy="true"
-    :paginator="true"
-    :rows="lazyParams.rows"
-    :totalRecords="totalRecords"
+    :value="storeData.dataDashBoard.listaMovimientos"
+    lazy
+    paginator
+    :rows="storeData.pagination.listaMovimientos.limit"
+    :totalRecords="storeData.pagination.listaMovimientos.totalData"
     :loading="loadingStore.dashboardMovimientos"
-    @page="onPage"
+    @page="handlePage"
     responsiveLayout="scroll"
     class="text-sm bg-transparent"
     :rowClass="
@@ -174,5 +148,10 @@ const eliminarMovimiento = (data) => {
     </Column>
   </DataTable>
 
-  <CreateMovimientoModal v-model:visible="isModalOpen" :mode="modalMode" :movementId="selectedMovimientoId" @saved="loadMovimientos" />
+  <CreateMovimientoModal
+    v-model:visible="isModalOpen"
+    :mode="modalMode"
+    :movementId="selectedMovimientoId"
+    @saved="storeData.fetchListaMovimientos()"
+  />
 </template>

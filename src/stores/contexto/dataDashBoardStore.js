@@ -10,14 +10,16 @@ const defaultState = () => ({
     listaMovimientos: [],
     listaTransacciones: [],
   },
-  body: {
+  pagination: {
     listaMovimientos: {
+      totalData: 0,
       page: 1,
-      limit: 10,
+      limit: 4,
     },
     listaTransacciones: {
+      totalData: 0,
       page: 1,
-      limit: 10,
+      limit: 4,
     },
   },
 });
@@ -58,8 +60,11 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
       const {getAllMovimientos} = dataMovimientos();
 
       loadingStore.start("dashboardMovimientos");
-      const data = await getAllMovimientos(this.body.listaMovimientos.page, this.body.listaMovimientos.limit);
-      this.dataDashBoard.listaMovimientos = data.items ?? data;
+      const data = await getAllMovimientos(this.pagination.listaMovimientos.page, this.pagination.listaMovimientos.limit, {
+        tipo: "STANDARD",
+      });
+      this.dataDashBoard.listaMovimientos = data.data.data.data;
+      this.pagination.listaMovimientos.totalData = data.data.data.total;
       loadingStore.stop("dashboardMovimientos");
     },
 
@@ -68,7 +73,7 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
       const {getAllTransacciones} = dataMovimientos();
 
       loadingStore.start("dashboardTransferencias");
-      const data = await getAllTransacciones(this.body.listaTransacciones.page, this.body.listaTransacciones.limit);
+      const data = await getAllTransacciones(this.pagination.listaTransacciones.page, this.pagination.listaTransacciones.limit);
       this.dataDashBoard.listaTransacciones = data.items ?? data;
       loadingStore.stop("dashboardTransferencias");
     },
@@ -81,28 +86,14 @@ export const dataDashBoardStore = defineStore("dataDashBoardStore", {
       }
     },
 
-    setPageListaMovimientos(page) {
-      this.$patch((state) => {
-        state.body.listaMovimientos.page = page;
-      });
+    setPaginationListaMovimientos({page, limit}) {
+      this.pagination.listaMovimientos.page = page;
+      this.pagination.listaMovimientos.limit = limit;
     },
 
-    setLimitListaMovimientos(limit) {
-      this.$patch((state) => {
-        state.body.listaMovimientos.limit = limit;
-      });
-    },
-
-    setPageListaTransacciones(page) {
-      this.$patch((state) => {
-        state.body.listaTransacciones.page = page;
-      });
-    },
-
-    setLimitListaTransacciones(limit) {
-      this.$patch((state) => {
-        state.body.listaTransacciones.limit = limit;
-      });
+    setPaginationListaTransacciones({page, limit}) {
+      this.pagination.listaTransacciones.page = page;
+      this.pagination.listaTransacciones.limit = limit;
     },
   },
 });
