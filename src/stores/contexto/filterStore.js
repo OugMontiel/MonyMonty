@@ -2,9 +2,13 @@ import {defineStore} from "pinia";
 import {DateTime} from "luxon";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
+const defaultRange = () => ([
+  DateTime.now().startOf("month").toJSDate(),
+  DateTime.now().endOf("month").toJSDate()
+]);
+
 const defaultState = () => ({
-  fechaInicio: DateTime.now().startOf("month").toJSDate(), // 01/MM/YYYY 00:00:00
-  fechaFin: DateTime.now().endOf("month").toJSDate(), // último día  23:59:59
+  dateRange: defaultRange(),
   cuentas: [],
   monedas: [],
   categorias: [],
@@ -29,6 +33,8 @@ const transformQuery = (state) => {
 export const useDashboardFilters = defineStore("filter", {
   state: () => defaultState(),
   getters: {
+    fechaInicio: (state) => state.dateRange?.[0] ?? null,
+    fechaFin: (state) => state.dateRange?.[1] ?? null,
     /**
      * Query reactivo listo para enviar a la API.
      * Se recalcula automáticamente cada vez que cambia cualquier filtro.
@@ -37,11 +43,12 @@ export const useDashboardFilters = defineStore("filter", {
   },
 
   actions: {
-    setFechaInicio(date) {
-      this.fechaInicio = date;
+    setDateRange(range) {
+      this.dateRange = range ?? defaultRange()
     },
-    setFechaFin(date) {
-      this.fechaFin = date;
+
+    clearDates() {
+      this.dateRange = defaultRange()
     },
     setCuentas(accounts = []) {
       this.cuentas = [...accounts];

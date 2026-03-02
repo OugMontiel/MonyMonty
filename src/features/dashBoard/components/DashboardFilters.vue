@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted} from "vue";
+import {onMounted} from "vue";
 
 import {useDashboardFilters} from "../../../stores/contexto/filterStore";
 import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
@@ -12,14 +12,6 @@ const storeData = dataDashBoardStore();
 const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
 
 onMounted(() => fetchOptions());
-
-const dateRange = computed({
-  get: () => [filterStore.fechaInicio, filterStore.fechaFin],
-  set: (val) => {
-    if (val && val[0]) filterStore.setFechaInicio(val[0]);
-    if (val && val[1]) filterStore.setFechaFin(val[1]);
-  },
-});
 </script>
 
 <template>
@@ -31,7 +23,7 @@ const dateRange = computed({
         <label for="RangoFechasFiltro">Rango de Fechas</label>
         <DatePicker
           id="RangoFechasFiltro"
-          v-model="dateRange"
+          v-model="filterStore.dateRange"
           selectionMode="range"
           :manualInput="false"
           dateFormat="dd/mm/yy"
