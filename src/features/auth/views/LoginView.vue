@@ -25,22 +25,14 @@ const {login, loading, isAuthenticated} = useAuth();
 
 const submitted = ref(false);
 
-// Valores iniciales para que no sean null
-const initialValues = reactive({
-    email: '',
-    password: ''
-});
-
 // Esquema de validación con Zod
 const resolver = zodResolver(
   z.object({
-    email: z
-      .string()
-      .min(1, { message: "Usuario o contraseña no coinciden." }) // Error si está vacío
-      .email({ message: "Formato de correo no válido." }), // Error si no es email
-    password: z
-      .string()
-      .min(1, { message: "Usuario o contraseña no coinciden." }) // Error si está vacío
+    email: z.preprocess(
+      (val) => (val === null ? "" : val),
+      z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."})
+    ),
+    password: z.preprocess((val) => (val === null ? "" : val), z.string().min(8, {message: "Credenciales Invalidas"})),
   })
 );
 
@@ -99,16 +91,16 @@ onMounted(() => {
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
           <!-- FORMULARIO PRIMEVUE -->
-          <Form :initialValues="initialValues" :resolver="resolver" @submit="onFormSubmit" class="login-form">
+          <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
             <!-- EMAIL -->
             <FormField v-slot="$field" name="email" class="w-full flex flex-col items-center">
               <FloatLabel variant="on" class="w-full">
                 <InputText id="email" type="email" v-bind="$field.props" :disabled="loading" class="w-full" />
                 <label for="email">Correo electrónico</label>
-              </FloatLabel>              
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
-                {{$field.error?.message}}
-              </Message>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
             </FormField>
 
             <!-- PASSWORD -->
@@ -125,9 +117,9 @@ onMounted(() => {
                 />
                 <label for="password">Contraseña</label>
               </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
-                {{$field.error?.message}}
-              </Message>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
             </FormField>
 
             <!-- BOTONES -->
@@ -164,7 +156,8 @@ onMounted(() => {
 }
 
 .contentCentrado {
-  flex: 1; /* ocupa todo el espacio disponible entre header y footer */
+  flex: 1;
+  /* ocupa todo el espacio disponible entre header y footer */
   display: flex;
   justify-content: center;
   align-items: center;
