@@ -1,40 +1,34 @@
 import axios from "axios";
-import {useToast} from "primevue/usetoast";
+import {useDashboardFilters} from "@/stores/contexto/filterStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function dataMovimientos() {
-  const toast = useToast();
+  const filterStore = useDashboardFilters();
 
-  const request = async (endpoint) => {
+  const request = async (endpoint, payload = {}) => {
+    // Merge params from store
+    const body = {...filterStore.query, ...payload};
+
     // lógica aquí
-    try {
-      const res = await axios.get(`${API_URL}${endpoint}`, {
-        withCredentials: true,
-      });
-      if (res.status === 200) {
-        return {...res};
-      }
-    } catch (error) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: error.response?.data?.message || " ",
-        life: 4000,
-      });
+    const res = await axios.post(`${API_URL}${endpoint}`, body, {
+      withCredentials: true,
+    });
+    if (res.status === 200) {
+      return {...res};
     }
   };
-  const Cars = () => request("movimiento/Dashboard");
-  const getRankingCategorias = () => request("movimiento/ranking");
+  const cars = () => request("movimiento/dashboard");
+  const rankingCategorias = () => request("movimiento/ranking");
   const getAllMovimientos = (page = 1, limit = 10, filters = {}) => {
-    let query = `movimiento/?page=${page}&limit=${limit}`;
-    if (filters.tipo) query += `&tipo=${filters.tipo}`;
-    return request(query);
+    const payload = {page, limit};
+    if (filters.tipo) payload.tipo = filters.tipo;
+    return request("movimiento/list", payload);
   };
 
   return {
-    Cars,
-    getRankingCategorias,
+    cars,
+    rankingCategorias,
     getAllMovimientos,
   };
 }
