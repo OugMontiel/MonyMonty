@@ -28,8 +28,11 @@ const submitted = ref(false);
 // Esquema de validación con Zod
 const resolver = zodResolver(
   z.object({
-    email: z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."}),
-    password: z.string().min(8, {message: "La contraseña debe tener al menos 8 caracteres."}),
+    email: z.preprocess(
+      (val) => (val === null ? "" : val),
+      z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."})
+    ),
+    password: z.preprocess((val) => (val === null ? "" : val), z.string().min(8, {message: "Credenciales Invalidas"})),
   })
 );
 
@@ -153,7 +156,8 @@ onMounted(() => {
 }
 
 .contentCentrado {
-  flex: 1; /* ocupa todo el espacio disponible entre header y footer */
+  flex: 1;
+  /* ocupa todo el espacio disponible entre header y footer */
   display: flex;
   justify-content: center;
   align-items: center;

@@ -5,8 +5,8 @@ import {z} from "zod";
 import {useToast} from "primevue/usetoast";
 import {zodResolver} from "@primevue/forms/resolvers/zod";
 
-import {useEntidades} from "../logic/CreateEntidad";
-import {useMovimientoOptions} from "../logic/OptionsMovimiento";
+import {useEntidades} from "../../logic/CreateEntidad";
+import {useMovimientoOptions} from "../../logic/OptionsMovimiento";
 
 const props = defineProps({
   visible: {
