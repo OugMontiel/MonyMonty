@@ -8,44 +8,41 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import {ref, onMounted, reactive} from "vue";
-import {useToast} from "primevue/usetoast";
-import {useRouter} from "vue-router";
-import {zodResolver} from "@primevue/forms/resolvers/zod";
-import {z} from "zod";
+import { ref, onMounted, reactive } from "vue";
+import { useToast } from "primevue/usetoast";
+import { useRouter } from "vue-router";
+import { zodResolver } from "@primevue/forms/resolvers/zod";
+import { z } from "zod";
 
-import {useAuth} from "../logic/useAuth.js";
+import { useAuth } from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import InfoView from "../components/infoLogin.vue";
 import FooterAuth from "../components/FooterAuth.vue";
 
 const toast = useToast();
 const router = useRouter();
-const {login, loading, isAuthenticated} = useAuth();
+const { login, loading, isAuthenticated } = useAuth();
 
 const submitted = ref(false);
-
-// Valores iniciales para que no sean null
-const initialValues = reactive({
-    email: '',
-    password: ''
-});
 
 // Esquema de validación con Zod
 const resolver = zodResolver(
   z.object({
-    email: z
-      .string()
-      .min(1, { message: "Usuario o contraseña no coinciden." }) // Error si está vacío
-      .email({ message: "Formato de correo no válido." }), // Error si no es email
-    password: z
-      .string()
-      .min(1, { message: "Usuario o contraseña no coinciden." }) // Error si está vacío
+    email: z.preprocess(
+      (val) => (val === null ? '' : val),
+      z.string().min(1, { message: "Por favor, ingresa tu correo electrónico." }).email({ message: "Correo electrónico no válido." })
+
+    ),
+    password: z.preprocess(
+      (val) => (val === null ? '' : val),
+      z.string().min(8, { message: "La contraseña debe tener al menos 8 caracteres." })
+
+    ),
   })
 );
 
 // === SUBMIT DEL FORM ===
-const onFormSubmit = async ({valid, values}) => {
+const onFormSubmit = async ({ valid, values }) => {
   submitted.value = true;
 
   if (!valid) return;
@@ -99,42 +96,36 @@ onMounted(() => {
             <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
           </div>
           <!-- FORMULARIO PRIMEVUE -->
-          <Form :initialValues="initialValues" :resolver="resolver" @submit="onFormSubmit" class="login-form">
+          <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
             <!-- EMAIL -->
             <FormField v-slot="$field" name="email" class="w-full flex flex-col items-center">
               <FloatLabel variant="on" class="w-full">
                 <InputText id="email" type="email" v-bind="$field.props" :disabled="loading" class="w-full" />
                 <label for="email">Correo electrónico</label>
-              </FloatLabel>              
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
-                {{$field.error?.message}}
-              </Message>
+              </FloatLabel>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
             </FormField>
 
             <!-- PASSWORD -->
             <FormField v-slot="$field" name="password" class="w-full flex flex-col items-center">
               <FloatLabel variant="on" class="w-full">
-                <Password
-                  id="password"
-                  v-bind="$field.props"
-                  :feedback="false"
-                  toggleMask
-                  :disabled="loading"
-                  class="w-full"
-                  inputClass="w-full"
-                />
+                <Password id="password" v-bind="$field.props" :feedback="false" toggleMask :disabled="loading"
+                  class="w-full" inputClass="w-full" />
                 <label for="password">Contraseña</label>
               </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
-                {{$field.error?.message}}
-              </Message>
+              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
+                $field.error?.message
+              }}</Message>
             </FormField>
 
             <!-- BOTONES -->
             <Button type="submit" label="Iniciar Sesión" class="w-full" severity="primary" :loading="loading" />
           </Form>
 
-          <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
+          <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading"
+            @click="redirectToCrearCuenta" />
 
           <!-- Olvidaste tu contraseña -->
           <Button label="¿Olvidaste tu contraseña?" link @click="redirectToRecuperarCuenta" />
@@ -164,7 +155,8 @@ onMounted(() => {
 }
 
 .contentCentrado {
-  flex: 1; /* ocupa todo el espacio disponible entre header y footer */
+  flex: 1;
+  /* ocupa todo el espacio disponible entre header y footer */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -244,22 +236,19 @@ onMounted(() => {
 }
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-}
+@media (min-width: 576px) and (max-width: 767.98px) {}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-}
+@media (min-width: 768px) and (max-width: 991.98px) {}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-}
+@media (min-width: 992px) and (max-width: 1199.98px) {}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
-}
+@media (min-width: 1200px) and (max-width: 1399.98px) {}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-}
+@media (min-width: 1400px) {}
 </style>
+
+ 
