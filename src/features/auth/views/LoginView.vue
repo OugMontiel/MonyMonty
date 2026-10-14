@@ -8,251 +8,132 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import {ref, onMounted, reactive} from "vue";
-import {useToast} from "primevue/usetoast";
+import {ref, computed, onMounted} from "vue";
 import {useRouter} from "vue-router";
-import {zodResolver} from "@primevue/forms/resolvers/zod";
 import {z} from "zod";
 
 import {useAuth} from "../logic/useAuth.js";
+import {emailSchema, mensajeDe} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
-import InfoView from "../components/infoLogin.vue";
-import FooterAuth from "../components/FooterAuth.vue";
+import AuthSplit from "../components/AuthSplit.vue";
+import MmIcon from "@/components/mm/MmIcon.vue";
 
-const toast = useToast();
 const router = useRouter();
 const {login, loading, isAuthenticated} = useAuth();
 
-const submitted = ref(false);
+const email = ref("");
+const password = ref("");
+const verClave = ref(false);
+const tocado = ref({email: false, password: false});
+const intentado = ref(false);
+// Mensaje que devuelve el servidor (credenciales incorrectas, etc.)
+const errorServidor = ref("");
 
-// Esquema de validación con Zod
-const resolver = zodResolver(
-  z.object({
-    email: z.preprocess(
-      (val) => (val === null ? "" : val),
-      z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."})
-    ),
-    password: z.preprocess((val) => (val === null ? "" : val), z.string().min(8, {message: "Credenciales Invalidas"})),
-  })
-);
+const claveSchema = z.string().min(8, {message: "La contraseña tiene mínimo 8 caracteres"});
 
-// === SUBMIT DEL FORM ===
-const onFormSubmit = async ({valid, values}) => {
-  submitted.value = true;
+// La validación corre mientras se escribe, pero solo se muestra tras tocar el campo o enviar
+const errorEmail = computed(() => (tocado.value.email || intentado.value ? mensajeDe(emailSchema, email.value) : ""));
+const errorClave = computed(() => (tocado.value.password || intentado.value ? mensajeDe(claveSchema, password.value) : ""));
+const hayErrores = computed(() => Boolean(errorEmail.value || errorClave.value));
 
-  if (!valid) return;
+async function onSubmit() {
+  intentado.value = true;
+  errorServidor.value = "";
+
+  if (mensajeDe(emailSchema, email.value) || mensajeDe(claveSchema, password.value)) return;
 
   try {
-    const result = await login({
-      email: values.email.trim(),
-      password: values.password,
-    });
+    const result = await login({email: email.value.trim(), password: password.value});
 
-    if (result.success) {
-      redirectToTablero();
+    if (result?.success) {
+      router.push("/tablero");
     } else {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: result.error || "Error en el inicio de sesión",
-        life: 4000,
-      });
+      errorServidor.value = result?.error || "Error en el inicio de sesión";
     }
   } catch {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo.",
-      life: 4000,
-    });
+    errorServidor.value = "No pudimos conectar con el servidor. Inténtalo de nuevo.";
   }
-};
+}
 
-// Redirecciones
-const redirectToRecuperarCuenta = () => router.push("/recuperarCuenta");
-const redirectToCrearCuenta = () => router.push("/crearCuenta");
-const redirectToTablero = () => router.push("/tablero");
-
-// Verificar si ya está autenticado al montar el componente
+// Si ya hay sesión, no tiene sentido ver el login
 onMounted(() => {
-  if (isAuthenticated.value) {
-    redirectToTablero();
-  }
+  if (isAuthenticated.value) router.push("/tablero");
 });
 </script>
 
 <template>
-  <div class="login p-4">
-    <div class="contentCentrado">
-      <div class="login-container">
-        <!-- Sección derecha -->
-        <div class="login-card">
-          <div>
-            <img :src="logo" alt="Icono de la aplicación" class="login-logo" />
-          </div>
-          <!-- FORMULARIO PRIMEVUE -->
-          <Form :resolver="resolver" @submit="onFormSubmit" class="login-form">
-            <!-- EMAIL -->
-            <FormField v-slot="$field" name="email" class="w-full flex flex-col items-center">
-              <FloatLabel variant="on" class="w-full">
-                <InputText id="email" type="email" v-bind="$field.props" :disabled="loading" class="w-full" />
-                <label for="email">Correo electrónico</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
+  <AuthSplit :info-start="0">
+    <template #cabecera>
+      <img :src="logo" alt="MonyMonty" style="height: 44px; width: auto; align-self: flex-start" />
+    </template>
 
-            <!-- PASSWORD -->
-            <FormField v-slot="$field" name="password" class="w-full flex flex-col items-center">
-              <FloatLabel variant="on" class="w-full">
-                <Password
-                  id="password"
-                  v-bind="$field.props"
-                  :feedback="false"
-                  toggleMask
-                  :disabled="loading"
-                  class="w-full"
-                  inputClass="w-full"
-                />
-                <label for="password">Contraseña</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-
-            <!-- BOTONES -->
-            <Button type="submit" label="Iniciar Sesión" class="w-full" severity="primary" :loading="loading" />
-          </Form>
-
-          <Button label="Crear Cuenta" class="w-full" severity="success" :disabled="loading" @click="redirectToCrearCuenta" />
-
-          <!-- Olvidaste tu contraseña -->
-          <Button label="¿Olvidaste tu contraseña?" link @click="redirectToRecuperarCuenta" />
-        </div>
-
-        <!-- División -->
-
-        <!-- Sección izquierda -->
-        <InfoView />
-      </div>
+    <div class="col gap-1">
+      <h1 class="t-h1" style="font-size: 32px; line-height: 38px">Hola de nuevo</h1>
+      <p class="muted">Ingresa para ver cómo van tus finanzas hoy.</p>
     </div>
 
-    <!-- mensaje de pie de pagina -->
-    <FooterAuth />
-  </div>
+    <div v-if="errorServidor" class="mm-banner expense" role="alert">
+      <MmIcon i="alert-circle" :s="18" />
+      <span class="grow">{{ errorServidor }}</span>
+    </div>
+
+    <form class="col gap-6" novalidate @submit.prevent="onSubmit">
+      <div class="col gap-4">
+        <div class="mm-field">
+          <label for="login-email">Correo electrónico</label>
+          <div class="mm-input" :class="{'is-error': errorEmail}">
+            <MmIcon i="mail" :s="18" />
+            <input
+              id="login-email"
+              v-model="email"
+              type="email"
+              autocomplete="email"
+              placeholder="tu@correo.co"
+              :disabled="loading"
+              :aria-invalid="Boolean(errorEmail)"
+              @blur="tocado.email = true"
+            />
+          </div>
+          <span v-if="errorEmail" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ errorEmail }}</span>
+        </div>
+
+        <div class="mm-field">
+          <div class="row between">
+            <label class="mm-flabel" for="login-password">Contraseña</label>
+            <router-link to="/recuperarCuenta" class="t-sm">¿La olvidaste?</router-link>
+          </div>
+          <div class="mm-input" :class="{'is-error': errorClave}">
+            <MmIcon i="lock-closed" :s="18" />
+            <input
+              id="login-password"
+              v-model="password"
+              :type="verClave ? 'text' : 'password'"
+              autocomplete="current-password"
+              :disabled="loading"
+              :aria-invalid="Boolean(errorClave)"
+              @blur="tocado.password = true"
+            />
+            <button
+              type="button"
+              class="mm-btn icon sm ghost"
+              :aria-label="verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              style="margin-right: -8px"
+              @click="verClave = !verClave"
+            >
+              <MmIcon :i="verClave ? 'eye-off' : 'eye'" :s="18" />
+            </button>
+          </div>
+          <span v-if="errorClave" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ errorClave }}</span>
+        </div>
+      </div>
+
+      <button type="submit" class="mm-btn primary lg block" :class="{'is-loading': loading}" :disabled="loading || hayErrores">
+        Iniciar sesión<MmIcon i="arrow-forward" :s="18" />
+      </button>
+    </form>
+
+    <router-link to="/crearCuenta" class="mm-btn lg block" :class="{'is-disabled': loading}">
+      <MmIcon i="person-add" :s="18" />Crear cuenta gratis
+    </router-link>
+  </AuthSplit>
 </template>
-
-<style scoped>
-/* estilo general */
-.login {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  background-color: var(--color-fondo-login);
-  height: 100vh;
-}
-
-.contentCentrado {
-  flex: 1;
-  /* ocupa todo el espacio disponible entre header y footer */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-container {
-  display: flex;
-  justify-content: space-evenly;
-  background: var(--color-fondo-login);
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 30px var(--color-fondo-shadow);
-}
-
-/* Sección derecha */
-.login-logo {
-  max-width: 9rem;
-}
-
-.login-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  padding: 1rem;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  gap: 1em;
-}
-
-.login-mesaje {
-  text-align: center;
-  width: 100%;
-  padding: 10px 0;
-  font-size: var(--font-size-text);
-  color: var(--color-oscuro);
-}
-
-/* Responsive Design */
-@media (max-width: 575.98px) {
-  .login-container {
-    flex-direction: column;
-    width: 90%;
-    height: auto;
-    margin-top: 6rem;
-    margin-bottom: 30px;
-  }
-
-  .login-card {
-    width: 100%;
-    height: auto;
-    padding: 10px;
-  }
-
-  .login-form {
-    width: 100%;
-  }
-
-  .login-form input {
-    font-size: 14px;
-  }
-
-  .divider {
-    width: 100%;
-    height: 2px;
-    margin: 15px 0;
-    background-color: #e0e0e0;
-  }
-
-  .login-logo {
-    max-width: 120px;
-  }
-}
-
-/* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-}
-
-/* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-}
-
-/* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-}
-
-/* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {
-}
-
-/* XXL: monitores muy grandes */
-@media (min-width: 1400px) {
-}
-</style>

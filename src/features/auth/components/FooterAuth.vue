@@ -1,37 +1,37 @@
 <script setup>
-/**
- * ============================================================
- * Autor: Diego Alejandro Montiel Flórez
- * Proyecto: MonyMonty
- * Descripción: Este código es propiedad intelectual de
- * Diego Alejandro Montiel Flórez. Su uso, copia o distribución
- * sin autorización está estrictamente prohibido.
- * ============================================================
- */
-import {computed, ref, onMounted} from "vue";
+import {computed, ref} from "vue";
+
+import TerminosCondicionesDrawer from "./modales/terminosCondiciones.vue";
+import PoliticaPrivacidadDrawer from "./modales/politicaPrivacidad.vue";
 
 const currentYear = computed(() => new Date().getFullYear());
 
-const mensajes = ["“El dinero es un terrible amo, pero un excelente sirviente.” — P.T. Barnum",];
-
-// Estado reactivo para el mensaje actual
-const mensajeActual = ref("");
-
-// Selecciona aleatoriamente un mensaje al montar el componente
-onMounted(() => {
-  if (mensajes.length > 0) {
-    const indice = Math.floor(Math.random() * mensajes.length);
-    mensajeActual.value = mensajes[indice];
-  }
-});
+// Los textos legales completos viven en estos dos paneles; se abren desde el pie
+const showCondiciones = ref(false);
+const showPrivacidad = ref(false);
 </script>
+
 <template>
-  <footer class="w-full flex flex-col items-center gap-2 text-center text-xs">
-    <Message severity="secondary" variant="simple" class="w-full max-w-md italic leading-snug sm:whitespace-nowrap ">
-      {{ mensajeActual }}
-    </Message>
-    <p class="text-[11px] text-gray-500 dark:text-gray-400">
-      &copy; {{ currentYear }} <span class="font-semibold text-primary"> MonyMonty</span>. Todos los derechos reservados.
-    </p>
+  <footer class="t-xs muted row gap-4" style="flex-wrap: wrap">
+    <button type="button" class="mm-footer-link" @click="showCondiciones = true">Términos</button>
+    <button type="button" class="mm-footer-link" @click="showPrivacidad = true">Privacidad</button>
+    <span>&copy; {{ currentYear }} MonyMonty</span>
+    <TerminosCondicionesDrawer v-model="showCondiciones" />
+    <PoliticaPrivacidadDrawer v-model="showPrivacidad" />
   </footer>
 </template>
+
+<style scoped>
+.mm-footer-link {
+  border: 0;
+  padding: 0;
+  background: none;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+.mm-footer-link:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+</style>
