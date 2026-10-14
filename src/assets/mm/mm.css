@@ -475,3 +475,13 @@
 .mm-root img { max-width: 100%; }
 .mm-root button { cursor: pointer; }
 .mm-root button:disabled, .mm-root .mm-btn[disabled] { cursor: not-allowed; }
+
+/* En la app real las capas van fijas a la ventana (en el lienzo de diseño eran absolutas) */
+.mm-root .mm-overlay, .mm-root .mm-fab { position: fixed; }
+/* Utilidades de visibilidad por ancho, para las pantallas que cambian de composición en móvil */
+@media (min-width: 721px) {
+  .mm-root .mm-only-mobile { display: none !important; }
+}
+@media (max-width: 720px) {
+  .mm-root .mm-only-desktop { display: none !important; }
+}
