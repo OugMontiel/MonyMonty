@@ -8,136 +8,162 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import {ref, onMounted, reactive} from "vue";
-import {useToast} from "primevue/usetoast";
-import {useRouter} from "vue-router";
-import {zodResolver} from "@primevue/forms/resolvers/zod";
-import {z} from "zod";
+import {ref, computed, onBeforeUnmount} from "vue";
 
 import {useAuth} from "../logic/useAuth.js";
+import {emailSchema, mensajeDe, enmascararCorreo} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
+import MmIcon from "@/components/mm/MmIcon.vue";
 
-const toast = useToast();
-const router = useRouter();
 const {recuperarCuenta, loading} = useAuth();
 
-const submitted = ref(false);
+// "pedir" = formulario (S09) · "enviado" = confirmación (S10)
+const vista = ref("pedir");
+const email = ref("");
+const tocado = ref(false);
+const errorServidor = ref("");
 
-// Esquema de validación con Zod
-const resolver = zodResolver(
-  z.object({
-    email: z.string().min(1, {message: "Por favor, ingresa tu correo electrónico."}).email({message: "Correo electrónico no válido."}),
-  })
-);
+const ESPERA_REENVIO_S = 30;
+const segundos = ref(0);
+let timer = null;
 
-// === SUBMIT DEL FORM ===
-const onFormSubmit = async ({valid, values}) => {
-  submitted.value = true;
+const errorEmail = computed(() => (tocado.value ? mensajeDe(emailSchema, email.value) : ""));
+const segundosTxt = computed(() => String(segundos.value).padStart(2, "0"));
 
-  if (!valid) return;
+function iniciarCuentaAtras() {
+  clearInterval(timer);
+  segundos.value = ESPERA_REENVIO_S;
+  timer = setInterval(() => {
+    segundos.value -= 1;
+    if (segundos.value <= 0) clearInterval(timer);
+  }, 1000);
+}
+
+async function enviar() {
+  tocado.value = true;
+  errorServidor.value = "";
+  if (mensajeDe(emailSchema, email.value)) return;
 
   try {
-    const result = await recuperarCuenta({
-      email: values.email.trim(),
-    });
+    const result = await recuperarCuenta({email: email.value.trim()});
 
-    if (result.success) {
-      toast.add({
-        severity: "success",
-        summary: "Éxito",
-        detail: result.message || "Se ha enviado un correo para recuperar tu cuenta.",
-        life: 3000,
-      });
-      irALogin();
+    if (result?.success) {
+      vista.value = "enviado";
+      iniciarCuentaAtras();
     } else {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: result.error || "Error al recuperar la cuenta",
-        life: 4000,
-      });
+      errorServidor.value = result?.error || "Error al recuperar la cuenta";
     }
   } catch {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo.",
-      life: 4000,
-    });
+    errorServidor.value = "No pudimos conectar con el servidor. Inténtalo de nuevo.";
   }
-};
+}
 
-const irALogin = () => router.push("/");
+function usarOtroCorreo() {
+  clearInterval(timer);
+  vista.value = "pedir";
+  tocado.value = false;
+}
+
+onBeforeUnmount(() => clearInterval(timer));
 </script>
 
 <template>
-  <div class="flex flex-col justify-between items-center min-h-screen p-4">
-    <div class="flex justify-center items-center flex-1">
-      <div class="flex flex-col max-w-md shadow-lg p-4 gap-4">
-        <div class="flex justify-center pt-6 pb-2">
-          <img :src="logo" alt="Icono de la aplicación" class="h-16 object-contain login-logo" />
-        </div>
+  <div class="mm-root" data-theme="light">
+    <div class="mm-center" style="position: relative; overflow: hidden">
+      <!-- S09 · Pedir el enlace -->
+      <template v-if="vista === 'pedir'">
+        <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; left: -120px; top: -140px; background: var(--brand-tint)"></div>
+        <div class="mm-float" style="position: absolute; width: 300px; height: 300px; border-radius: 50%; right: -80px; bottom: -100px; background: var(--balance-tint); animation-delay: -3s"></div>
 
-        <div>
-          <div class="flex justify-center">
-            <Message severity="contrast" variant="simple" size="large"> Recupera tu cuenta </Message>
+        <form class="mm-card mm-rise" style="position: relative; width: min(460px, 100%); padding: 36px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 22px" novalidate @submit.prevent="enviar">
+          <img :src="logo" alt="MonyMonty" style="height: 36px; width: auto; align-self: flex-start" />
+          <div class="mm-empty" style="padding: 8px 0 0; align-items: flex-start; text-align: left">
+            <div class="art" style="width: 88px; height: 88px">
+              <div class="mm-ico lg brand mm-float" style="width: 56px; height: 56px; border-radius: 18px"><MmIcon i="key" :s="28" /></div>
+            </div>
+          </div>
+          <div class="col gap-1">
+            <h1 class="t-h1">¿Olvidaste tu contraseña?</h1>
+            <p class="muted">A todos nos pasa. Escribe tu correo y te enviamos un enlace para crear una nueva.</p>
           </div>
 
-          <Message severity="secondary" variant="simple">
-            Ingresa tu correo electrónico y te enviaremos las instrucciones para recuperar el acceso a tu cuenta.
-          </Message>
-        </div>
-
-        <!-- FORMULARIO PRIMEVUE -->
-        <Form :resolver="resolver" @submit="onFormSubmit" class="flex flex-col justify-around gap-4">
-          <!-- EMAIL -->
-          <FormField v-slot="$field" name="email" class="w-full">
-            <FloatLabel variant="on" class="w-full">
-              <InputText id="email" type="email" v-bind="$field.props" :disabled="loading" class="w-full" />
-              <label for="email">Correo electrónico</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
-              {{ $field.error?.message }}
-            </Message>
-          </FormField>
-
-          <!-- BOTONES -->
-          <div class="flex flex-col gap-2 pt-2">
-            <Button type="submit" label="Recuperar cuenta" severity="primary" :loading="loading" class="w-full" />
-            <Button label="Volver al inicio" link :disabled="loading" @click="irALogin" outlined class="w-full" />
+          <div v-if="errorServidor" class="mm-banner expense" role="alert">
+            <MmIcon i="alert-circle" :s="18" /><span class="grow">{{ errorServidor }}</span>
           </div>
-        </Form>
-      </div>
+
+          <div class="mm-field">
+            <label for="rec-email">Correo de tu cuenta</label>
+            <div class="mm-input" :class="{'is-error': errorEmail}">
+              <MmIcon i="mail" :s="18" />
+              <input
+                id="rec-email"
+                v-model="email"
+                type="email"
+                autocomplete="email"
+                placeholder="tu@correo.co"
+                :disabled="loading"
+                :aria-invalid="Boolean(errorEmail)"
+                @blur="tocado = true"
+              />
+            </div>
+            <span v-if="errorEmail" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ errorEmail }}</span>
+          </div>
+
+          <button type="submit" class="mm-btn primary lg block" :class="{'is-loading': loading}" :disabled="loading">
+            Enviar enlace<MmIcon i="arrow-forward" :s="18" />
+          </button>
+          <router-link to="/" class="mm-btn ghost block" :class="{'is-disabled': loading}"><MmIcon i="arrow-back" :s="18" />Volver a iniciar sesión</router-link>
+        </form>
+      </template>
+
+      <!-- S10 · Revisa tu correo -->
+      <template v-else>
+        <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; right: -120px; top: -140px; background: var(--info-tint)"></div>
+
+        <div class="mm-card mm-rise" style="position: relative; width: min(480px, 100%); padding: 40px 36px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px">
+          <div style="position: relative; width: 128px; height: 128px; display: grid; place-items: center">
+            <div style="position: absolute; inset: 0; border-radius: 50%; background: var(--info-tint); animation: mm-breathe 3.2s var(--ease-in-out) infinite"></div>
+            <div class="mm-ico lg info mm-popin" style="position: relative; width: 72px; height: 72px; border-radius: 22px; --i: 2"><MmIcon i="mail" :s="36" /></div>
+            <span class="mm-count mm-popin" style="position: absolute; right: 18px; top: 18px; --i: 6; width: 26px; height: 26px; border-radius: 50%">1</span>
+          </div>
+
+          <div class="col gap-2">
+            <h1 class="t-h1">Revisa tu correo</h1>
+            <p class="muted">
+              Enviamos un enlace a <b style="color: var(--ink)">{{ enmascararCorreo(email.trim()) }}</b>. Ábrelo desde este dispositivo para crear tu nueva contraseña.
+            </p>
+          </div>
+
+          <div v-if="errorServidor" class="mm-banner expense" role="alert" style="width: 100%; text-align: left">
+            <MmIcon i="alert-circle" :s="18" /><span class="grow">{{ errorServidor }}</span>
+          </div>
+
+          <div class="row gap-2" style="width: 100%">
+            <a class="mm-btn grow" href="https://mail.google.com" target="_blank" rel="noopener noreferrer"><MmIcon i="logo-google" :s="16" />Abrir Gmail</a>
+            <a class="mm-btn grow" href="https://outlook.live.com/mail" target="_blank" rel="noopener noreferrer"><MmIcon i="mail" :s="16" />Abrir Outlook</a>
+          </div>
+
+          <div class="mm-card flat" style="width: 100%; background: var(--surface-2); border: 0; padding: 14px 16px; text-align: left">
+            <div class="row gap-3">
+              <MmIcon i="time" :s="18" />
+              <span class="grow t-sm">
+                ¿No llegó? Revisa spam
+                <template v-if="segundos > 0">o reenvía en <b class="num">0:{{ segundosTxt }}</b></template>
+                <template v-else>o pide otro enlace.</template>
+              </span>
+              <button type="button" class="mm-btn sm" :class="{'is-loading': loading}" :disabled="segundos > 0 || loading" @click="enviar">Reenviar</button>
+            </div>
+          </div>
+
+          <div class="row gap-4 t-sm">
+            <a href="#" @click.prevent="usarOtroCorreo">Usar otro correo</a>
+            <router-link to="/">Volver a iniciar sesión</router-link>
+          </div>
+        </div>
+      </template>
+
+      <FooterAuth style="position: absolute; bottom: 16px; left: 0; right: 0; justify-content: center" />
     </div>
-
-    <FooterAuth class="mt-8" />
   </div>
 </template>
-
-<style scoped>
-/* Sección derecha */
-.login-logo {
-  max-width: 9rem;
-}
-
-/* Asegura que el card tenga buen espaciado en móviles */
-:deep(.p-card-body) {
-  padding: 0;
-}
-
-:deep(.p-card-content) {
-  padding-top: 0;
-}
-
-/* Mejora la apariencia del título */
-:deep(.p-card-title) {
-  padding: 0 1.5rem;
-  margin-bottom: 0;
-}
-
-:deep(.p-card-subtitle) {
-  padding: 0 1.5rem 1rem;
-  line-height: 1.5;
-}
-</style>
