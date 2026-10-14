@@ -16,6 +16,7 @@ import {useAuth} from "../logic/useAuth.js";
 import {emailSchema, mensajeDe} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import AuthSplit from "../components/AuthSplit.vue";
+import {MODO_DEMO} from "@/demo/flagDemo.js";
 import MmIcon from "@/components/mm/MmIcon.vue";
 
 const router = useRouter();
@@ -37,6 +38,9 @@ const errorClave = computed(() => (tocado.value.password || intentado.value ? me
 const hayErrores = computed(() => Boolean(errorEmail.value || errorClave.value));
 
 async function onSubmit() {
+  // Modo demo: se entra sin validar nada ni consultar la API
+  if (MODO_DEMO) return router.push("/tablero");
+
   intentado.value = true;
   errorServidor.value = "";
 
@@ -70,6 +74,11 @@ onMounted(() => {
     <div class="col gap-1">
       <h1 class="t-h1" style="font-size: 32px; line-height: 38px">Hola de nuevo</h1>
       <p class="muted">Ingresa para ver cómo van tus finanzas hoy.</p>
+    </div>
+
+    <div v-if="MODO_DEMO" class="mm-banner info" role="status">
+      <MmIcon i="information-circle" :s="18" />
+      <span class="grow">Modo demo: sin API. Pulsa “Iniciar sesión” para entrar con datos de ejemplo.</span>
     </div>
 
     <div v-if="errorServidor" class="mm-banner expense" role="alert">
@@ -127,7 +136,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <button type="submit" class="mm-btn primary lg block" :class="{'is-loading': loading}" :disabled="loading || hayErrores">
+      <button type="submit" class="mm-btn primary lg block" :class="{'is-loading': loading}" :disabled="loading || (hayErrores && !MODO_DEMO)">
         Iniciar sesión<MmIcon i="arrow-forward" :s="18" />
       </button>
     </form>
