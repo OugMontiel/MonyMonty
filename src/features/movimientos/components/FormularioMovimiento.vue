@@ -1,15 +1,16 @@
 <script setup>
 /**
- * Formulario de movimiento (modal). Registra un gasto (EGRESO) o un ingreso (INGRESO) con
- * POST movimiento; los campos son los de la API: tipo, monto, divisaId, categoriaId,
- * subcategoriaId, entidadId, fecha, concepto {titulo, detalle}, tags y esRecurrente.
+ * Formulario de movimiento (modal). Registra un gasto (EGRESO), un ingreso (INGRESO) o una
+ * transferencia entre cuentas (TRANSFERENCIA) con POST movimiento; los campos son los de la API:
+ * tipo, monto, divisaId, categoriaId, subcategoriaId, entidadId, transferencia {origenEntidadId,
+ * destinoEntidadId}, fecha, concepto {titulo, detalle}, tags y esRecurrente.
  */
 import {ref, reactive, computed, watch, onMounted, nextTick} from "vue";
 import {useToast} from "primevue/usetoast";
 
 import MmIcon from "@/components/mm/MmIcon.vue";
 import {useTablero} from "@/features/dashBoard/logic/useTablero.js";
-import {iconoDe, parseLabelEntidad, formatearMontoTexto, leerMontoTexto, montoATexto} from "@/features/dashBoard/logic/formato.js";
+import {iconoDe, moneda, parseLabelEntidad, formatearMontoTexto, leerMontoTexto, montoATexto, TIPOS_ENTIDAD, ENTIDAD_GENERICA} from "@/features/dashBoard/logic/formato.js";
 import {useMovimientos} from "../logic/CreateMovimiento.js";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento.js";
 import {movimientos} from "../logic/movimientosStore.js";
@@ -24,11 +25,12 @@ const emit = defineEmits(["cerrar", "guardado"]);
 const toast = useToast();
 const {createMovimiento, loading: guardando} = useMovimientos();
 const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
-const {divisaPrincipal} = useTablero();
+const {divisaPrincipal, cuentas: cuentasConSaldo} = useTablero();
 
 const TIPOS = [
   {id: "EGRESO", etiqueta: "Gasto", icono: "arrow-down", tono: "expense", guardar: "Guardar gasto", marcador: "Ej: Almuerzo, mercado, gasolina…", cuenta: "Sale de"},
   {id: "INGRESO", etiqueta: "Ingreso", icono: "arrow-up", tono: "income", guardar: "Guardar ingreso", marcador: "Ej: Pago cliente, salario…", cuenta: "Entra a"},
+  {id: "TRANSFERENCIA", etiqueta: "Transferencia", icono: "swap-horizontal", tono: "info", guardar: "Transferir", marcador: "Ej: Recarga para la semana", cuenta: ""},
 ];
 
 const form = reactive({
@@ -38,6 +40,8 @@ const form = reactive({
   categoriaId: "",
   subcategoriaId: "",
   entidadId: "",
+  origenId: "",
+  destinoId: "",
   fecha: aInputFecha(new Date()),
   titulo: "",
   detalle: "",
@@ -53,15 +57,32 @@ const tipoActual = computed(() => TIPOS.find((t) => t.id === form.tipo));
 const indiceTipo = computed(() => TIPOS.findIndex((t) => t.id === form.tipo));
 const decimales = computed(() => !["COP", "CLP", "PYG", "JPY"].includes(form.divisaId));
 const monto = computed(() => leerMontoTexto(form.montoTexto));
+const esTransferencia = computed(() => form.tipo === "TRANSFERENCIA");
 
 // ---------- Opciones de la API ----------
 // GET entidad solo trae una etiqueta "TIPO - nombre - número"
 const cuentas = computed(() =>
   entidades.value.map((e) => {
     const d = parseLabelEntidad(e.label);
-    return {id: e.value, texto: d.numero ? `${d.nombre} •••• ${d.numero}` : d.nombre};
+    return {id: e.value, nombre: d.nombre, texto: d.numero ? `${d.nombre} •••• ${d.numero}` : d.nombre};
   })
 );
+/** Datos de una cuenta para las tarjetas Desde / Hacia (nombre, tipo, icono y saldo si se conoce) */
+const infoCuenta = (id) => {
+  const c = cuentasConSaldo.value.find((x) => x.id === id);
+  const t = TIPOS_ENTIDAD[c?.tipo] ?? ENTIDAD_GENERICA;
+  const base = cuentas.value.find((x) => x.id === id);
+  return {nombre: c?.nombre ?? base?.texto ?? "—", detalle: c ? (c.numero ? `${t.etiqueta} · ${c.numero}` : t.etiqueta) : "", icono: t.icono, color: t.color, saldo: c?.saldo ?? null};
+};
+const origen = computed(() => infoCuenta(form.origenId));
+const destino = computed(() => infoCuenta(form.destinoId));
+const dinero = (v) => moneda(v, form.divisaId);
+const saldoTotal = computed(() => cuentasConSaldo.value.reduce((s, c) => s + c.saldo, 0));
+
+function intercambiarCuentas() {
+  [form.origenId, form.destinoId] = [form.destinoId, form.origenId];
+}
+
 const categoriaActual = computed(() => categorias.value.find((c) => c.value === form.categoriaId));
 const subcategorias = computed(() => categoriaActual.value?.subcategorias ?? []);
 const colorCategoria = computed(() => movimientos.value.find((m) => m.categoriaId === form.categoriaId)?.categoria?.color ?? "var(--cat-slate)");
@@ -97,10 +118,16 @@ function aplicarPorDefecto() {
   }
 }
 
+function cuentasPorDefecto() {
+  if (!cuentas.value.some((c) => c.id === form.origenId)) form.origenId = cuentas.value[0]?.id ?? "";
+  if (!cuentas.value.some((c) => c.id === form.destinoId) || form.destinoId === form.origenId) form.destinoId = cuentas.value.find((c) => c.id !== form.origenId)?.id ?? "";
+}
+
 function cambiarTipo(id) {
   if (form.tipo === id) return;
   form.tipo = id;
-  aplicarPorDefecto();
+  if (id === "TRANSFERENCIA") cuentasPorDefecto();
+  else aplicarPorDefecto();
 }
 
 watch(() => form.categoriaId, (id, anterior) => {
@@ -122,6 +149,7 @@ onMounted(async () => {
   await fetchOptions();
   form.divisaId = divisas.value.some((d) => d.value === divisaPrincipal.value) ? divisaPrincipal.value : (divisas.value[0]?.value ?? "COP");
   aplicarPorDefecto();
+  cuentasPorDefecto();
   await nextTick();
   campoMonto.value?.focus();
 });
@@ -130,9 +158,15 @@ onMounted(async () => {
 const errores = computed(() => {
   const e = {};
   if (!(monto.value > 0)) e.monto = "Escribe un monto mayor a 0";
-  if (!form.entidadId) e.entidadId = "Elige una cuenta";
-  if (!form.categoriaId) e.categoriaId = "Elige una categoría";
-  else if (!form.subcategoriaId) e.subcategoriaId = "Elige una subcategoría";
+  if (esTransferencia.value) {
+    if (!form.origenId) e.origenId = "Elige la cuenta de origen";
+    if (!form.destinoId) e.destinoId = "Elige la cuenta de destino";
+    else if (form.destinoId === form.origenId) e.destinoId = "El origen y el destino no pueden ser la misma cuenta";
+  } else {
+    if (!form.entidadId) e.entidadId = "Elige una cuenta";
+    if (!form.categoriaId) e.categoriaId = "Elige una categoría";
+    else if (!form.subcategoriaId) e.subcategoriaId = "Elige una subcategoría";
+  }
   if (!form.fecha) e.fecha = "Elige una fecha";
   return e;
 });
@@ -148,14 +182,16 @@ function fechaISO() {
 }
 
 function armarPayload() {
+  // Una transferencia no lleva categoría ni cuenta única: va de un origen a un destino
+  const cuenta = esTransferencia.value
+    ? {transferencia: {origenEntidadId: form.origenId, destinoEntidadId: form.destinoId}}
+    : {categoriaId: form.categoriaId, subcategoriaId: form.subcategoriaId, entidadId: form.entidadId};
   return {
     tipo: form.tipo,
     monto: monto.value,
     fecha: fechaISO(),
     divisaId: form.divisaId,
-    categoriaId: form.categoriaId,
-    subcategoriaId: form.subcategoriaId,
-    entidadId: form.entidadId,
+    ...cuenta,
     concepto: {titulo: form.titulo.trim(), detalle: form.detalle.trim()},
     tags: form.etiquetas.split(",").map((t) => t.trim()).filter(Boolean),
     esRecurrente: form.esRecurrente,
@@ -170,7 +206,12 @@ async function guardar({crearOtro = false} = {}) {
 
   try {
     await createMovimiento(armarPayload());
-    toast.add({severity: "success", summary: tipoActual.value.etiqueta === "Gasto" ? "Gasto guardado" : "Ingreso guardado", detail: `${form.titulo.trim() || categoriaActual.value?.label}`, life: 3000});
+    toast.add({
+      severity: "success",
+      summary: {EGRESO: "Gasto guardado", INGRESO: "Ingreso guardado", TRANSFERENCIA: "Transferencia registrada"}[form.tipo],
+      detail: form.titulo.trim() || (esTransferencia.value ? `${origen.value.nombre} → ${destino.value.nombre}` : categoriaActual.value?.label),
+      life: 3000,
+    });
     emit("guardado");
 
     if (crearOtro) {
@@ -201,9 +242,9 @@ function alTeclear(e) {
 <template>
   <div class="mm-root" data-theme="light">
     <div class="mm-overlay" @click.self="emit('cerrar')" @keydown="alTeclear">
-      <form ref="modal" class="mm-modal" role="dialog" aria-modal="true" aria-labelledby="mov-titulo" novalidate @submit.prevent="guardar()">
+      <form ref="modal" class="mm-modal" :style="esTransferencia ? {width: 'min(560px, 100%)'} : null" role="dialog" aria-modal="true" aria-labelledby="mov-titulo" novalidate @submit.prevent="guardar()">
         <div class="mm-modal-h">
-          <div class="grow"><h2 id="mov-titulo" class="t-h2">Nuevo movimiento</h2><p class="t-sm muted">Registra en segundos</p></div>
+          <div class="grow"><h2 id="mov-titulo" class="t-h2">Nuevo movimiento</h2><p class="t-sm muted">{{ esTransferencia ? "Mueve plata entre tus cuentas" : "Registra en segundos" }}</p></div>
           <button type="button" class="mm-x" aria-label="Cerrar" @click="emit('cerrar')"><MmIcon i="close" :s="20" /></button>
         </div>
 
@@ -225,6 +266,7 @@ function alTeclear(e) {
             <span v-if="verError('monto')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("monto") }}</span>
           </div>
 
+          <template v-if="!esTransferencia">
           <div class="grid g2" style="gap: 16px">
             <div class="mm-field">
               <label for="mov-categoria">Categoría</label>
@@ -274,6 +316,63 @@ function alTeclear(e) {
               <span v-if="verError('fecha')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("fecha") }}</span>
             </div>
           </div>
+          </template>
+
+          <!-- Transferencia: de qué cuenta sale, a cuál llega y cómo queda cada saldo -->
+          <template v-else>
+            <div class="transferencia">
+              <div class="mm-card flat" style="padding: 14px">
+                <label class="t-over" for="mov-origen">Desde</label>
+                <div class="row gap-2" style="margin-top: 8px">
+                  <div class="mm-ico cat sm" :style="{background: origen.color}"><MmIcon :i="origen.icono" :s="18" /></div>
+                  <div class="grow" style="min-width: 0">
+                    <div class="mm-input mm-select campo-cuenta"><select id="mov-origen" v-model="form.origenId" :aria-invalid="Boolean(verError('origenId'))"><option v-for="c in cuentas" :key="c.id" :value="c.id">{{ c.nombre }}</option></select></div>
+                    <div class="t-xs muted">{{ origen.detalle }}</div>
+                  </div>
+                </div>
+                <template v-if="origen.saldo !== null">
+                  <div class="divider" style="margin: 12px 0"></div>
+                  <div class="t-xs muted">Queda en</div>
+                  <div class="row gap-2" style="align-items: baseline; flex-wrap: wrap">
+                    <span v-if="monto > 0" class="t-sm muted num" style="text-decoration: line-through">{{ dinero(origen.saldo) }}</span>
+                    <b class="num" :class="{expense: origen.saldo - monto < 0}">{{ dinero(origen.saldo - monto) }}</b>
+                  </div>
+                </template>
+              </div>
+
+              <button type="button" class="mm-btn icon" aria-label="Intercambiar cuentas" style="border-radius: 50%; background: var(--info-tint); color: var(--info); border: 0" @click="intercambiarCuentas"><MmIcon i="swap-horizontal" :s="18" /></button>
+
+              <div class="mm-card flat" style="padding: 14px; border-color: var(--info)">
+                <label class="t-over" for="mov-destino">Hacia</label>
+                <div class="row gap-2" style="margin-top: 8px">
+                  <div class="mm-ico cat sm" :style="{background: destino.color}"><MmIcon :i="destino.icono" :s="18" /></div>
+                  <div class="grow" style="min-width: 0">
+                    <div class="mm-input mm-select campo-cuenta"><select id="mov-destino" v-model="form.destinoId" :aria-invalid="Boolean(verError('destinoId'))"><option v-for="c in cuentas" :key="c.id" :value="c.id">{{ c.nombre }}</option></select></div>
+                    <div class="t-xs muted">{{ destino.detalle }}</div>
+                  </div>
+                </div>
+                <template v-if="destino.saldo !== null">
+                  <div class="divider" style="margin: 12px 0"></div>
+                  <div class="t-xs muted">Queda en</div>
+                  <div class="row gap-2" style="align-items: baseline; flex-wrap: wrap">
+                    <span v-if="monto > 0" class="t-sm muted num" style="text-decoration: line-through">{{ dinero(destino.saldo) }}</span>
+                    <b class="num info">{{ dinero(destino.saldo + monto) }}</b>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <span v-if="verError('origenId')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("origenId") }}</span>
+            <span v-if="verError('destinoId')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("destinoId") }}</span>
+
+            <div class="mm-banner info"><MmIcon i="information-circle" :s="18" /><span>Tu balance total no cambia: sigues con <b class="num">{{ dinero(saldoTotal) }}</b>.</span></div>
+            <div v-if="origen.saldo !== null && monto > 0 && origen.saldo - monto < 0" class="mm-banner warn"><MmIcon i="warning" :s="18" /><span>{{ origen.nombre }} quedaría con saldo negativo.</span></div>
+
+            <div class="mm-field">
+              <label for="mov-fecha-t">Fecha</label>
+              <div class="mm-input" :class="{'is-error': verError('fecha')}"><MmIcon i="calendar" :s="18" /><input id="mov-fecha-t" v-model="form.fecha" type="date" /></div>
+              <span v-if="verError('fecha')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("fecha") }}</span>
+            </div>
+          </template>
 
           <div class="mm-field">
             <label for="mov-titulo-concepto">Descripción <span class="muted" style="font-weight: 500">· opcional</span></label>
@@ -310,6 +409,30 @@ function alTeclear(e) {
 </template>
 
 <style scoped>
+.transferencia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+/* Selector de cuenta sin caja propia: vive dentro de la tarjeta Desde / Hacia */
+.campo-cuenta {
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 14px;
+}
+.campo-cuenta:hover {
+  background: none;
+}
+@media (max-width: 720px) {
+  .transferencia {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .divisa {
   all: unset;
   font-size: 12px;
