@@ -1,18 +1,26 @@
 <script setup>
 /**
  * Contenedor de todas las pantallas de Reportes: carga los datos una vez y deja ver la pestaña
- * elegida (router-view). Aquí viven también las piezas que comparten todas las pestañas.
+ * elegida (router-view). Reportes es de Basic en adelante: con plan Free se muestra una vista
+ * que explica qué incluye, sin pedir los datos.
  */
-import {onMounted} from "vue";
+import {computed, watch} from "vue";
 
+import {useUsuario} from "@/composables/useUsuario.js";
 import {cargarDatosReportes} from "../logic/useReportes.js";
+import ReportesFree from "./ReportesFree.vue";
 
-onMounted(cargarDatosReportes);
+const {planId} = useUsuario();
+// planId llega vacío mientras se carga el usuario: solo se bloquea cuando es "free" de verdad
+const bloqueado = computed(() => planId.value === "free");
+
+watch(bloqueado, (b) => { if (!b) cargarDatosReportes(); }, {immediate: true});
 </script>
 
 <template>
   <div class="mm-page">
-    <router-view />
+    <ReportesFree v-if="bloqueado" />
+    <router-view v-else />
   </div>
 </template>
 
