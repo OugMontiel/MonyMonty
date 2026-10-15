@@ -7,10 +7,12 @@
 import {computed, watch} from "vue";
 
 import {useUsuario} from "@/composables/useUsuario.js";
-import {cargarDatosReportes} from "../logic/useReportes.js";
+import {cargarDatosReportes, useReportes} from "../logic/useReportes.js";
 import ReportesFree from "./ReportesFree.vue";
+import ReportesExportar from "../components/ReportesExportar.vue";
 
 const {planId} = useUsuario();
+const {exportarAbierto} = useReportes();
 // planId llega vacío mientras se carga el usuario: solo se bloquea cuando es "free" de verdad
 const bloqueado = computed(() => planId.value === "free");
 
@@ -21,6 +23,7 @@ watch(bloqueado, (b) => { if (!b) cargarDatosReportes(); }, {immediate: true});
   <div class="mm-page">
     <ReportesFree v-if="bloqueado" />
     <router-view v-else />
+    <ReportesExportar v-if="exportarAbierto" />
   </div>
 </template>
 

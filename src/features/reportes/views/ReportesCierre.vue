@@ -15,7 +15,7 @@ import {delMes, esFlujo, totales, gastoPorCategoria, cambioPct, inicioDeMes, fin
 import {useReportes} from "../logic/useReportes.js";
 
 const router = useRouter();
-const {anio, mes, movimientos, divisa, cargando, error, etiquetaMes, esMesActual, hoy, cargar} = useReportes();
+const {anio, mes, movimientos, divisa, cargando, error, etiquetaMes, esMesActual, hoy, cargar, exportarAbierto} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 const delPeriodo = computed(() => delMes(movimientos.value, anio.value, mes.value));
@@ -58,7 +58,7 @@ function revisarSinCategoria() {
 
 <template>
   <div class="mm-page">
-    <MmTopbar migas="Reportes" titulo="Cierre del mes" :periodo="null" cta="" />
+    <MmTopbar migas="Reportes" titulo="Cierre del mes" :periodo="null" cta="Exportar" cta-icono="download" cta-personalizado @cta="exportarAbierto = true" />
 
     <div class="mm-content" :aria-busy="cargando">
       <ReportesTabs activa="cierre" />

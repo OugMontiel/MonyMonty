@@ -12,7 +12,7 @@ import ReportesTabs from "../components/ReportesTabs.vue";
 import {escalaEje, patrimonioPorMes, saldosPorCuenta, finDeMes, cambioPct} from "../logic/calculos.js";
 import {useReportes} from "../logic/useReportes.js";
 
-const {anio, movimientos, cuentas, divisa, cargando, error, esAnioActual, hoy, cargar} = useReportes();
+const {anio, movimientos, cuentas, divisa, cargando, error, esAnioActual, hoy, cargar, exportarAbierto} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 const ultimoMes = computed(() => (esAnioActual.value ? hoy.getMonth() : 11));
@@ -48,7 +48,7 @@ const saldos = computed(() => {
 
 <template>
   <div class="mm-page">
-    <MmTopbar migas="Reportes" titulo="Patrimonio" :periodo="null" cta="" />
+    <MmTopbar migas="Reportes" titulo="Patrimonio" :periodo="null" cta="Exportar" cta-icono="download" cta-personalizado @cta="exportarAbierto = true" />
 
     <div class="mm-content" :aria-busy="cargando">
       <ReportesTabs activa="patrimonio" />
