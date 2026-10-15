@@ -31,6 +31,12 @@ export const filtros = reactive({
   montoMax: null,
 });
 
+/** Date -> "2026-10-08" para un <input type="date"> */
+export function aInputFecha(f) {
+  const p = (n) => String(n).padStart(2, "0");
+  return `${f.getFullYear()}-${p(f.getMonth() + 1)}-${p(f.getDate())}`;
+}
+
 /** "2026-10-08" -> Date local a medianoche */
 function fechaDeInput(valor) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(valor);
@@ -71,8 +77,8 @@ function idsDeCuenta(m) {
 }
 
 /**
- * Filtra `lista`. Con `ignorar` se omite un grupo ("tipo" o "fecha") para contar lo que habría
- * en cada opción del panel sin tocar los demás filtros.
+ * Filtra `lista`. Con `ignorar` se omiten grupos ("fecha", "tipo", "cuentas", "categorias" o "monto")
+ * para contar lo que habría en cada opción del panel sin tocar los demás filtros.
  */
 export function aplicarFiltros(lista, {ignorar = []} = {}) {
   const {inicio, fin} = rangoEfectivo();
@@ -84,10 +90,12 @@ export function aplicarFiltros(lista, {ignorar = []} = {}) {
       if (f < inicio || f > fin) return false;
     }
     if (!ignorar.includes("tipo") && filtros.tipo && m.tipo !== filtros.tipo) return false;
-    if (filtros.cuentas.length && !idsDeCuenta(m).some((id) => filtros.cuentas.includes(id))) return false;
-    if (filtros.categorias.length && !filtros.categorias.includes(m.categoriaId)) return false;
-    if (filtros.montoMin !== null && filtros.montoMin !== "" && m.monto < Number(filtros.montoMin)) return false;
-    if (filtros.montoMax !== null && filtros.montoMax !== "" && m.monto > Number(filtros.montoMax)) return false;
+    if (!ignorar.includes("cuentas") && filtros.cuentas.length && !idsDeCuenta(m).some((id) => filtros.cuentas.includes(id))) return false;
+    if (!ignorar.includes("categorias") && filtros.categorias.length && !filtros.categorias.includes(m.categoriaId)) return false;
+    if (!ignorar.includes("monto")) {
+      if (filtros.montoMin !== null && filtros.montoMin !== "" && m.monto < Number(filtros.montoMin)) return false;
+      if (filtros.montoMax !== null && filtros.montoMax !== "" && m.monto > Number(filtros.montoMax)) return false;
+    }
     if (q && !coincideTexto(m, q)) return false;
     return true;
   });
