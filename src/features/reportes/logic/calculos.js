@@ -129,6 +129,25 @@ export function cambioPct(actual, previo) {
   return Math.round(((actual - previo) / Math.abs(previo)) * 100);
 }
 
+/** Saldo de cada cuenta al cierre de `fecha` (las transferencias restan del origen y suman al destino) */
+export function saldosPorCuenta(movs, cuentas, fecha) {
+  const saldos = new Map(cuentas.map((c) => [c.id, {cuenta: c, saldo: 0}]));
+  for (const m of movs) {
+    if (new Date(m.fecha) > fecha) continue;
+    if (m.tipo === "TRANSFERENCIA") {
+      const o = saldos.get(m.transferencia?.origenEntidadId);
+      const d = saldos.get(m.transferencia?.destinoEntidadId);
+      if (o) o.saldo -= m.monto;
+      if (d) d.saldo += m.monto;
+      continue;
+    }
+    const f = saldos.get(m.entidadId);
+    if (!f) continue;
+    f.saldo += m.tipo === "INGRESO" ? m.monto : -m.monto;
+  }
+  return [...saldos.values()];
+}
+
 /** Suma de saldos de todas las cuentas hasta una fecha (ingresos − gastos; las transferencias no cambian el total) */
 export function patrimonioAl(movs, fecha) {
   let valor = 0;
