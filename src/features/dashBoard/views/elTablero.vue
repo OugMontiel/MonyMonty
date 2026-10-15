@@ -14,7 +14,7 @@ import MmSearchDialog from "@/components/mm/layout/MmSearchDialog.vue";
 import MmNotifications from "@/components/mm/layout/MmNotifications.vue";
 import DetalleMovimiento from "../../movimientos/components/DetalleMovimiento.vue";
 import FormularioMovimiento from "../../movimientos/components/FormularioMovimiento.vue";
-import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
+import EliminarMovimiento from "../../movimientos/components/EliminarMovimiento.vue";
 import CreateEntidadModal from "../../movimientos/components/modals/CreateEntidadModal.vue";
 import CreateCategoriaModal from "../../movimientos/components/modals/CreateCategoriaModal.vue";
 
@@ -35,11 +35,10 @@ const {
 const modoMovimiento = computed(() => movimientoAbierto.value?.modo ?? "CREATE");
 const idMovimiento = computed(() => movimientoAbierto.value?.id ?? null);
 
-// Ver un movimiento abre el panel de detalle; crear y editar abren el formulario;
-// eliminar sigue usando el modal anterior hasta que tenga su pantalla nueva
+// Ver un movimiento abre el panel de detalle, crear y editar el formulario y eliminar la confirmación
 const detalleAbierto = computed(() => modalMovimiento.value && modoMovimiento.value === "VIEW" && Boolean(idMovimiento.value));
 const formularioAbierto = computed(() => modalMovimiento.value && (modoMovimiento.value === "CREATE" || (modoMovimiento.value === "EDIT" && Boolean(idMovimiento.value))));
-const modalAbierto = computed(() => modalMovimiento.value && !detalleAbierto.value && !formularioAbierto.value);
+const eliminarAbierto = computed(() => modalMovimiento.value && modoMovimiento.value === "DELETE" && Boolean(idMovimiento.value));
 
 const algoAbierto = computed(
   () => modalMovimiento.value || modalCuenta.value || modalCategoria.value || busquedaAbierta.value || notificacionesAbiertas.value || accionesRapidasAbiertas.value
@@ -95,12 +94,13 @@ onBeforeUnmount(() => document.removeEventListener("keydown", alTeclear));
       @cerrar="modalMovimiento = false"
       @eliminar="abrirMovimiento(idMovimiento, 'DELETE')"
     />
+    <EliminarMovimiento v-if="eliminarAbierto" :id="idMovimiento" @cerrar="modalMovimiento = false" />
     <MmSearchDialog />
     <MmNotifications />
   </div>
 
-  <!-- Los modales son de PrimeVue y se dibujan solos en el body; al guardar refrescan el tablero por useGlobalState -->
-  <CreateMovimientoModal :visible="modalAbierto" :mode="modoMovimiento" :movementId="idMovimiento" @update:visible="modalMovimiento = $event" />
+  <!-- Los modales de cuenta y categoría son de PrimeVue y se dibujan solos en el body;
+       al guardar, el tablero y las listas se refrescan por useGlobalState -->
   <CreateEntidadModal v-model:visible="modalCuenta" />
   <CreateCategoriaModal v-model:visible="modalCategoria" />
 </template>
