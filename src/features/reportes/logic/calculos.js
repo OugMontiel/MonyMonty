@@ -128,3 +128,37 @@ export function cambioPct(actual, previo) {
   if (!previo) return null;
   return Math.round(((actual - previo) / Math.abs(previo)) * 100);
 }
+
+/** Suma de saldos de todas las cuentas hasta una fecha (ingresos − gastos; las transferencias no cambian el total) */
+export function patrimonioAl(movs, fecha) {
+  let valor = 0;
+  for (const m of movs) {
+    if (new Date(m.fecha) > fecha) continue;
+    if (m.tipo === "INGRESO") valor += m.monto;
+    else if (m.tipo === "EGRESO") valor -= m.monto;
+  }
+  return valor;
+}
+
+/** Gasto promedio de los últimos `n` meses con gastos que terminan en (anio, mes) */
+export function gastoPromedioMensual(movs, anio, mes, n = 3) {
+  const montos = [];
+  for (let i = 0; i < 12 && montos.length < n; i++) {
+    const f = new Date(anio, mes - i, 1);
+    const g = totales(delMes(movs, f.getFullYear(), f.getMonth())).gastos;
+    if (g > 0) montos.push(g);
+  }
+  return montos.length ? montos.reduce((a, b) => a + b, 0) / montos.length : 0;
+}
+
+/** Qué parte de los ingresos del mes llegó entre los días `desde` y `hasta` (0–100), o null si no hubo ingresos */
+export function ingresosEntreDias(movs, desde, hasta) {
+  const ingresos = movs.filter((m) => esFlujo(m) && m.tipo === "INGRESO");
+  const total = ingresos.reduce((s, m) => s + m.monto, 0);
+  if (!total) return null;
+  const parte = ingresos.filter((m) => {
+    const d = new Date(m.fecha).getDate();
+    return d >= desde && d <= hasta;
+  });
+  return Math.round((parte.reduce((s, m) => s + m.monto, 0) / total) * 100);
+}

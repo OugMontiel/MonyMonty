@@ -16,6 +16,7 @@ import elTablero from "../features/dashBoard/views/elTablero.vue";
 import Dashboard from "../features/dashBoard/views/Dashboard.vue";
 import ReportesLayout from "../features/reportes/views/ReportesLayout.vue";
 import ReportesResumen from "../features/reportes/views/ReportesResumen.vue";
+import ReportesFlujo from "../features/reportes/views/ReportesFlujo.vue";
 import MovimientosView from "../features/movimientos/views/MovimientosView.vue";
 
 const router = createRouter({
@@ -91,7 +92,10 @@ const router = createRouter({
         {
           path: "/reportes",
           component: ReportesLayout,
-          children: [{path: "", name: "ReportesResumen", component: ReportesResumen}],
+          children: [
+            {path: "", name: "ReportesResumen", component: ReportesResumen},
+            {path: "flujo", name: "ReportesFlujo", component: ReportesFlujo},
+          ],
         },
       ],
     },
