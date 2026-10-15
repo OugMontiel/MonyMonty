@@ -25,12 +25,14 @@ import {
 import {movimientos, movimientosSinCargar, movimientoResaltado, ultimoGuardado, cargarTodosLosMovimientos, cargarEntidades} from "../logic/movimientosStore.js";
 import {filtros, aplicarFiltros, filtrosActivos, limpiarFiltros} from "../logic/filtrosMovimientos.js";
 import FiltrosMovimientos from "../components/FiltrosMovimientos.vue";
+import ImportarMovimientos from "../components/ImportarMovimientos.vue";
 
 const {abrirMovimiento} = useAppUi();
 const {globalDataRefreshTrigger} = useGlobalState();
 
 const POR_PAGINA = 20;
 const panelFiltros = ref(false);
+const importando = ref(false);
 const cargando = ref(movimientosSinCargar.value);
 const error = ref("");
 const pagina = ref(1);
@@ -217,6 +219,7 @@ function exportarCSV() {
           <button type="button" class="mm-btn" aria-haspopup="dialog" @click="panelFiltros = true">
             <MmIcon i="filter" :s="18" />Filtros<span v-if="filtrosActivos" class="mm-count">{{ filtrosActivos }}</span>
           </button>
+          <button type="button" class="mm-btn" @click="importando = true"><MmIcon i="cloud-upload" :s="18" />Importar</button>
           <button type="button" class="mm-btn icon" aria-label="Exportar a CSV" title="Exportar a CSV" :disabled="!lista.length" @click="exportarCSV"><MmIcon i="download" :s="18" /></button>
         </div>
 
@@ -299,6 +302,7 @@ function exportarCSV() {
       </div>
     </div>
 
+    <ImportarMovimientos v-if="importando" @cerrar="importando = false" />
     <FiltrosMovimientos v-model="panelFiltros" :total="lista.length" />
 
     <!-- Menú de la fila abierta; el fondo transparente lo cierra al hacer clic en cualquier otro lugar -->
