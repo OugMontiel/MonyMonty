@@ -30,6 +30,7 @@ const {
   accionesRapidasAbiertas,
   nuevoMovimiento,
   abrirMovimiento,
+  alternarSidebar,
 } = useAppUi();
 
 // Sin movimiento seleccionado el modal crea uno nuevo
@@ -47,7 +48,7 @@ const algoAbierto = computed(
 
 const esCampoDeTexto = (el) => el && (["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName) || el.isContentEditable);
 
-// Atajos: Ctrl/Cmd + K busca, N registra un movimiento y Escape cierra lo que esté abierto
+// Atajos: Ctrl/Cmd + K busca, N registra un movimiento, [ colapsa el menú y Escape cierra lo que esté abierto
 function alTeclear(e) {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
     e.preventDefault();
@@ -58,6 +59,11 @@ function alTeclear(e) {
     busquedaAbierta.value = false;
     notificacionesAbiertas.value = false;
     accionesRapidasAbiertas.value = false;
+    return;
+  }
+  if (e.key === "[" && !e.ctrlKey && !e.metaKey && !e.altKey && !esCampoDeTexto(e.target)) {
+    e.preventDefault();
+    alternarSidebar();
     return;
   }
   if (e.key.toLowerCase() === "n" && !e.ctrlKey && !e.metaKey && !e.altKey && !esCampoDeTexto(e.target) && !algoAbierto.value) {

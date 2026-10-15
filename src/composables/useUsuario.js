@@ -21,11 +21,9 @@ export function useUsuario() {
     const a = usuario.value?.apellido?.[0] ?? "";
     return (n + a).toUpperCase() || "MM";
   });
-  // El plan llega en minúsculas (free, basic, premium)
-  const plan = computed(() => {
-    const p = String(usuario.value?.planId ?? "");
-    return p ? p.charAt(0).toUpperCase() + p.slice(1).toLowerCase() : "";
-  });
+  // El plan llega en minúsculas (free, basic, premium). En pantalla "premium" se llama Pro.
+  const planId = computed(() => String(usuario.value?.planId ?? "").toLowerCase());
+  const plan = computed(() => ({free: "Free", basic: "Basic", premium: "Pro"})[planId.value] ?? "");
 
-  return {usuario, nombreCompleto, iniciales, plan, primerNombre: computed(() => usuario.value?.nombre ?? "")};
+  return {usuario, nombreCompleto, iniciales, plan, planId, primerNombre: computed(() => usuario.value?.nombre ?? "")};
 }

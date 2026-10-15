@@ -491,3 +491,48 @@
 .mm-root .mm-input select option { color: #2f2f2f; background: #fff; }
 .mm-root .mm-input input[type="date"] { cursor: pointer; }
 .mm-root .mm-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Sidebar colapsable (ancho animado, botón en el borde, tooltips) ---------- */
+.mm-root .mm-app, .mm-root .mm-app.is-collapsed { grid-template-columns: auto minmax(0, 1fr); }
+.mm-root .mm-side { width: 252px; transition: width var(--dur-slow) var(--ease-in-out), padding var(--dur-slow) var(--ease-in-out); z-index: 6; }
+.mm-root .mm-side.is-collapsed { width: 84px; padding-left: 12px; padding-right: 12px; }
+.mm-root .mm-side-head { position: relative; display: flex; align-items: center; min-height: 48px; }
+.mm-root .mm-side.is-collapsed .mm-side-head { justify-content: center; }
+.mm-root .mm-side-toggle { position: absolute; right: -31px; top: 50%; margin-top: -15px; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-base) var(--ease-spring), box-shadow var(--dur-base); }
+.mm-root .mm-side.is-collapsed .mm-side-toggle { right: -27px; }
+.mm-root .mm-side-toggle:hover { background: var(--brand-tint); color: var(--brand-ink); transform: scale(1.1); box-shadow: var(--shadow-md); }
+.mm-root .mm-side-toggle:focus-visible { outline: 2px solid var(--brand-strong); outline-offset: 2px; }
+.mm-root .mm-side.is-collapsed .mm-nav-group { display: block; height: 1px; padding: 0; margin: 10px 12px; background: var(--line); font-size: 0; overflow: hidden; }
+.mm-root .mm-side.is-collapsed .mm-nav-item.is-active::before { left: -12px; }
+.mm-root .mm-side.is-collapsed .mm-nav-item { position: relative; }
+.mm-root .mm-side.is-collapsed .mm-nav-item:hover::after { content: attr(data-tip); position: absolute; left: calc(100% + 14px); top: 6px; z-index: 30; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: var(--shadow-md); animation: mm-pop-in var(--dur-base) var(--ease-out) both; pointer-events: none; }
+.mm-root .mm-side.is-collapsed .mm-side-badge { position: absolute; top: 3px; right: 12px; min-width: 16px; height: 16px; padding: 0 4px; font-size: 10px; box-shadow: 0 0 0 2px var(--surface); }
+.mm-root .mm-side.is-collapsed .mm-user { justify-content: center; }
+.mm-root .mm-side .mm-nav-item span, .mm-root .mm-side .mm-side-hide { transition: opacity var(--dur-base) var(--ease-out); }
+/* Los iconos son <span class="mm-icon">: nunca se ocultan al colapsar */
+.mm-root .mm-side .mm-nav-item span.mm-icon, .mm-root .mm-side.is-collapsed .mm-nav-item span.mm-icon, .mm-root .is-collapsed .mm-nav-item span.mm-icon { display: inline-flex !important; }
+.mm-root .mm-nav-item.is-soon { opacity: .5; cursor: default; }
+.mm-root .mm-nav-item.is-soon:hover { background: none; color: var(--ink-muted); }
+/* Etiquetas de plan en el menú */
+.mm-root .mm-plan-tag { margin-left: auto; display: inline-flex; align-items: center; gap: 3px; height: 20px; padding: 0 7px; border-radius: var(--radius-pill); font-size: 10.5px; font-weight: 800; letter-spacing: .02em; flex: none; }
+.mm-root .mm-plan-tag.basic { background: var(--info-tint); color: var(--info); }
+.mm-root .mm-plan-tag.pro { background: var(--brand-tint); color: var(--brand-ink); }
+.mm-root .mm-plan-tag.is-locked { background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
+.mm-root .mm-plan-tag .mm-icon { display: inline-flex !important; }
+.mm-root .mm-side.is-collapsed .mm-plan-tag { display: none; }
+.mm-root .mm-side.is-collapsed .mm-plan-tag.pro { display: block; position: absolute; top: 6px; right: 14px; width: 9px; height: 9px; padding: 0; font-size: 0; background: var(--brand); box-shadow: 0 0 0 2px var(--surface); }
+.mm-root .mm-side.is-collapsed .mm-plan-tag.pro .mm-icon { display: none !important; }
+@media (max-width: 1100px) {
+  .mm-root .mm-app .mm-plan-tag { display: none; }
+  .mm-root .mm-side { width: 84px; padding-left: 12px; padding-right: 12px; }
+  .mm-root .mm-side-toggle { display: none; }
+}
+@media (max-width: 720px) {
+  .mm-root .mm-app, .mm-root .mm-app.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+}
+/* Los nombres del menú no se parten en dos líneas (la etiqueta de plan ocupa su lado) */
+.mm-root .mm-side .mm-nav-item span:not(.mm-icon) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+/* En pantallas bajas la tarjeta de plan se oculta para que el usuario siga a la vista */
+@media (max-height: 960px) {
+  .mm-root .mm-side .mm-upsell { display: none; }
+}
