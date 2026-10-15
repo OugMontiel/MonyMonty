@@ -22,7 +22,7 @@ import {
   iconoMovimiento,
   cuentaDeMovimiento,
 } from "@/features/dashBoard/logic/formato.js";
-import {movimientos, movimientosSinCargar, movimientoResaltado, cargarTodosLosMovimientos, cargarEntidades} from "../logic/movimientosStore.js";
+import {movimientos, movimientosSinCargar, movimientoResaltado, ultimoGuardado, cargarTodosLosMovimientos, cargarEntidades} from "../logic/movimientosStore.js";
 import {filtros, aplicarFiltros, filtrosActivos, limpiarFiltros} from "../logic/filtrosMovimientos.js";
 import FiltrosMovimientos from "../components/FiltrosMovimientos.vue";
 
@@ -65,6 +65,10 @@ const totales = computed(() => {
   const salio = suma("EGRESO");
   return {entro, salio, movio: suma("TRANSFERENCIA"), balance: entro - salio};
 });
+
+/** Estilo de una tarjeta de totales cuando el último movimiento guardado la afecta */
+const cambiada = (tipo) => ultimoGuardado.value?.tipo === tipo;
+const estiloCambiada = (tono) => ({position: "relative", borderColor: `var(--${tono})`, boxShadow: `0 0 0 4px var(--${tono}-tint)`, transition: "box-shadow var(--dur-slow)"});
 
 const totalPaginas = computed(() => Math.max(1, Math.ceil(lista.value.length / POR_PAGINA)));
 const visibles = computed(() => lista.value.slice((pagina.value - 1) * POR_PAGINA, pagina.value * POR_PAGINA));
@@ -182,14 +186,14 @@ function exportarCSV() {
 
       <!-- Totales del periodo -->
       <div class="grid g4">
-        <div class="mm-card mm-rise" style="--i: 0">
-          <div class="row gap-3"><div class="mm-ico income sm"><MmIcon i="trending-up" :s="18" /></div><div><div class="t-over">Entró</div><div class="t-h2 num income">+ {{ dinero(totales.entro) }}</div></div></div>
+        <div class="mm-card mm-rise" style="--i: 0" :style="cambiada('INGRESO') ? estiloCambiada('income') : null">
+          <div class="row gap-3"><div class="mm-ico income sm"><MmIcon i="trending-up" :s="18" /></div><div><div class="t-over">Entró</div><div class="t-h2 num income">+ {{ dinero(totales.entro) }}</div></div><span v-if="cambiada('INGRESO')" class="mm-badge income mm-popin" style="position: absolute; top: 12px; right: 12px">+ {{ dinero(ultimoGuardado.monto) }}</span></div>
         </div>
-        <div class="mm-card mm-rise" style="--i: 1">
-          <div class="row gap-3"><div class="mm-ico expense sm"><MmIcon i="trending-down" :s="18" /></div><div><div class="t-over">Salió</div><div class="t-h2 num">− {{ dinero(totales.salio) }}</div></div></div>
+        <div class="mm-card mm-rise" style="--i: 1" :style="cambiada('EGRESO') ? estiloCambiada('expense') : null">
+          <div class="row gap-3"><div class="mm-ico expense sm"><MmIcon i="trending-down" :s="18" /></div><div><div class="t-over">Salió</div><div class="t-h2 num">− {{ dinero(totales.salio) }}</div></div><span v-if="cambiada('EGRESO')" class="mm-badge expense mm-popin" style="position: absolute; top: 12px; right: 12px">+ {{ dinero(ultimoGuardado.monto) }}</span></div>
         </div>
-        <div class="mm-card mm-rise" style="--i: 2">
-          <div class="row gap-3"><div class="mm-ico info sm"><MmIcon i="swap-horizontal" :s="18" /></div><div><div class="t-over">Se movió</div><div class="t-h2 num info">{{ dinero(totales.movio) }}</div></div></div>
+        <div class="mm-card mm-rise" style="--i: 2" :style="cambiada('TRANSFERENCIA') ? estiloCambiada('info') : null">
+          <div class="row gap-3"><div class="mm-ico info sm"><MmIcon i="swap-horizontal" :s="18" /></div><div><div class="t-over">Se movió</div><div class="t-h2 num info">{{ dinero(totales.movio) }}</div></div><span v-if="cambiada('TRANSFERENCIA')" class="mm-badge info mm-popin" style="position: absolute; top: 12px; right: 12px">+ {{ dinero(ultimoGuardado.monto) }}</span></div>
         </div>
         <div class="mm-card mm-rise" style="--i: 3">
           <div class="row gap-3"><div class="mm-ico balance sm"><MmIcon i="wallet" :s="18" /></div><div><div class="t-over">Balance del periodo</div><div class="t-h2 num balance">{{ totales.balance < 0 ? "−" : "+" }} {{ dinero(Math.abs(totales.balance)) }}</div></div></div>
