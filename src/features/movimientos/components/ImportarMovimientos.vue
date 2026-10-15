@@ -7,6 +7,7 @@ import {ref, reactive, computed, onMounted} from "vue";
 import axios from "axios";
 
 import MmIcon from "@/components/mm/MmIcon.vue";
+import MmSelect from "@/components/mm/MmSelect.vue";
 import {useAvisos} from "@/composables/useAvisos.js";
 import {useGlobalState} from "@/composables/useGlobalState";
 import {moneda, parseLabelEntidad} from "@/features/dashBoard/logic/formato.js";
@@ -115,6 +116,8 @@ function sugerir(titulo) {
   for (const [k, v] of conocidos.value) if (t.includes(k) || k.includes(t)) return v;
   return null;
 }
+
+const opcionesColumnas = computed(() => (csv.value?.encabezados ?? []).map((h, i) => ({value: i, label: h || `Columna ${i + 1}`})));
 
 const mapeoCompleto = computed(() => mapeo.fecha >= 0 && mapeo.descripcion >= 0 && mapeo.monto >= 0);
 const columnasDetectadas = computed(() => [mapeo.fecha, mapeo.descripcion, mapeo.monto].filter((i) => i >= 0).length);
@@ -262,27 +265,27 @@ const fechaCorta = (f) => f.toLocaleDateString("es-CO", {day: "2-digit", month: 
             <div class="grid g2" style="gap: 12px">
               <div class="mm-field">
                 <label for="imp-fecha">Fecha</label>
-                <div class="mm-input mm-select" style="height: 42px"><select id="imp-fecha" v-model.number="mapeo.fecha"><option :value="-1" disabled>Elige una columna</option><option v-for="(h, i) in csv.encabezados" :key="i" :value="i">{{ h || `Columna ${i + 1}` }}</option></select></div>
+                <MmSelect id="imp-fecha" v-model="mapeo.fecha" :options="opcionesColumnas" placeholder="Elige una columna" />
               </div>
               <div class="mm-field">
                 <label for="imp-desc">Descripción</label>
-                <div class="mm-input mm-select" style="height: 42px"><select id="imp-desc" v-model.number="mapeo.descripcion"><option :value="-1" disabled>Elige una columna</option><option v-for="(h, i) in csv.encabezados" :key="i" :value="i">{{ h || `Columna ${i + 1}` }}</option></select></div>
+                <MmSelect id="imp-desc" v-model="mapeo.descripcion" :options="opcionesColumnas" placeholder="Elige una columna" />
               </div>
               <div class="mm-field">
                 <label for="imp-monto">Monto <span class="muted" style="font-weight: 500">· negativo = gasto</span></label>
-                <div class="mm-input mm-select" style="height: 42px"><select id="imp-monto" v-model.number="mapeo.monto"><option :value="-1" disabled>Elige una columna</option><option v-for="(h, i) in csv.encabezados" :key="i" :value="i">{{ h || `Columna ${i + 1}` }}</option></select></div>
+                <MmSelect id="imp-monto" v-model="mapeo.monto" :options="opcionesColumnas" placeholder="Elige una columna" />
               </div>
               <div class="mm-field">
                 <label for="imp-cuenta">Cuenta destino</label>
-                <div class="mm-input mm-select" style="height: 42px"><select id="imp-cuenta" v-model="destino.entidadId"><option v-for="c in cuentas" :key="c.id" :value="c.id">{{ c.nombre }}</option></select></div>
+                <MmSelect id="imp-cuenta" v-model="destino.entidadId" :options="cuentas.map((c) => ({value: c.id, label: c.nombre}))" icono="wallet" placeholder="Elige una cuenta" />
               </div>
               <div class="mm-field">
                 <label for="imp-cat">Categoría para los que no reconocemos</label>
-                <div class="mm-input mm-select" style="height: 42px"><select id="imp-cat" :value="destino.categoriaId" @change="elegirCategoria($event.target.value)"><option v-for="c in categorias" :key="c.value" :value="c.value">{{ c.label }}</option></select></div>
+                <MmSelect id="imp-cat" :model-value="destino.categoriaId" :options="categorias.map((c) => ({value: c.value, label: c.label}))" placeholder="Elige una categoría" @change="elegirCategoria($event)" />
               </div>
               <div class="mm-field">
                 <label for="imp-sub">Subcategoría</label>
-                <div class="mm-input mm-select" style="height: 42px"><select id="imp-sub" v-model="destino.subcategoriaId"><option v-for="s in subcategorias" :key="s.value" :value="s.value">{{ s.label }}</option></select></div>
+                <MmSelect id="imp-sub" v-model="destino.subcategoriaId" :options="subcategorias.map((s) => ({value: s.value, label: s.label}))" placeholder="Elige una subcategoría" />
               </div>
             </div>
 
