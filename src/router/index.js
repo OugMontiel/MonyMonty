@@ -18,6 +18,7 @@ import ReportesLayout from "../features/reportes/views/ReportesLayout.vue";
 import ReportesResumen from "../features/reportes/views/ReportesResumen.vue";
 import ReportesFlujo from "../features/reportes/views/ReportesFlujo.vue";
 import ReportesCategorias from "../features/reportes/views/ReportesCategorias.vue";
+import ReportesPatrimonio from "../features/reportes/views/ReportesPatrimonio.vue";
 import MovimientosView from "../features/movimientos/views/MovimientosView.vue";
 
 const router = createRouter({
@@ -97,6 +98,7 @@ const router = createRouter({
             {path: "", name: "ReportesResumen", component: ReportesResumen},
             {path: "flujo", name: "ReportesFlujo", component: ReportesFlujo},
             {path: "categorias", name: "ReportesCategorias", component: ReportesCategorias},
+            {path: "patrimonio", name: "ReportesPatrimonio", component: ReportesPatrimonio},
           ],
         },
       ],
