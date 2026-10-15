@@ -80,7 +80,7 @@ function agregar(tipo, monto, catId, entId, dias, titulo, extra = {}) {
 
 // Saldos iniciales (la API los guarda como ingresos "de sistema")
 agregar("INGRESO", 2_800_000, "c5", "e1", 70, "", {esSistema: true});
-agregar("INGRESO", 640_000, "c5", "e2", 70, "", {esSistema: true});
+agregar("INGRESO", 1_800_000, "c5", "e2", 70, "", {esSistema: true});
 agregar("INGRESO", 600_000, "c5", "e3", 70, "", {esSistema: true});
 agregar("INGRESO", 1_540_000, "c5", "e4", 70, "", {esSistema: true});
 // Meses anteriores, para que la gráfica de flujo tenga forma

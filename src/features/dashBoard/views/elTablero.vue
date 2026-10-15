@@ -12,6 +12,7 @@ import MmBottomNav from "@/components/mm/layout/MmBottomNav.vue";
 import MmQuickActions from "@/components/mm/layout/MmQuickActions.vue";
 import MmSearchDialog from "@/components/mm/layout/MmSearchDialog.vue";
 import MmNotifications from "@/components/mm/layout/MmNotifications.vue";
+import DetalleMovimiento from "../../movimientos/components/DetalleMovimiento.vue";
 import CreateMovimientoModal from "../../movimientos/components/modals/CreateMovimientoModal.vue";
 import CreateEntidadModal from "../../movimientos/components/modals/CreateEntidadModal.vue";
 import CreateCategoriaModal from "../../movimientos/components/modals/CreateCategoriaModal.vue";
@@ -31,6 +32,10 @@ const {
 // Sin movimiento seleccionado el modal crea uno nuevo
 const modoMovimiento = computed(() => movimientoAbierto.value?.modo ?? "CREATE");
 const idMovimiento = computed(() => movimientoAbierto.value?.id ?? null);
+
+// Ver un movimiento abre el panel de detalle; crear, editar y eliminar usan el modal
+const detalleAbierto = computed(() => modalMovimiento.value && modoMovimiento.value === "VIEW" && Boolean(idMovimiento.value));
+const modalAbierto = computed(() => modalMovimiento.value && !detalleAbierto.value);
 
 const algoAbierto = computed(
   () => modalMovimiento.value || modalCuenta.value || modalCategoria.value || busquedaAbierta.value || notificacionesAbiertas.value || accionesRapidasAbiertas.value
@@ -78,12 +83,13 @@ onBeforeUnmount(() => document.removeEventListener("keydown", alTeclear));
       <MmBottomNav />
     </div>
 
+    <DetalleMovimiento v-if="detalleAbierto" :id="idMovimiento" @cerrar="modalMovimiento = false" />
     <MmSearchDialog />
     <MmNotifications />
   </div>
 
   <!-- Los modales son de PrimeVue y se dibujan solos en el body; al guardar refrescan el tablero por useGlobalState -->
-  <CreateMovimientoModal v-model:visible="modalMovimiento" :mode="modoMovimiento" :movementId="idMovimiento" />
+  <CreateMovimientoModal :visible="modalAbierto" :mode="modoMovimiento" :movementId="idMovimiento" @update:visible="modalMovimiento = $event" />
   <CreateEntidadModal v-model:visible="modalCuenta" />
   <CreateCategoriaModal v-model:visible="modalCategoria" />
 </template>
