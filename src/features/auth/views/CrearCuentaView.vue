@@ -114,6 +114,35 @@ const fuerza = computed(() => fortalezaClave(form.password));
 const coinciden = computed(() => form.confirmPassword.length > 0 && form.password === form.confirmPassword);
 const colorFuerza = computed(() => `var(--${fuerza.value.tono})`);
 
+// ---------- Calendario para elegir la fecha de nacimiento ----------
+const selectorFecha = ref(null);
+const dos = (n) => String(n).padStart(2, "0");
+const aISO = (f) => `${f.getFullYear()}-${dos(f.getMonth() + 1)}-${dos(f.getDate())}`;
+// Solo mayores de edad: el calendario no permite fechas posteriores a hace 18 años
+const fechaMaximaISO = aISO(fechaMinimaMayorDeEdad());
+const fechaEnISO = computed(() => {
+  const f = parseFecha(form.fechaTexto);
+  return f ? aISO(f) : "";
+});
+
+function abrirCalendario() {
+  const el = selectorFecha.value;
+  if (!el) return;
+  // Si todavía no hay fecha, el calendario abre en el límite de los 18 años en vez de en hoy
+  if (!el.value) el.value = fechaMaximaISO;
+  try {
+    el.showPicker();
+  } catch {
+    // Navegadores sin showPicker (o sin gesto del usuario): el campo de texto sigue funcionando
+    el.focus();
+  }
+}
+
+function alElegirEnCalendario(e) {
+  const [a, m, d] = e.target.value.split("-");
+  if (a) form.fechaTexto = `${d}/${m}/${a}`;
+}
+
 function alEscribirFecha(e) {
   form.fechaTexto = mascaraFecha(e.target.value);
   e.target.value = form.fechaTexto;
@@ -223,8 +252,7 @@ async function crearCuenta() {
 
       <div class="mm-field">
         <label for="reg-fecha">Fecha de nacimiento</label>
-        <div class="mm-input" :class="{'is-error': verError1('fecha')}">
-          <MmIcon i="calendar" :s="18" />
+        <div class="mm-input" :class="{'is-error': verError1('fecha')}" style="position: relative">
           <input
             id="reg-fecha"
             :value="form.fechaTexto"
@@ -233,6 +261,19 @@ async function crearCuenta() {
             placeholder="DD/MM/AAAA"
             :aria-invalid="Boolean(verError1('fecha'))"
             @input="alEscribirFecha"
+          />
+          <button type="button" class="mm-btn icon sm ghost" aria-label="Elegir la fecha en el calendario" style="margin-right: -8px" @click="abrirCalendario"><MmIcon i="calendar" :s="18" /></button>
+          <!-- Selector de fecha del navegador: se abre con el botón y escribe la fecha en el campo de texto -->
+          <input
+            ref="selectorFecha"
+            type="date"
+            tabindex="-1"
+            aria-hidden="true"
+            min="1900-01-01"
+            :max="fechaMaximaISO"
+            :value="fechaEnISO"
+            style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none"
+            @change="alElegirEnCalendario"
           />
         </div>
         <span v-if="verError1('fecha')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError1("fecha") }}</span>
