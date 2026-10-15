@@ -16,8 +16,11 @@ const props = defineProps({
   // Si es null no se muestra el selector de periodo
   periodo: {type: String, default: null},
   cta: {type: String, default: "Nuevo"},
+  // Icono del botón principal y, si es true, el botón avisa con el evento "cta" en vez de abrir "nuevo movimiento"
+  ctaIcono: {type: String, default: "add"},
+  ctaPersonalizado: {type: Boolean, default: false},
 });
-const emit = defineEmits(["update:periodo"]);
+const emit = defineEmits(["update:periodo", "cta"]);
 
 const {busquedaAbierta, notificacionesAbiertas, nuevoMovimiento} = useAppUi();
 const {iniciales, primerNombre} = useUsuario();
@@ -54,7 +57,7 @@ const sinSeleccion = computed(() => !PERIODOS.some((p) => p.id === props.periodo
     </button>
     <button type="button" class="mm-btn icon mm-only-mobile" aria-label="Buscar" @click="busquedaAbierta = true"><MmIcon i="search" :s="20" /></button>
     <button type="button" class="mm-btn icon" aria-label="Notificaciones" @click="notificacionesAbiertas = true"><MmIcon i="notifications" :s="20" /></button>
-    <button v-if="cta" type="button" class="mm-btn primary" @click="nuevoMovimiento"><MmIcon i="add" :s="20" />{{ cta }}</button>
+    <button v-if="cta" type="button" class="mm-btn primary" @click="ctaPersonalizado ? emit('cta') : nuevoMovimiento()"><MmIcon :i="ctaIcono" :s="20" />{{ cta }}</button>
   </header>
 </template>
 
