@@ -15,6 +15,7 @@ import {emailSchema, mensajeDe, enmascararCorreo} from "../logic/validaciones.js
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
 import MmIcon from "@/components/mm/MmIcon.vue";
+import {MODO_DEMO} from "@/demo/flagDemo.js";
 
 const {recuperarCuenta, loading} = useAuth();
 
@@ -52,7 +53,8 @@ async function enviar() {
       vista.value = "enviado";
       iniciarCuentaAtras();
     } else {
-      errorServidor.value = result?.error || "Error al recuperar la cuenta";
+      // La API responde "Credenciales inválidas" cuando el correo no está registrado
+      errorServidor.value = result?.error === "Credenciales inválidas" ? "No encontramos una cuenta con ese correo. Revisa que esté bien escrito." : result?.error || "Error al recuperar la cuenta";
     }
   } catch {
     errorServidor.value = "No pudimos conectar con el servidor. Inténtalo de nuevo.";
@@ -86,6 +88,10 @@ onBeforeUnmount(() => clearInterval(timer));
           <div class="col gap-1">
             <h1 class="t-h1">¿Olvidaste tu contraseña?</h1>
             <p class="muted">A todos nos pasa. Escribe tu correo y te enviamos un enlace para crear una nueva.</p>
+          </div>
+
+          <div v-if="MODO_DEMO" class="mm-banner warn" role="status">
+            <MmIcon i="information-circle" :s="18" /><span class="grow">Modo demo: aquí no se envía ningún correo real. Para probarlo usa <b>npm run dev</b> con la API encendida.</span>
           </div>
 
           <div v-if="errorServidor" class="mm-banner expense" role="alert">
