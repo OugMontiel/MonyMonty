@@ -308,7 +308,7 @@ function exportarCSV() {
     <!-- Menú de la fila abierta; el fondo transparente lo cierra al hacer clic en cualquier otro lugar -->
     <template v-if="menuFila">
       <div style="position: fixed; inset: 0; z-index: 40" @click="menuFila = null"></div>
-      <div class="mm-root" data-theme="light" style="position: fixed; inset: 0; z-index: 41; pointer-events: none">
+      <div class="mm-root" data-theme="light" style="position: fixed; inset: 0; z-index: 41; pointer-events: none; background: transparent; min-height: 0">
         <div class="mm-popover" role="menu" :style="{position: 'fixed', top: menuFila.top !== undefined ? `${menuFila.top}px` : 'auto', bottom: menuFila.bottom !== undefined ? `${menuFila.bottom}px` : 'auto', right: `${menuFila.right}px`, width: '190px', pointerEvents: 'auto'}">
           <button type="button" class="mm-menu-item" role="menuitem" @click="accion('VIEW')"><MmIcon i="document-text" :s="18" />Ver detalle</button>
           <button v-if="!menuFila.esSistema" type="button" class="mm-menu-item" role="menuitem" @click="accion('EDIT')"><MmIcon i="create" :s="18" />Editar</button>
