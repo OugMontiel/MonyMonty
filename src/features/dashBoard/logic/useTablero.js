@@ -2,6 +2,8 @@ import {ref, computed} from "vue";
 import axios from "axios";
 
 import {capitalizar, nombreMes, nombreMesCorto, parseLabelEntidad} from "./formato.js";
+import {rangoDe, baseAnterior} from "../../movimientos/logic/periodos.js";
+import {movimientos, entidades, pedirMovimientos, cargarTodosLosMovimientos, cargarEntidades} from "../../movimientos/logic/movimientosStore.js";
 
 /**
  * Datos de "Mi estado actual". Todo sale de los endpoints existentes de la API:
@@ -16,7 +18,6 @@ import {capitalizar, nombreMes, nombreMesCorto, parseLabelEntidad} from "./forma
 const API_URL = import.meta.env.VITE_API_URL;
 const OPCIONES = {withCredentials: true};
 
-const MAX_PAGINAS_MOVIMIENTOS = 25; // 25 × 100 = 2.500 movimientos como tope de seguridad
 const MESES_FLUJO = 6;
 
 // ---------- Estado ----------
@@ -31,8 +32,6 @@ const totalesActual = ref({ingresos: 0, gastos: 0});
 const totalesPrevio = ref({ingresos: 0, gastos: 0});
 const flujo = ref([]); // [{etiqueta, ingresos, gastos}] de los últimos 6 meses
 const ranking = ref([]);
-const movimientos = ref([]); // todos, del más reciente al más antiguo
-const entidades = ref([]);
 
 export const tabRecientes = ref("TODOS"); // "TODOS" | "INGRESO" | "EGRESO" | "TRANSFERENCIA"
 const recientes = ref([]);
@@ -42,26 +41,6 @@ const cargandoRecientes = ref(false);
 const cacheTotales = new Map();
 
 // ---------- Fechas ----------
-const finDelDia = (y, m, d) => new Date(y, m, d, 23, 59, 59, 999);
-
-function rangoDe(p, base) {
-  const y = base.getFullYear();
-  const m = base.getMonth();
-  if (p === "semana") {
-    // La semana empieza el lunes
-    const lunes = new Date(y, m, base.getDate() - ((base.getDay() + 6) % 7));
-    return {inicio: lunes, fin: finDelDia(lunes.getFullYear(), lunes.getMonth(), lunes.getDate() + 6)};
-  }
-  if (p === "anio") return {inicio: new Date(y, 0, 1), fin: finDelDia(y, 11, 31)};
-  return {inicio: new Date(y, m, 1), fin: finDelDia(y, m + 1, 0)};
-}
-
-function baseAnterior(p, base) {
-  if (p === "semana") return new Date(base.getFullYear(), base.getMonth(), base.getDate() - 7);
-  if (p === "anio") return new Date(base.getFullYear() - 1, 0, 1);
-  return new Date(base.getFullYear(), base.getMonth() - 1, 1);
-}
-
 /** Textos que dependen del periodo: migas, "vs. …" y nombre del periodo anterior */
 export function etiquetasPeriodo(p = periodo.value, base = new Date()) {
   const prev = baseAnterior(p, base);
@@ -97,29 +76,6 @@ async function totales(inicio, fin) {
 async function cargarRanking(rango) {
   const res = await axios.post(`${API_URL}movimiento/ranking`, {fechaInicio: rango.inicio.toISOString(), fechaFin: rango.fin.toISOString()}, OPCIONES);
   return res.data?.data ?? [];
-}
-
-async function pedirMovimientos(body) {
-  const res = await axios.post(`${API_URL}movimiento/list`, body, OPCIONES);
-  return res.data?.data ?? {data: [], total: 0, totalPages: 0};
-}
-
-/** Trae todos los movimientos en páginas de 100: alimentan saldos por cuenta, búsqueda y el estado vacío */
-async function cargarMovimientos() {
-  const primera = await pedirMovimientos({page: 1, limit: 100});
-  const lista = [...primera.data];
-
-  if (primera.totalPages > 1) {
-    const paginas = Math.min(primera.totalPages, MAX_PAGINAS_MOVIMIENTOS);
-    const resto = await Promise.all(Array.from({length: paginas - 1}, (_, i) => pedirMovimientos({page: i + 2, limit: 100})));
-    resto.forEach((r) => lista.push(...r.data));
-  }
-  movimientos.value = lista;
-}
-
-async function cargarEntidades() {
-  const res = await axios.get(`${API_URL}entidad`, OPCIONES);
-  entidades.value = res.data?.data ?? [];
 }
 
 export async function cargarRecientes() {
@@ -163,7 +119,7 @@ export async function cargarTablero({refrescar = false} = {}) {
       Promise.all(meses.map((m) => totales(m.inicio, m.fin))),
       cargarRanking(actual),
       // Estos tres no dependen del periodo; solo se piden en la primera carga o al refrescar
-      refrescar || primeraCarga.value ? Promise.all([cargarMovimientos(), cargarEntidades()]) : null,
+      refrescar || primeraCarga.value ? Promise.all([cargarTodosLosMovimientos(), cargarEntidades()]) : null,
       cargarRecientes(),
     ]);
 
