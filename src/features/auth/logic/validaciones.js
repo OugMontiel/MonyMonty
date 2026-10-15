@@ -12,7 +12,7 @@ export const emailSchema = z
   .string()
   .trim()
   .min(1, {message: "Por favor, ingresa tu correo electrónico."})
-  .email({message: "Escribe un correo válido, por ejemplo laura@correo.co"});
+  .email({message: "Escribe un correo válido, por ejemplo correo@monteflor.co"});
 
 export const passwordSchema = z
   .string()
@@ -95,7 +95,7 @@ export function fechaMinimaMayorDeEdad() {
   return f;
 }
 
-/** "laura@correo.co" -> "la•••@correo.co" */
+/** "correo@monteflor.co" -> "co•••@monteflor.co" */
 export function enmascararCorreo(email) {
   const [usuario = "", dominio = ""] = email.split("@");
   return `${usuario.slice(0, 2)}•••@${dominio}`;
