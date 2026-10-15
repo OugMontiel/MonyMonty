@@ -152,3 +152,28 @@ export function cuentaDeMovimiento(m) {
   }
   return m.entidad?.nombre ?? "";
 }
+
+/**
+ * Da formato de miles (es-CO) a lo que se escribe en un campo de monto. Con `decimales` acepta una
+ * coma decimal (para divisas distintas al peso colombiano); sin ellos solo deja dígitos.
+ */
+export function formatearMontoTexto(texto, decimales = false) {
+  const limpio = String(texto).replace(decimales ? /[^\d,]/g : /\D/g, "");
+  const [entero = "", ...resto] = limpio.split(",");
+  const miles = entero.replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (!decimales || !resto.length) return miles;
+  return `${miles || "0"},${resto.join("").slice(0, 2)}`;
+}
+
+/** "1.234,5" -> 1234.5 (0 si no es un número) */
+export function leerMontoTexto(texto) {
+  const n = Number(String(texto).replace(/\./g, "").replace(",", "."));
+  return Number.isFinite(n) ? n : 0;
+}
+
+/** 48900 -> "48.900" (para mostrar un monto existente en el campo) */
+export function montoATexto(valor, decimales = false) {
+  return Number.isFinite(Number(valor)) && Number(valor) !== 0
+    ? new Intl.NumberFormat("es-CO", {maximumFractionDigits: decimales ? 2 : 0}).format(Number(valor))
+    : "";
+}
