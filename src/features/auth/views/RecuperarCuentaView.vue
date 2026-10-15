@@ -18,7 +18,7 @@ import MmIcon from "@/components/mm/MmIcon.vue";
 
 const {recuperarCuenta, loading} = useAuth();
 
-// "pedir" = formulario (S09) · "enviado" = confirmación (S10)
+// "pedir" = formulario · "enviado" = confirmación
 const vista = ref("pedir");
 const email = ref("");
 const tocado = ref(false);
@@ -71,7 +71,7 @@ onBeforeUnmount(() => clearInterval(timer));
 <template>
   <div class="mm-root" data-theme="light">
     <div class="mm-center" style="position: relative; overflow: hidden">
-      <!-- S09 · Pedir el enlace -->
+      <!-- Pedir el enlace -->
       <template v-if="vista === 'pedir'">
         <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; left: -120px; top: -140px; background: var(--brand-tint)"></div>
         <div class="mm-float" style="position: absolute; width: 300px; height: 300px; border-radius: 50%; right: -80px; bottom: -100px; background: var(--balance-tint); animation-delay: -3s"></div>
@@ -117,7 +117,7 @@ onBeforeUnmount(() => clearInterval(timer));
         </form>
       </template>
 
-      <!-- S10 · Revisa tu correo -->
+      <!-- Revisa tu correo -->
       <template v-else>
         <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; right: -120px; top: -140px; background: var(--info-tint)"></div>
 

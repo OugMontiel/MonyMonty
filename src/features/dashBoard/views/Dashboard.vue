@@ -8,7 +8,7 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  *
- * Mi estado actual (S17), con su estado de carga (S18), de primer uso (S19) y su versión móvil (S24).
+ * Mi estado actual, con su estado de carga, de primer uso y su versión móvil.
  */
 import {computed, onMounted, watch} from "vue";
 

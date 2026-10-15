@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Mis cuentas (S17 lista · S24 tarjetas horizontales). Los saldos se calculan con los movimientos
+ * Mis cuentas. Los saldos se calculan con los movimientos
  * porque GET entidad solo devuelve el nombre de cada cuenta.
  */
 import {useAppUi} from "@/composables/useAppUi.js";

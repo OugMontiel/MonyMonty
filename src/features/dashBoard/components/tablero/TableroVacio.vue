@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Primer uso (S19): mientras no haya movimientos propios se muestran los primeros pasos
+ * Primer uso: mientras no haya movimientos propios se muestran los primeros pasos
  * en lugar de un tablero lleno de ceros. Los pasos se marcan solos según los datos reales.
  */
 import {computed} from "vue";

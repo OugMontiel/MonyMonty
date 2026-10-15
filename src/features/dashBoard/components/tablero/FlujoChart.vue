@@ -1,5 +1,5 @@
 <script setup>
-/** Flujo de dinero (S17): ingresos y gastos de los últimos meses como dos curvas suaves. */
+/** Flujo de dinero: ingresos y gastos de los últimos meses como dos curvas suaves. */
 import {computed, useId} from "vue";
 
 import {compacto} from "../../logic/formato.js";

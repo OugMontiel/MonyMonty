@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Panel de notificaciones (S22). La API aún no tiene avisos, así que muestra el estado vacío
+ * Panel de notificaciones. La API aún no tiene avisos, así que muestra el estado vacío
  * del diseño; cuando existan, las filas se renderizan en `notificaciones` con el mismo marcado.
  */
 import {ref, watch, nextTick} from "vue";

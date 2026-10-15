@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Botón flotante con acciones rápidas (S23). Abre los modales que ya existían
+ * Botón flotante con acciones rápidas. Abre los modales que ya existían
  * (nuevo movimiento, cuenta y categoría). En móvil el "+" de la barra inferior lo reemplaza.
  */
 import {useAppUi} from "@/composables/useAppUi.js";

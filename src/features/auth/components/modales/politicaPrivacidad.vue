@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Modal de Política de privacidad (S08): primero un resumen en 4 tarjetas y,
+ * Modal de Política de privacidad: primero un resumen en 4 tarjetas y,
  * con "Texto completo", las 8 secciones de la política.
  */
 import {ref, watch, nextTick, onBeforeUnmount} from "vue";

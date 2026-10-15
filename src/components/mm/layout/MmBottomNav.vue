@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Navegación inferior móvil (S24). El CSS del diseño la muestra solo en ≤ 720 px.
+ * Navegación inferior móvil. El CSS del diseño la muestra solo en ≤ 720 px.
  * "Perfil" abre el menú de usuario, que es donde vive "Cerrar sesión".
  */
 import {ref} from "vue";
