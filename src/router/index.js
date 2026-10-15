@@ -14,6 +14,7 @@ import elTablero from "../features/dashBoard/views/elTablero.vue";
 
 //rutas base 
 import Dashboard from "../features/dashBoard/views/Dashboard.vue";
+import MovimientosView from "../features/movimientos/views/MovimientosView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,18 +75,17 @@ const router = createRouter({
      *  Rutas protegidas
      *
      * */
-    // Vistas de inicio: El tablero
+    // Pantallas con el layout principal (barra lateral, búsqueda, acciones rápidas…).
+    // Los hijos usan rutas absolutas para que las URLs sean /tablero, /movimientos, etc.
     {
-      path: "/tablero",
-      name: "HomeTablero",
+      path: "/app",
+      name: "Layout",
       component: elTablero,
+      redirect: "/tablero",
       meta: {requiresAuth: true},
       children: [
-        {
-          path: "",
-          name: "DashboardView",
-          component: Dashboard,
-        },
+        {path: "/tablero", name: "DashboardView", component: Dashboard},
+        {path: "/movimientos", name: "Movimientos", component: MovimientosView},
       ],
     },
   ],
@@ -104,7 +104,7 @@ router.beforeEach(async (to, from) => {
   }
 
   if (to.name === "Login" && authValid) {
-    return {name: "HomeTablero"};
+    return {name: "DashboardView"};
   }
 });
 

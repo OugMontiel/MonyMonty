@@ -102,3 +102,53 @@ export function parseLabelEntidad(label = "") {
   if (partes.length >= 3) return {tipo: partes[0], nombre: partes.slice(1, -1).join(" - "), numero: partes[partes.length - 1]};
   return {tipo: null, nombre: label, numero: ""};
 }
+
+/** Presentación de cada tipo de movimiento de la API (EGRESO, INGRESO, TRANSFERENCIA) */
+export const TIPOS_MOVIMIENTO = {
+  EGRESO: {etiqueta: "Gasto", tono: "expense", icono: "trending-down", clase: ""},
+  INGRESO: {etiqueta: "Ingreso", tono: "income", icono: "trending-up", clase: "income"},
+  TRANSFERENCIA: {etiqueta: "Transferencia", tono: "info", icono: "swap-horizontal", clase: "info"},
+};
+
+const mismoDiaCal = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+/** "jueves 8 de octubre" */
+function diaLargo(f) {
+  return f.toLocaleDateString("es-CO", {weekday: "long", day: "numeric", month: "long"}).replace(",", "");
+}
+
+/** Encabezado de un grupo de la lista: "Hoy · jueves 8 de octubre", "Ayer · …" o "Lunes 5 de octubre" */
+export function tituloDia(valor, ahora = new Date()) {
+  const f = new Date(valor);
+  const ayer = new Date(ahora);
+  ayer.setDate(ahora.getDate() - 1);
+  if (mismoDiaCal(f, ahora)) return `Hoy · ${diaLargo(f)}`;
+  if (mismoDiaCal(f, ayer)) return `Ayer · ${diaLargo(f)}`;
+  return capitalizar(diaLargo(f));
+}
+
+export const horaCorta = (valor) => new Date(valor).toLocaleTimeString("es-CO", {hour: "numeric", minute: "2-digit"});
+
+/** "Hoy, jueves 8 de octubre · 1:12 p. m." */
+export function fechaLarga(valor, ahora = new Date()) {
+  const f = new Date(valor);
+  const ayer = new Date(ahora);
+  ayer.setDate(ahora.getDate() - 1);
+  const prefijo = mismoDiaCal(f, ahora) ? "Hoy, " : mismoDiaCal(f, ayer) ? "Ayer, " : "";
+  const dia = diaLargo(f);
+  return `${prefijo}${prefijo ? dia : capitalizar(dia)} · ${horaCorta(f)}`;
+}
+
+/** Color e icono de la categoría de un movimiento (las transferencias van en azul con la flecha doble) */
+export const colorMovimiento = (m) => (m.tipo === "TRANSFERENCIA" ? "var(--cat-sky)" : m.categoria?.color || "var(--cat-slate)");
+export const iconoMovimiento = (m) => (m.tipo === "TRANSFERENCIA" ? "swap-horizontal" : iconoDe(m.categoria?.icono));
+
+/** Nombre de la cuenta (entidad) de un movimiento, o "Origen → Destino" en transferencias */
+export function cuentaDeMovimiento(m) {
+  if (m.tipo === "TRANSFERENCIA") {
+    const o = m.transferenciaDetalle?.origen?.nombre;
+    const d = m.transferenciaDetalle?.destino?.nombre;
+    return o && d ? `${o} → ${d}` : "Entre cuentas";
+  }
+  return m.entidad?.nombre ?? "";
+}

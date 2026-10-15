@@ -18,7 +18,7 @@ const menuAbierto = ref(false);
 <template>
   <nav class="mm-bottomnav" aria-label="Navegación inferior">
     <router-link to="/tablero" :class="{'is-on': route.path.startsWith('/tablero')}"><MmIcon i="grid" :s="22" />Inicio</router-link>
-    <button type="button" disabled aria-disabled="true" style="opacity: 0.5"><MmIcon i="swap-horizontal" :s="22" />Movimientos</button>
+    <router-link to="/movimientos" :class="{'is-on': route.path.startsWith('/movimientos')}"><MmIcon i="swap-horizontal" :s="22" />Movimientos</router-link>
     <button type="button" class="mm-bn-add" aria-label="Nuevo movimiento" @click="nuevoMovimiento"><MmIcon i="add" :s="28" /></button>
     <button type="button" disabled aria-disabled="true" style="opacity: 0.5"><MmIcon i="pie-chart" :s="22" />Planear</button>
     <button type="button" :class="{'is-on': menuAbierto}" aria-haspopup="menu" :aria-expanded="menuAbierto" @click="menuAbierto = !menuAbierto"><MmIcon i="person" :s="22" />Perfil</button>

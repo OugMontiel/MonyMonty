@@ -11,6 +11,7 @@ import MmIcon from "../MmIcon.vue";
 
 const props = defineProps({
   migas: {type: String, default: ""},
+  subtitulo: {type: String, default: ""},
   titulo: {type: String, required: true},
   // Si es null no se muestra el selector de periodo
   periodo: {type: String, default: null},
@@ -27,6 +28,8 @@ const PERIODOS = [
   {id: "anio", etiqueta: "Año"},
 ];
 const indice = computed(() => Math.max(0, PERIODOS.findIndex((p) => p.id === props.periodo)));
+// Si el periodo no es ninguno de los tres (p. ej. un rango elegido en filtros) no se marca ninguna opción
+const sinSeleccion = computed(() => !PERIODOS.some((p) => p.id === props.periodo));
 </script>
 
 <template>
@@ -36,9 +39,10 @@ const indice = computed(() => Math.max(0, PERIODOS.findIndex((p) => p.id === pro
       <div class="mm-crumb mm-only-mobile">Hola{{ primerNombre ? `, ${primerNombre}` : "" }}</div>
       <div v-if="migas" class="mm-crumb mm-only-desktop">{{ migas }}</div>
       <h1 class="t-h1">{{ titulo }}</h1>
+      <div v-if="subtitulo" class="t-sm muted mm-only-desktop" style="margin-top: 2px">{{ subtitulo }}</div>
     </div>
 
-    <div v-if="periodo" class="mm-seg" role="group" aria-label="Periodo" :style="{'--n': 3, '--on': indice}">
+    <div v-if="periodo !== null" class="mm-seg" :class="{'sin-seleccion': sinSeleccion}" role="group" aria-label="Periodo" :style="{'--n': 3, '--on': indice}">
       <i class="thumb"></i>
       <button v-for="p in PERIODOS" :key="p.id" type="button" :class="{'is-on': periodo === p.id}" :aria-pressed="periodo === p.id" @click="emit('update:periodo', p.id)">
         {{ p.etiqueta }}
@@ -55,6 +59,9 @@ const indice = computed(() => Math.max(0, PERIODOS.findIndex((p) => p.id === pro
 </template>
 
 <style scoped>
+.sin-seleccion :deep(.thumb) {
+  opacity: 0;
+}
 /* En móvil avatar, saludo, búsqueda y campana van en una sola fila */
 @media (max-width: 720px) {
   .mm-top {

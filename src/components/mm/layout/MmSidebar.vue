@@ -21,7 +21,7 @@ const GRUPOS = [
     titulo: "Resumen",
     items: [
       {id: "tablero", icono: "grid", titulo: "Mi estado actual", ruta: "/tablero"},
-      {id: "movimientos", icono: "swap-horizontal", titulo: "Movimientos"},
+      {id: "movimientos", icono: "swap-horizontal", titulo: "Movimientos", ruta: "/movimientos"},
       {id: "reportes", icono: "stats-chart", titulo: "Reportes"},
     ],
   },
