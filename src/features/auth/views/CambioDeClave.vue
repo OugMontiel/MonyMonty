@@ -18,6 +18,7 @@ import {passwordSchema, validar, fortalezaClave} from "../logic/validaciones.js"
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
 import MmIcon from "@/components/mm/MmIcon.vue";
+import {MODO_DEMO} from "@/demo/flagDemo.js";
 
 const toast = useToast();
 const router = useRouter();
@@ -134,6 +135,10 @@ onBeforeUnmount(() => clearInterval(timer));
               Para <b style="color: var(--ink)">{{ user?.email }}</b>
               <template v-if="user?.nombre"> ({{ user.nombre }})</template>.
             </p>
+          </div>
+
+          <div v-if="MODO_DEMO" class="mm-banner warn" role="status">
+            <MmIcon i="information-circle" :s="18" /><span class="grow">Modo demo: la contraseña <b>no se guarda</b> en la base de datos. Abre este enlace en el servidor normal (<b>npm run dev</b>) para cambiarla de verdad.</span>
           </div>
 
           <div v-if="errorServidor" class="mm-banner expense" role="alert">
