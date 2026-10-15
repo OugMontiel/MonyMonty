@@ -15,7 +15,7 @@ import {delMes, esFlujo, gastoPorCategoria, finDeMes, inicioDeMes} from "../logi
 import {useReportes} from "../logic/useReportes.js";
 
 const router = useRouter();
-const {anio, mes, movimientos, divisa, cargando, error, etiquetaMes, cargar} = useReportes();
+const {anio, mes, movimientos, divisa, cargando, error, etiquetaMes, cargar, exportarAbierto} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 const delPeriodo = computed(() => delMes(movimientos.value, anio.value, mes.value));
@@ -94,7 +94,7 @@ function verMovimientos() {
 
 <template>
   <div class="mm-page">
-    <MmTopbar migas="Reportes" titulo="Gasto por categoría" :periodo="null" cta="" />
+    <MmTopbar migas="Reportes" titulo="Gasto por categoría" :periodo="null" cta="Exportar" cta-icono="download" cta-personalizado @cta="exportarAbierto = true" />
 
     <div class="mm-content" :aria-busy="cargando">
       <ReportesTabs activa="categorias" />

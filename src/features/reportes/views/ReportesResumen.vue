@@ -13,7 +13,7 @@ import BarrasMensuales from "../components/BarrasMensuales.vue";
 import {delAnio, mesesDelAnio, totales} from "../logic/calculos.js";
 import {useReportes} from "../logic/useReportes.js";
 
-const {anio, movimientos, divisa, cargando, error, esAnioActual, hoy, cargar} = useReportes();
+const {anio, movimientos, divisa, cargando, error, esAnioActual, hoy, cargar, exportarAbierto} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 // Hasta el mes actual si es el año en curso; todos los meses en años pasados
@@ -46,7 +46,7 @@ const mejorMes = computed(() => {
 
 <template>
   <div class="mm-page">
-    <MmTopbar migas="Resumen" titulo="Reportes" :periodo="null" cta="" />
+    <MmTopbar migas="Resumen" titulo="Reportes" :periodo="null" cta="Exportar" cta-icono="download" cta-personalizado @cta="exportarAbierto = true" />
 
     <div class="mm-content" :aria-busy="cargando">
       <ReportesTabs activa="resumen" />

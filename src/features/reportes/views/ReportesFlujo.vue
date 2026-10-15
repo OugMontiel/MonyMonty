@@ -13,7 +13,7 @@ import CascadaFlujo from "../components/CascadaFlujo.vue";
 import {delMes, esFlujo, totales, gastoPorCategoria, porCuenta, patrimonioAl, finDeMes, gastoPromedioMensual, ingresosEntreDias} from "../logic/calculos.js";
 import {useReportes} from "../logic/useReportes.js";
 
-const {anio, mes, movimientos, cuentas, divisa, cargando, error, etiquetaMes, cargar} = useReportes();
+const {anio, mes, movimientos, cuentas, divisa, cargando, error, etiquetaMes, cargar, exportarAbierto} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 const delPeriodo = computed(() => delMes(movimientos.value, anio.value, mes.value));
@@ -57,7 +57,7 @@ const lectura = computed(() => {
 
 <template>
   <div class="mm-page">
-    <MmTopbar migas="Reportes" titulo="Flujo de caja" :periodo="null" cta="" />
+    <MmTopbar migas="Reportes" titulo="Flujo de caja" :periodo="null" cta="Exportar" cta-icono="download" cta-personalizado @cta="exportarAbierto = true" />
 
     <div class="mm-content" :aria-busy="cargando">
       <ReportesTabs activa="flujo" />
