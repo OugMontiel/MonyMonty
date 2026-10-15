@@ -42,31 +42,42 @@ const paso = ref(1);
 
 // Valores que acepta la API hoy (la validación anterior solo permitía estos dos)
 const GENEROS = ["Femenino", "Masculino"];
+// "id" es el valor que entiende la API (planId); "nombre" es lo que ve la persona (Premium se muestra como Pro)
 const PLANES = [
   {
     id: "Free",
+    nombre: "Free",
     icono: "wallet",
     tono: "",
-    precio: "$ 0",
+    mensual: "$ 0",
+    anual: "$ 0",
     resumen: "Para ordenar lo básico y crear el hábito.",
     items: ["Movimientos ilimitados", "Hasta 3 cuentas", "Tablero y categorías", "Lecciones nivel 1"],
   },
   {
     id: "Basic",
+    nombre: "Basic",
     icono: "rocket",
     tono: "brand",
     recomendado: true,
-    resumen: "Para planear el mes y salir de deudas.",
+    mensual: "$ 4.900",
+    anual: "$ 32.900",
+    resumen: {mensual: "O $ 32.900 al año (≈ US$ 10). Para planear el mes y salir de deudas.", anual: "Equivale a $ 2.742 al mes. Para planear el mes y salir de deudas."},
     items: ["Todo lo de Free", "Cuentas ilimitadas", "Presupuesto y deudas", "Importar extractos CSV", "3 metas de ahorro"],
   },
   {
     id: "Premium",
+    nombre: "Pro",
     icono: "sparkles",
     tono: "balance",
-    resumen: "Para crecer con acompañamiento experto.",
+    mensual: "$ 11.900",
+    anual: "$ 79.900",
+    resumen: {mensual: "O $ 79.900 al año. Para crecer con acompañamiento experto.", anual: "Equivale a $ 6.658 al mes. Para crecer con acompañamiento experto."},
     items: ["Todo lo de Basic", "Metas ilimitadas", "Reportes en PDF", "Asesoría con mentores", "Todas las lecciones"],
   },
 ];
+// Solo cambia el precio que se muestra: la API todavía no guarda el periodo de cobro
+const periodoPrecio = ref("mensual");
 
 const form = reactive({
   nombre: "",
@@ -414,6 +425,11 @@ async function crearCuenta() {
       <div class="col gap-2 mm-rise" style="text-align: center; align-items: center; max-width: 620px">
         <h1 class="t-h1" style="font-size: 34px; line-height: 40px">Elige cómo quieres empezar</h1>
         <p class="muted">Puedes cambiar de plan cuando quieras desde Configuración. Empezar en Free no tiene costo.</p>
+        <div class="mm-seg" role="group" aria-label="Periodo de cobro" :style="{'--n': 2, '--on': periodoPrecio === 'mensual' ? 0 : 1, marginTop: '8px'}">
+          <i class="thumb"></i>
+          <button type="button" :class="{'is-on': periodoPrecio === 'mensual'}" :aria-pressed="periodoPrecio === 'mensual'" @click="periodoPrecio = 'mensual'">Mensual</button>
+          <button type="button" :class="{'is-on': periodoPrecio === 'anual'}" :aria-pressed="periodoPrecio === 'anual'" @click="periodoPrecio = 'anual'">Anual</button>
+        </div>
       </div>
 
       <div v-if="errorServidor" class="mm-banner expense" role="alert" style="width: 100%; max-width: 1080px">
@@ -437,11 +453,11 @@ async function crearCuenta() {
             <div class="mm-ico sm" :class="p.tono" :style="p.tono ? null : {background: 'var(--surface-2)'}"><MmIcon :i="p.icono" :s="18" /></div>
             <span class="mm-radio" :class="{'is-on': form.plan === p.id}"></span>
           </div>
-          <div class="t-h2" style="margin-top: 16px">{{ p.id }}</div>
-          <div v-if="p.precio" class="row gap-1" style="align-items: baseline; margin: 6px 0 4px">
-            <span class="t-amt-lg">{{ p.precio }}</span><span class="t-sm muted">/ mes</span>
+          <div class="t-h2" style="margin-top: 16px">{{ p.nombre }}</div>
+          <div class="row gap-1" style="align-items: baseline; margin: 6px 0 4px">
+            <span class="t-amt-lg">{{ p[periodoPrecio] }}</span><span class="t-sm muted">/ {{ periodoPrecio === "mensual" ? "mes" : "año" }}</span>
           </div>
-          <p class="t-sm muted" :style="p.precio ? null : {marginTop: '6px'}">{{ p.resumen }}</p>
+          <p class="t-sm muted">{{ typeof p.resumen === "string" ? p.resumen : p.resumen[periodoPrecio] }}</p>
           <div class="divider"></div>
           <div class="col gap-2 t-sm">
             <span v-for="item in p.items" :key="item" class="row gap-2"><MmIcon i="checkmark" :s="16" />{{ item }}</span>
