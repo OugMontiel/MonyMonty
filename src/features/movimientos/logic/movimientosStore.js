@@ -15,6 +15,8 @@ const MAX_PAGINAS = 25; // 25 × 100 = 2.500 movimientos como tope de seguridad
 /** Todos los movimientos, del más reciente al más antiguo */
 export const movimientos = ref([]);
 export const entidades = ref([]);
+/** Id del movimiento recién guardado: la lista lo resalta unos segundos */
+export const movimientoResaltado = ref(null);
 /** true hasta que termina la primera carga completa */
 export const movimientosSinCargar = ref(true);
 
