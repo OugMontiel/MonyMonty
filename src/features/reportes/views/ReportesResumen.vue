@@ -13,7 +13,8 @@ import BarrasMensuales from "../components/BarrasMensuales.vue";
 import {delAnio, mesesDelAnio, totales} from "../logic/calculos.js";
 import {useReportes} from "../logic/useReportes.js";
 
-const {anio, movimientos, divisa, cargando, error, esAnioActual, hoy, cargar, exportarAbierto} = useReportes();
+const {anio, movimientos, divisa, cargando, error, esAnioActual, hoy, cargar, exportarAbierto, mesDetalle} = useReportes();
+const abrirDetalle = (m) => (mesDetalle.value = {anio: anio.value, mes: m.mes});
 const dinero = (v) => moneda(v, divisa.value);
 
 // Hasta el mes actual si es el año en curso; todos los meses en años pasados
@@ -89,7 +90,7 @@ const mejorMes = computed(() => {
               <table class="mm-table">
                 <thead><tr><th>Mes</th><th class="r">Ingresos</th><th class="r">Gastos</th><th class="r">Ahorro</th><th class="r">Tasa</th></tr></thead>
                 <tbody>
-                  <tr v-for="m in filas" :key="m.mes">
+                  <tr v-for="m in filas" :key="m.mes" class="fila-mes" tabindex="0" :aria-label="`Ver detalle de ${m.nombre}`" @click="abrirDetalle(m)" @keydown.enter="abrirDetalle(m)">
                     <td><b>{{ m.nombre }}</b> <span v-if="esEnCurso(m)" class="mm-badge brand">en curso</span></td>
                     <td class="r t-amt income">+ {{ dinero(m.ingresos) }}</td>
                     <td class="r t-amt">− {{ dinero(m.gastos) }}</td>
@@ -122,6 +123,12 @@ const mejorMes = computed(() => {
 </template>
 
 <style scoped>
+.fila-mes {
+  cursor: pointer;
+}
+.fila-mes:hover {
+  background: var(--surface-2);
+}
 .mm-page {
   display: contents;
 }
