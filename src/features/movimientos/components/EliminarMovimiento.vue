@@ -4,8 +4,8 @@
  * y cómo quedan los saldos de las cuentas afectadas.
  */
 import {ref, computed, onMounted, nextTick} from "vue";
-import {useToast} from "primevue/usetoast";
 
+import {useAvisos} from "@/composables/useAvisos.js";
 import MmIcon from "@/components/mm/MmIcon.vue";
 import {useTablero} from "@/features/dashBoard/logic/useTablero.js";
 import {describirMovimiento, fechaCorta, moneda, montoConSigno, colorMovimiento, iconoMovimiento, cuentaDeMovimiento} from "@/features/dashBoard/logic/formato.js";
@@ -17,7 +17,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["cerrar", "eliminado"]);
 
-const toast = useToast();
+const {mostrar} = useAvisos();
 const {getMovimiento, deleteMovimiento, loading: eliminando} = useMovimientos();
 const {cuentas} = useTablero();
 
@@ -64,11 +64,11 @@ const efectos = computed(() => {
 async function eliminar() {
   try {
     await deleteMovimiento(props.id);
-    toast.add({severity: "success", summary: "Movimiento eliminado", detail: describirMovimiento(mov.value).titulo, life: 3000});
+    mostrar({icono: "trash", tono: "info", titulo: "Movimiento eliminado", detalle: describirMovimiento(mov.value).titulo});
     emit("eliminado");
     emit("cerrar");
   } catch (err) {
-    toast.add({severity: "error", summary: "No se pudo eliminar", detail: err.response?.data?.message || "Inténtalo de nuevo.", life: 4000});
+    mostrar({tono: "expense", icono: "alert-circle", titulo: "No se pudo eliminar", detalle: err.response?.data?.message || "Inténtalo de nuevo."});
   }
 }
 </script>

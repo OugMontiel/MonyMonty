@@ -17,6 +17,8 @@ export const movimientos = ref([]);
 export const entidades = ref([]);
 /** Id del movimiento recién guardado: la lista lo resalta unos segundos */
 export const movimientoResaltado = ref(null);
+/** Último movimiento guardado ({tipo, monto}): la lista marca el total que cambió unos segundos */
+export const ultimoGuardado = ref(null);
 /** true hasta que termina la primera carga completa */
 export const movimientosSinCargar = ref(true);
 

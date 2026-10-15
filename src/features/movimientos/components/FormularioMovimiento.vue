@@ -7,14 +7,14 @@
  * destinoEntidadId}, fecha, concepto {titulo, detalle}, tags y esRecurrente.
  */
 import {ref, reactive, computed, watch, onMounted, nextTick} from "vue";
-import {useToast} from "primevue/usetoast";
 
+import {useAvisos} from "@/composables/useAvisos.js";
 import MmIcon from "@/components/mm/MmIcon.vue";
 import {useTablero} from "@/features/dashBoard/logic/useTablero.js";
 import {iconoDe, moneda, fechaCorta, colorMovimiento, iconoMovimiento, parseLabelEntidad, formatearMontoTexto, leerMontoTexto, montoATexto, TIPOS_ENTIDAD, ENTIDAD_GENERICA} from "@/features/dashBoard/logic/formato.js";
 import {useMovimientos} from "../logic/CreateMovimiento.js";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento.js";
-import {movimientos} from "../logic/movimientosStore.js";
+import {movimientos, movimientoResaltado, ultimoGuardado} from "../logic/movimientosStore.js";
 import {aInputFecha} from "../logic/filtrosMovimientos.js";
 
 const props = defineProps({
@@ -23,8 +23,8 @@ const props = defineProps({
 });
 const emit = defineEmits(["cerrar", "guardado", "eliminar"]);
 
-const toast = useToast();
-const {createMovimiento, updateMovimiento, getMovimiento, loading: guardando} = useMovimientos();
+const {mostrar} = useAvisos();
+const {createMovimiento, updateMovimiento, getMovimiento, deleteMovimiento, loading: guardando} = useMovimientos();
 const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
 const {divisaPrincipal, cuentas: cuentasConSaldo} = useTablero();
 
@@ -257,6 +257,36 @@ function armarPayload() {
   };
 }
 
+/** Texto corto de lo que se guardó, para el aviso: "Comida · − $ 48.900 desde Nequi" */
+function resumenGuardado() {
+  const importe = dinero(monto.value);
+  if (esTransferencia.value) return `${origen.value.nombre} → ${destino.value.nombre} · ${importe}`;
+  const cuenta = cuentas.value.find((c) => c.id === form.entidadId)?.nombre ?? "";
+  const signo = form.tipo === "EGRESO" ? "−" : "+";
+  return `${categoriaActual.value?.label ?? ""} · ${signo} ${importe}${cuenta ? (form.tipo === "EGRESO" ? " desde " : " en ") + cuenta : ""}`;
+}
+
+/** Deshace un movimiento recién creado (lo elimina) */
+async function deshacer(idCreado) {
+  try {
+    await deleteMovimiento(idCreado);
+    if (movimientoResaltado.value === idCreado) movimientoResaltado.value = null;
+    mostrar({tono: "info", icono: "refresh", titulo: "Movimiento deshecho"});
+  } catch {
+    mostrar({tono: "expense", icono: "alert-circle", titulo: "No se pudo deshacer", detalle: "Elimínalo desde la lista de movimientos."});
+  }
+}
+
+/** La lista resalta la fila nueva y el total que cambió durante unos segundos */
+function resaltar(idCreado) {
+  movimientoResaltado.value = idCreado ?? null;
+  ultimoGuardado.value = {tipo: form.tipo, monto: monto.value, divisaId: form.divisaId};
+  setTimeout(() => {
+    if (movimientoResaltado.value === idCreado) movimientoResaltado.value = null;
+    ultimoGuardado.value = null;
+  }, 6000);
+}
+
 async function guardar({crearOtro = false} = {}) {
   intentado.value = true;
   if (Object.keys(errores.value).length) return;
@@ -264,15 +294,16 @@ async function guardar({crearOtro = false} = {}) {
   try {
     if (editando.value) {
       await updateMovimiento(props.id, armarPayload());
+      mostrar({titulo: "Cambios guardados", detalle: form.titulo.trim() || resumenGuardado()});
+      resaltar(props.id);
     } else {
-      await createMovimiento(armarPayload());
+      const resumen = resumenGuardado();
+      const titulo = {EGRESO: "Gasto guardado", INGRESO: "Ingreso guardado", TRANSFERENCIA: "Transferencia registrada"}[form.tipo];
+      // La API responde con el resultado de insertOne: el id del movimiento creado
+      const idCreado = (await createMovimiento(armarPayload()))?.data?.insertedId;
+      mostrar({titulo, detalle: resumen, accion: idCreado ? {texto: "Deshacer", ejecutar: () => deshacer(idCreado)} : undefined});
+      resaltar(idCreado);
     }
-    toast.add({
-      severity: "success",
-      summary: editando.value ? "Cambios guardados" : {EGRESO: "Gasto guardado", INGRESO: "Ingreso guardado", TRANSFERENCIA: "Transferencia registrada"}[form.tipo],
-      detail: form.titulo.trim() || (esTransferencia.value ? `${origen.value.nombre} → ${destino.value.nombre}` : categoriaActual.value?.label),
-      life: 3000,
-    });
     emit("guardado");
 
     if (crearOtro) {
@@ -287,7 +318,7 @@ async function guardar({crearOtro = false} = {}) {
       emit("cerrar");
     }
   } catch (err) {
-    toast.add({severity: "error", summary: editando.value ? "No se pudieron guardar los cambios" : "No se pudo guardar", detail: err.response?.data?.message || "Inténtalo de nuevo.", life: 4000});
+    mostrar({tono: "expense", icono: "alert-circle", titulo: editando.value ? "No se pudieron guardar los cambios" : "No se pudo guardar", detalle: err.response?.data?.message || "Inténtalo de nuevo."});
   }
 }
 

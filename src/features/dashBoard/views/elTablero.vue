@@ -11,6 +11,7 @@ import MmSidebar from "@/components/mm/layout/MmSidebar.vue";
 import MmBottomNav from "@/components/mm/layout/MmBottomNav.vue";
 import MmQuickActions from "@/components/mm/layout/MmQuickActions.vue";
 import MmSearchDialog from "@/components/mm/layout/MmSearchDialog.vue";
+import MmAvisos from "@/components/mm/layout/MmAvisos.vue";
 import MmNotifications from "@/components/mm/layout/MmNotifications.vue";
 import DetalleMovimiento from "../../movimientos/components/DetalleMovimiento.vue";
 import FormularioMovimiento from "../../movimientos/components/FormularioMovimiento.vue";
@@ -95,6 +96,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", alTeclear));
       @eliminar="abrirMovimiento(idMovimiento, 'DELETE')"
     />
     <EliminarMovimiento v-if="eliminarAbierto" :id="idMovimiento" @cerrar="modalMovimiento = false" />
+    <MmAvisos />
     <MmSearchDialog />
     <MmNotifications />
   </div>
