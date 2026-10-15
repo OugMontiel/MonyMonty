@@ -1,6 +1,7 @@
 <script setup>
 /**
- * Formulario de movimiento (modal). Registra un gasto (EGRESO), un ingreso (INGRESO) o una
+ * Formulario de movimiento (modal) para crear (POST movimiento) o, con `id`, editar (PUT movimiento/:id).
+ * Registra un gasto (EGRESO), un ingreso (INGRESO) o una
  * transferencia entre cuentas (TRANSFERENCIA) con POST movimiento; los campos son los de la API:
  * tipo, monto, divisaId, categoriaId, subcategoriaId, entidadId, transferencia {origenEntidadId,
  * destinoEntidadId}, fecha, concepto {titulo, detalle}, tags y esRecurrente.
@@ -10,7 +11,7 @@ import {useToast} from "primevue/usetoast";
 
 import MmIcon from "@/components/mm/MmIcon.vue";
 import {useTablero} from "@/features/dashBoard/logic/useTablero.js";
-import {iconoDe, moneda, parseLabelEntidad, formatearMontoTexto, leerMontoTexto, montoATexto, TIPOS_ENTIDAD, ENTIDAD_GENERICA} from "@/features/dashBoard/logic/formato.js";
+import {iconoDe, moneda, fechaCorta, colorMovimiento, iconoMovimiento, parseLabelEntidad, formatearMontoTexto, leerMontoTexto, montoATexto, TIPOS_ENTIDAD, ENTIDAD_GENERICA} from "@/features/dashBoard/logic/formato.js";
 import {useMovimientos} from "../logic/CreateMovimiento.js";
 import {useMovimientoOptions} from "../logic/OptionsMovimiento.js";
 import {movimientos} from "../logic/movimientosStore.js";
@@ -20,10 +21,10 @@ const props = defineProps({
   // Con "id" se edita ese movimiento; sin él se crea uno nuevo
   id: {type: String, default: null},
 });
-const emit = defineEmits(["cerrar", "guardado"]);
+const emit = defineEmits(["cerrar", "guardado", "eliminar"]);
 
 const toast = useToast();
-const {createMovimiento, loading: guardando} = useMovimientos();
+const {createMovimiento, updateMovimiento, getMovimiento, loading: guardando} = useMovimientos();
 const {entidades, categorias, divisas, fetchOptions} = useMovimientoOptions();
 const {divisaPrincipal, cuentas: cuentasConSaldo} = useTablero();
 
@@ -49,6 +50,12 @@ const form = reactive({
   etiquetas: "",
 });
 const intentado = ref(false);
+const editando = computed(() => Boolean(props.id));
+// Al editar: el movimiento tal como llegó de la API y una copia del formulario para detectar cambios
+const original = ref(null);
+const instantanea = ref("");
+const cargandoMov = ref(false);
+const errorCarga = ref("");
 const masOpciones = ref(false);
 const modal = ref(null);
 const campoMonto = ref(null);
@@ -145,14 +152,62 @@ function alEscribirMonto(e) {
   e.target.value = form.montoTexto;
 }
 
+/** Llena el formulario con un movimiento existente */
+function precargar(m) {
+  form.tipo = m.tipo;
+  form.divisaId = m.divisaId;
+  form.montoTexto = montoATexto(m.monto, !["COP", "CLP", "PYG", "JPY"].includes(m.divisaId));
+  form.fecha = aInputFecha(new Date(m.fecha));
+  form.titulo = m.concepto?.titulo ?? "";
+  form.detalle = m.concepto?.detalle ?? "";
+  form.esRecurrente = Boolean(m.esRecurrente);
+  form.etiquetas = (m.tags ?? []).join(", ");
+  if (m.tipo === "TRANSFERENCIA") {
+    form.origenId = m.transferencia?.origenEntidadId ?? "";
+    form.destinoId = m.transferencia?.destinoEntidadId ?? "";
+  } else {
+    form.entidadId = m.entidadId ?? "";
+    form.categoriaId = m.categoriaId ?? "";
+    form.subcategoriaId = m.subcategoriaId ?? "";
+  }
+  masOpciones.value = Boolean(form.detalle || form.etiquetas || form.esRecurrente);
+}
+
+const instantaneaActual = () => JSON.stringify(form);
+
 onMounted(async () => {
   await fetchOptions();
-  form.divisaId = divisas.value.some((d) => d.value === divisaPrincipal.value) ? divisaPrincipal.value : (divisas.value[0]?.value ?? "COP");
-  aplicarPorDefecto();
-  cuentasPorDefecto();
+
+  if (editando.value) {
+    cargandoMov.value = true;
+    try {
+      original.value = (await getMovimiento(props.id)).data;
+      precargar(original.value);
+      await nextTick();
+      instantanea.value = instantaneaActual();
+    } catch (err) {
+      errorCarga.value = err.response?.data?.message || "No pudimos cargar este movimiento.";
+    } finally {
+      cargandoMov.value = false;
+    }
+  } else {
+    form.divisaId = divisas.value.some((d) => d.value === divisaPrincipal.value) ? divisaPrincipal.value : (divisas.value[0]?.value ?? "COP");
+    aplicarPorDefecto();
+    cuentasPorDefecto();
+  }
   await nextTick();
   campoMonto.value?.focus();
 });
+
+// ---------- Cambios sin guardar (solo al editar) ----------
+const hayCambios = computed(() => editando.value && instantanea.value !== "" && instantaneaActual() !== instantanea.value);
+
+function descartarCambios() {
+  precargar(original.value);
+  intentado.value = false;
+}
+
+const montoAnterior = computed(() => (editando.value && original.value && original.value.monto !== monto.value ? moneda(original.value.monto, original.value.divisaId) : ""));
 
 // ---------- Validación ----------
 const errores = computed(() => {
@@ -175,6 +230,8 @@ const verError = (campo) => (intentado.value ? errores.value[campo] : "");
 // ---------- Guardado ----------
 /** La fecha elegida con la hora actual si es hoy, o al mediodía si es otro día (evita saltos por zona horaria) */
 function fechaISO() {
+  // Al editar sin tocar el día se conserva la hora original
+  if (editando.value && original.value && form.fecha === aInputFecha(new Date(original.value.fecha))) return new Date(original.value.fecha).toISOString();
   const hoy = aInputFecha(new Date());
   if (form.fecha === hoy) return new Date().toISOString();
   const [y, m, d] = form.fecha.split("-").map(Number);
@@ -205,10 +262,14 @@ async function guardar({crearOtro = false} = {}) {
   if (Object.keys(errores.value).length) return;
 
   try {
-    await createMovimiento(armarPayload());
+    if (editando.value) {
+      await updateMovimiento(props.id, armarPayload());
+    } else {
+      await createMovimiento(armarPayload());
+    }
     toast.add({
       severity: "success",
-      summary: {EGRESO: "Gasto guardado", INGRESO: "Ingreso guardado", TRANSFERENCIA: "Transferencia registrada"}[form.tipo],
+      summary: editando.value ? "Cambios guardados" : {EGRESO: "Gasto guardado", INGRESO: "Ingreso guardado", TRANSFERENCIA: "Transferencia registrada"}[form.tipo],
       detail: form.titulo.trim() || (esTransferencia.value ? `${origen.value.nombre} → ${destino.value.nombre}` : categoriaActual.value?.label),
       life: 3000,
     });
@@ -226,7 +287,7 @@ async function guardar({crearOtro = false} = {}) {
       emit("cerrar");
     }
   } catch (err) {
-    toast.add({severity: "error", summary: "No se pudo guardar", detail: err.response?.data?.message || "Inténtalo de nuevo.", life: 4000});
+    toast.add({severity: "error", summary: editando.value ? "No se pudieron guardar los cambios" : "No se pudo guardar", detail: err.response?.data?.message || "Inténtalo de nuevo.", life: 4000});
   }
 }
 
@@ -234,7 +295,7 @@ function alTeclear(e) {
   if (e.key === "Escape") emit("cerrar");
   else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
-    guardar({crearOtro: true});
+    guardar({crearOtro: !editando.value});
   }
 }
 </script>
@@ -244,14 +305,34 @@ function alTeclear(e) {
     <div class="mm-overlay" @click.self="emit('cerrar')" @keydown="alTeclear">
       <form ref="modal" class="mm-modal" :style="esTransferencia ? {width: 'min(560px, 100%)'} : null" role="dialog" aria-modal="true" aria-labelledby="mov-titulo" novalidate @submit.prevent="guardar()">
         <div class="mm-modal-h">
-          <div class="grow"><h2 id="mov-titulo" class="t-h2">Nuevo movimiento</h2><p class="t-sm muted">{{ esTransferencia ? "Mueve plata entre tus cuentas" : "Registra en segundos" }}</p></div>
+          <div v-if="editando && original" class="mm-ico cat" :style="{background: colorMovimiento(original)}"><MmIcon :i="iconoMovimiento(original)" :s="22" /></div>
+          <div class="grow">
+            <h2 id="mov-titulo" class="t-h2">{{ editando ? "Editar movimiento" : "Nuevo movimiento" }}</h2>
+            <p class="t-sm muted">{{ editando ? (original ? `Creado · ${fechaCorta(original.createdAt ?? original.fecha)}` : "") : esTransferencia ? "Mueve plata entre tus cuentas" : "Registra en segundos" }}</p>
+          </div>
           <button type="button" class="mm-x" aria-label="Cerrar" @click="emit('cerrar')"><MmIcon i="close" :s="20" /></button>
         </div>
 
-        <div class="mm-modal-b">
+        <!-- Cargando el movimiento a editar -->
+        <div v-if="cargandoMov" class="mm-modal-b" style="min-height: 320px" role="status" aria-label="Cargando el movimiento">
+          <div class="mm-skel" style="width: 100%; height: 48px"></div>
+          <div class="mm-skel" style="width: 100%; height: 72px"></div>
+          <div class="mm-skel" style="width: 100%; height: 48px"></div>
+          <div class="mm-skel" style="width: 100%; height: 48px"></div>
+        </div>
+        <div v-else-if="errorCarga" class="mm-modal-b">
+          <div class="mm-banner expense" role="alert"><MmIcon i="alert-circle" :s="18" /><span class="grow">{{ errorCarga }}</span></div>
+        </div>
+
+        <div v-else class="mm-modal-b">
+          <div v-if="hayCambios" class="mm-banner warn" role="status">
+            <MmIcon i="create" :s="18" /><span class="grow">Tienes cambios sin guardar</span>
+            <button type="button" class="t-sm" style="border: 0; background: none; color: inherit; font-weight: 700; text-decoration: underline" @click="descartarCambios">Descartar</button>
+          </div>
+
           <div class="mm-seg typed lg" role="group" aria-label="Tipo de movimiento" :data-v="indiceTipo" :style="{'--n': TIPOS.length, '--on': indiceTipo, width: '100%'}">
             <i class="thumb"></i>
-            <button v-for="t in TIPOS" :key="t.id" type="button" :class="{'is-on': form.tipo === t.id}" :aria-pressed="form.tipo === t.id" @click="cambiarTipo(t.id)"><MmIcon :i="t.icono" :s="14" />{{ t.etiqueta }}</button>
+            <button v-for="t in TIPOS" :key="t.id" type="button" :class="{'is-on': form.tipo === t.id}" :aria-pressed="form.tipo === t.id" :disabled="editando && (t.id === 'TRANSFERENCIA') !== esTransferencia" :title="editando && (t.id === 'TRANSFERENCIA') !== esTransferencia ? 'Una transferencia no puede cambiar de tipo' : null" @click="cambiarTipo(t.id)"><MmIcon :i="t.icono" :s="14" />{{ t.etiqueta }}</button>
           </div>
 
           <div class="mm-field">
@@ -259,6 +340,7 @@ function alTeclear(e) {
             <div class="mm-input amount" :class="[tipoActual.tono, {'is-error': verError('monto')}]">
               <span class="muted" style="font-size: 22px">$</span>
               <input id="mov-monto" ref="campoMonto" :value="form.montoTexto" inputmode="decimal" placeholder="0" autocomplete="off" style="font-size: 32px; color: inherit" :aria-invalid="Boolean(verError('monto'))" @input="alEscribirMonto" />
+              <span v-if="montoAnterior" class="mm-badge warn">antes {{ montoAnterior }}</span>
               <select v-model="form.divisaId" class="divisa" aria-label="Divisa">
                 <option v-for="d in divisas" :key="d.value" :value="d.value">{{ d.value }}</option>
               </select>
@@ -399,9 +481,13 @@ function alTeclear(e) {
         </div>
 
         <div class="mm-modal-f" style="align-items: center">
-          <span class="t-xs muted grow row gap-1 mm-only-desktop" style="white-space: nowrap"><span class="mm-kbd">Ctrl</span>+<span class="mm-kbd">Enter</span>guarda y crea otro</span>
+          <button v-if="editando" type="button" class="mm-btn danger-soft" @click="emit('eliminar')"><MmIcon i="trash" :s="18" />Eliminar</button>
+          <span v-if="!editando" class="t-xs muted grow row gap-1 mm-only-desktop" style="white-space: nowrap"><span class="mm-kbd">Ctrl</span>+<span class="mm-kbd">Enter</span>guarda y crea otro</span>
+          <span v-else class="grow"></span>
           <button type="button" class="mm-btn ghost" @click="emit('cerrar')">Cancelar</button>
-          <button type="submit" class="mm-btn primary" :class="{'is-loading': guardando}" :disabled="guardando"><MmIcon i="checkmark" :s="18" />{{ tipoActual.guardar }}</button>
+          <button type="submit" class="mm-btn primary" :class="{'is-loading': guardando}" :disabled="guardando || cargandoMov || Boolean(errorCarga) || (editando && !hayCambios)">
+            <MmIcon i="checkmark" :s="18" />{{ editando ? "Guardar cambios" : tipoActual.guardar }}
+          </button>
         </div>
       </form>
     </div>

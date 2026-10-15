@@ -28,16 +28,17 @@ const {
   notificacionesAbiertas,
   accionesRapidasAbiertas,
   nuevoMovimiento,
+  abrirMovimiento,
 } = useAppUi();
 
 // Sin movimiento seleccionado el modal crea uno nuevo
 const modoMovimiento = computed(() => movimientoAbierto.value?.modo ?? "CREATE");
 const idMovimiento = computed(() => movimientoAbierto.value?.id ?? null);
 
-// Ver un movimiento abre el panel de detalle y crear abre el formulario;
-// editar y eliminar siguen usando el modal anterior hasta que tengan su pantalla nueva
+// Ver un movimiento abre el panel de detalle; crear y editar abren el formulario;
+// eliminar sigue usando el modal anterior hasta que tenga su pantalla nueva
 const detalleAbierto = computed(() => modalMovimiento.value && modoMovimiento.value === "VIEW" && Boolean(idMovimiento.value));
-const formularioAbierto = computed(() => modalMovimiento.value && modoMovimiento.value === "CREATE");
+const formularioAbierto = computed(() => modalMovimiento.value && (modoMovimiento.value === "CREATE" || (modoMovimiento.value === "EDIT" && Boolean(idMovimiento.value))));
 const modalAbierto = computed(() => modalMovimiento.value && !detalleAbierto.value && !formularioAbierto.value);
 
 const algoAbierto = computed(
@@ -87,7 +88,13 @@ onBeforeUnmount(() => document.removeEventListener("keydown", alTeclear));
     </div>
 
     <DetalleMovimiento v-if="detalleAbierto" :id="idMovimiento" @cerrar="modalMovimiento = false" />
-    <FormularioMovimiento v-if="formularioAbierto" @cerrar="modalMovimiento = false" />
+    <FormularioMovimiento
+      v-if="formularioAbierto"
+      :key="`${modoMovimiento}-${idMovimiento}`"
+      :id="modoMovimiento === 'EDIT' ? idMovimiento : null"
+      @cerrar="modalMovimiento = false"
+      @eliminar="abrirMovimiento(idMovimiento, 'DELETE')"
+    />
     <MmSearchDialog />
     <MmNotifications />
   </div>
