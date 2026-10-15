@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Búsqueda global (S21, Ctrl K). Busca en los movimientos ya cargados por el tablero
+ * Búsqueda global (Ctrl K). Busca en los movimientos ya cargados por el tablero
  * (concepto, categoría, cuenta o monto) y ofrece acciones rápidas. Operadores de monto:
  * ">100000" y "<50000"; palabras de fecha: "hoy" y "ayer".
  */

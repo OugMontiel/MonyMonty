@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Modal de Términos y condiciones (S07).
+ * Modal de Términos y condiciones.
  * Índice lateral, progreso de lectura y, si `conAceptar` está activo, un botón
  * "Acepto" que solo se habilita al llegar al final del texto.
  */

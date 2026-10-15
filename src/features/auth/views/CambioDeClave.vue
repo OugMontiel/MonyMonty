@@ -23,7 +23,7 @@ const toast = useToast();
 const router = useRouter();
 const {verificacionTocken, CambiodeClave, loading} = useAuth();
 
-// "verificando" -> "formulario" (S11) | "vencido" (S11 alterno) -> "listo" (S12)
+// "verificando" -> "formulario" | "vencido" -> "listo"
 const vista = ref("verificando");
 const user = ref({});
 const token = ref("");
@@ -122,7 +122,7 @@ onBeforeUnmount(() => clearInterval(timer));
         <span class="muted t-sm">Verificando tu enlace…</span>
       </div>
 
-      <!-- S11 · Nueva contraseña -->
+      <!-- Nueva contraseña -->
       <template v-else-if="vista === 'formulario'">
         <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; left: -120px; bottom: -160px; background: var(--brand-tint)"></div>
 
@@ -180,7 +180,7 @@ onBeforeUnmount(() => clearInterval(timer));
         </form>
       </template>
 
-      <!-- S11 alterno · enlace inválido o vencido -->
+      <!-- enlace inválido o vencido -->
       <template v-else-if="vista === 'vencido'">
         <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; left: -120px; bottom: -160px; background: var(--brand-tint)"></div>
         <div class="mm-card mm-rise" style="position: relative; width: min(420px, 100%); padding: 28px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; box-shadow: var(--shadow-md)">
@@ -192,7 +192,7 @@ onBeforeUnmount(() => clearInterval(timer));
         </div>
       </template>
 
-      <!-- S12 · Contraseña actualizada -->
+      <!-- Contraseña actualizada -->
       <template v-else>
         <div class="mm-float" style="position: absolute; width: 480px; height: 480px; border-radius: 50%; left: 50%; top: 50%; margin: -340px 0 0 -240px; background: var(--income-tint); opacity: 0.7"></div>
         <div class="mm-card mm-rise" style="position: relative; width: min(440px, 100%); padding: 44px 36px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px">

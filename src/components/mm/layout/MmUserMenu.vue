@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Contenido del menú de usuario (S20). Se usa en la barra lateral y en la barra inferior móvil.
+ * Contenido del menú de usuario. Se usa en la barra lateral y en la barra inferior móvil.
  * Solo "Cerrar sesión" tiene destino hoy; el resto de opciones se marcan como próximas.
  */
 import {computed} from "vue";

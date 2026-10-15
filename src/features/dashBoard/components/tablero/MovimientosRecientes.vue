@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Últimos movimientos (S17). Cada fila abre el movimiento en el modal existente (ver);
+ * Últimos movimientos. Cada fila abre el movimiento en el modal existente (ver);
  * al pasar el cursor aparecen editar y eliminar para no perder lo que ya permitía el tablero anterior.
  */
 import {useAppUi} from "@/composables/useAppUi.js";

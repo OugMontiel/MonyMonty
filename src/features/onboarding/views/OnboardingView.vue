@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Configuración inicial tras el registro (S13–S16):
+ * Configuración inicial tras el registro:
  * moneda -> primera cuenta -> categorías -> resumen.
  * La cuenta y las categorías se crean con los mismos endpoints de siempre
  * (POST entidad, POST categoria); la moneda elegida viaja como divisaId de la cuenta.
@@ -207,7 +207,7 @@ const tipoCuentaResumen = computed(() => TIPOS_CUENTA.find((t) => t.value === es
         <a href="#" class="t-sm" style="color: var(--ink-muted)" @click.prevent="omitir">Omitir por ahora</a>
       </header>
 
-      <!-- S13 · Moneda -->
+      <!-- Moneda -->
       <main v-if="paso === 'divisa'" style="flex: 1; display: flex; flex-wrap: wrap; gap: 48px; align-items: center; justify-content: center; padding: 24px 40px 48px">
         <div class="col gap-6" style="flex: 1 1 480px; max-width: 560px">
           <div class="col gap-2 mm-rise">
@@ -265,7 +265,7 @@ const tipoCuentaResumen = computed(() => TIPOS_CUENTA.find((t) => t.value === es
         </div>
       </main>
 
-      <!-- S14 · Primera cuenta -->
+      <!-- Primera cuenta -->
       <main v-else-if="paso === 'cuenta'" style="flex: 1; display: flex; flex-wrap: wrap; gap: 48px; align-items: center; justify-content: center; padding: 24px 40px 48px">
         <form class="col gap-5" style="flex: 1 1 480px; max-width: 560px; gap: 22px" novalidate @submit.prevent="guardarCuenta">
           <div class="col gap-2 mm-rise">
@@ -367,7 +367,7 @@ const tipoCuentaResumen = computed(() => TIPOS_CUENTA.find((t) => t.value === es
         </div>
       </main>
 
-      <!-- S15 · Categorías -->
+      <!-- Categorías -->
       <main v-else style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 16px 40px 48px">
         <div class="col gap-2 mm-rise" style="text-align: center; align-items: center; max-width: 640px">
           <h1 class="t-h1" style="font-size: 34px; line-height: 40px">¿En qué se te va la plata?</h1>
@@ -424,7 +424,7 @@ const tipoCuentaResumen = computed(() => TIPOS_CUENTA.find((t) => t.value === es
       </main>
     </div>
 
-    <!-- S16 · Todo listo -->
+    <!-- Todo listo -->
     <div v-else class="mm-center" style="position: relative; overflow: hidden">
       <i class="mm-popin" style="--i: 3; position: absolute; left: 22%; top: 18%; width: 14px; height: 14px; border-radius: 4px; background: var(--brand); transform: rotate(20deg)"></i>
       <i class="mm-popin" style="--i: 5; position: absolute; left: 30%; top: 70%; width: 10px; height: 10px; border-radius: 50%; background: var(--balance)"></i>

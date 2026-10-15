@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Barra lateral (S17 expandida · S20 colapsada). Solo "Mi estado actual" tiene pantalla hoy;
+ * Barra lateral. Solo "Mi estado actual" tiene pantalla hoy;
  * las demás entradas se muestran como "Pronto" para que el menú ya refleje el diseño completo.
  */
 import {ref, onMounted, onBeforeUnmount} from "vue";

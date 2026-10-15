@@ -21,7 +21,7 @@ const MESES_FLUJO = 6;
 
 // ---------- Estado ----------
 export const periodo = ref("mes"); // "semana" | "mes" | "anio"
-const cargando = ref(false); // solo la primera carga muestra el esqueleto (S18)
+const cargando = ref(false); // solo la primera carga muestra el esqueleto
 const primeraCarga = ref(true);
 const error = ref("");
 
@@ -240,7 +240,7 @@ const kpis = computed(() => {
 
 /**
  * Sin actividad propia: no hay movimientos, o solo el ingreso de "saldo inicial" que crea la API al
- * abrir una cuenta (esSistema). El tablero muestra entonces los primeros pasos (S19) en vez de ceros.
+ * abrir una cuenta (esSistema). El tablero muestra entonces los primeros pasos en vez de ceros.
  */
 const sinMovimientos = computed(() => !primeraCarga.value && !error.value && movimientos.value.every((m) => m.esSistema));
 

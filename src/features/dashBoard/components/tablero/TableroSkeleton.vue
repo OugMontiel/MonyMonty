@@ -1,5 +1,5 @@
 <script setup>
-/** Esqueleto del tablero (S18): los bloques conservan su forma para que nada salte al llegar los datos. */
+/** Esqueleto del tablero: los bloques conservan su forma para que nada salte al llegar los datos. */
 </script>
 
 <template>

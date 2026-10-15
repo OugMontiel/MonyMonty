@@ -2,7 +2,7 @@ import {reactive} from "vue";
 import {userData} from "@/features/dashBoard/logic/user.js";
 
 /**
- * Estado compartido de la configuración inicial (pasos S13–S16).
+ * Estado compartido de la configuración inicial.
  * Es un singleton: el registro lo deja con el nombre y cada paso va completándolo.
  */
 const estado = reactive({

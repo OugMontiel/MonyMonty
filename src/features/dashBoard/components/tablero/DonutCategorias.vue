@@ -1,5 +1,5 @@
 <script setup>
-/** Gasto por categoría (S17): dona con las 5 categorías que más pesan y el resto agrupado en "Otros". */
+/** Gasto por categoría: dona con las 5 categorías que más pesan y el resto agrupado en "Otros". */
 import {computed} from "vue";
 
 import {moneda, compacto} from "../../logic/formato.js";
