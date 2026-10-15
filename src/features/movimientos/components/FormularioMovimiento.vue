@@ -10,6 +10,7 @@ import {ref, reactive, computed, watch, onMounted, nextTick} from "vue";
 
 import {useAvisos} from "@/composables/useAvisos.js";
 import MmIcon from "@/components/mm/MmIcon.vue";
+import MmSelect from "@/components/mm/MmSelect.vue";
 import {useTablero} from "@/features/dashBoard/logic/useTablero.js";
 import {iconoDe, moneda, fechaCorta, colorMovimiento, iconoMovimiento, parseLabelEntidad, formatearMontoTexto, leerMontoTexto, montoATexto, TIPOS_ENTIDAD, ENTIDAD_GENERICA} from "@/features/dashBoard/logic/formato.js";
 import {useMovimientos} from "../logic/CreateMovimiento.js";
@@ -89,6 +90,29 @@ const saldoTotal = computed(() => cuentasConSaldo.value.reduce((s, c) => s + c.s
 function intercambiarCuentas() {
   [form.origenId, form.destinoId] = [form.destinoId, form.origenId];
 }
+
+/** Opciones de cada selector, con el icono y color de lo que ya se usó en movimientos */
+const opcionesDivisa = computed(() =>
+  divisas.value.map((d) => {
+    // GET divisa entrega "TIPO - CÓDIGO - Nombre"; si llega otra cosa se usa la etiqueta tal cual
+    const partes = String(d.label).split(" - ");
+    const nombre = partes.length >= 3 ? partes.slice(2).join(" - ") : d.label;
+    return {value: d.value, corto: d.value, label: nombre === d.value ? d.value : `${d.value} · ${nombre}`};
+  })
+);
+const opcionesCategoria = computed(() =>
+  categorias.value.map((c) => {
+    const ejemplo = movimientos.value.find((m) => m.categoriaId === c.value)?.categoria;
+    return {value: c.value, label: c.label, color: ejemplo?.color ?? "var(--cat-slate)", icono: iconoDe(ejemplo?.icono)};
+  })
+);
+const opcionesSubcategoria = computed(() => subcategorias.value.map((s) => ({value: s.value, label: s.label})));
+const opcionesCuenta = computed(() =>
+  cuentas.value.map((c) => {
+    const i = infoCuenta(c.id);
+    return {value: c.id, label: c.nombre, detalle: i.detalle, icono: i.icono, color: i.color};
+  })
+);
 
 const categoriaActual = computed(() => categorias.value.find((c) => c.value === form.categoriaId));
 const subcategorias = computed(() => categoriaActual.value?.subcategorias ?? []);
@@ -372,9 +396,7 @@ function alTeclear(e) {
               <span class="muted" style="font-size: 22px">$</span>
               <input id="mov-monto" ref="campoMonto" :value="form.montoTexto" inputmode="decimal" placeholder="0" autocomplete="off" style="font-size: 32px; color: inherit" :aria-invalid="Boolean(verError('monto'))" @input="alEscribirMonto" />
               <span v-if="montoAnterior" class="mm-badge warn">antes {{ montoAnterior }}</span>
-              <select v-model="form.divisaId" class="divisa" aria-label="Divisa">
-                <option v-for="d in divisas" :key="d.value" :value="d.value">{{ d.value }}</option>
-              </select>
+              <MmSelect v-model="form.divisaId" :options="opcionesDivisa" variante="pildora" aria-label="Divisa" />
             </div>
             <span v-if="verError('monto')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("monto") }}</span>
           </div>
@@ -383,22 +405,12 @@ function alTeclear(e) {
           <div class="grid g2" style="gap: 16px">
             <div class="mm-field">
               <label for="mov-categoria">Categoría</label>
-              <div class="mm-input mm-select" :class="{'is-error': verError('categoriaId')}">
-                <span class="mm-ico cat" :style="{width: '26px', height: '26px', borderRadius: '8px', background: colorCategoria}"><MmIcon :i="iconoCategoria" :s="14" /></span>
-                <select id="mov-categoria" :value="form.categoriaId" @change="elegirCategoria($event.target.value)">
-                  <option v-for="c in categorias" :key="c.value" :value="c.value">{{ c.label }}</option>
-                </select>
-              </div>
+              <MmSelect id="mov-categoria" :model-value="form.categoriaId" :options="opcionesCategoria" placeholder="Elige una categoría" :invalid="Boolean(verError('categoriaId'))" @change="elegirCategoria($event)" />
               <span v-if="verError('categoriaId')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("categoriaId") }}</span>
             </div>
             <div class="mm-field">
               <label for="mov-subcategoria">Subcategoría</label>
-              <div class="mm-input mm-select" :class="{'is-error': verError('subcategoriaId')}">
-                <select id="mov-subcategoria" v-model="form.subcategoriaId">
-                  <option v-if="!subcategorias.length" value="">Sin subcategorías</option>
-                  <option v-for="s in subcategorias" :key="s.value" :value="s.value">{{ s.label }}</option>
-                </select>
-              </div>
+              <MmSelect id="mov-subcategoria" v-model="form.subcategoriaId" :options="opcionesSubcategoria" :placeholder="subcategorias.length ? 'Elige una subcategoría' : 'Sin subcategorías'" :invalid="Boolean(verError('subcategoriaId'))" />
               <span v-if="verError('subcategoriaId')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("subcategoriaId") }}</span>
             </div>
           </div>
@@ -411,13 +423,7 @@ function alTeclear(e) {
           <div class="grid g2" style="gap: 16px">
             <div class="mm-field">
               <label for="mov-cuenta">{{ tipoActual.cuenta }}</label>
-              <div class="mm-input mm-select" :class="{'is-error': verError('entidadId')}">
-                <MmIcon i="wallet" :s="18" />
-                <select id="mov-cuenta" v-model="form.entidadId">
-                  <option v-if="!cuentas.length" value="">Aún no tienes cuentas</option>
-                  <option v-for="c in cuentas" :key="c.id" :value="c.id">{{ c.texto }}</option>
-                </select>
-              </div>
+              <MmSelect id="mov-cuenta" v-model="form.entidadId" :options="opcionesCuenta" icono="wallet" :placeholder="cuentas.length ? 'Elige una cuenta' : 'Aún no tienes cuentas'" :invalid="Boolean(verError('entidadId'))" />
               <span v-if="verError('entidadId')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("entidadId") }}</span>
             </div>
             <div class="mm-field">
@@ -439,7 +445,7 @@ function alTeclear(e) {
                 <div class="row gap-2" style="margin-top: 8px">
                   <div class="mm-ico cat sm" :style="{background: origen.color}"><MmIcon :i="origen.icono" :s="18" /></div>
                   <div class="grow" style="min-width: 0">
-                    <div class="mm-input mm-select campo-cuenta"><select id="mov-origen" v-model="form.origenId" :aria-invalid="Boolean(verError('origenId'))"><option v-for="c in cuentas" :key="c.id" :value="c.id">{{ c.nombre }}</option></select></div>
+                    <MmSelect id="mov-origen" v-model="form.origenId" :options="opcionesCuenta" variante="plano" placeholder="Elige una cuenta" :invalid="Boolean(verError('origenId'))" />
                     <div class="t-xs muted">{{ origen.detalle }}</div>
                   </div>
                 </div>
@@ -460,7 +466,7 @@ function alTeclear(e) {
                 <div class="row gap-2" style="margin-top: 8px">
                   <div class="mm-ico cat sm" :style="{background: destino.color}"><MmIcon :i="destino.icono" :s="18" /></div>
                   <div class="grow" style="min-width: 0">
-                    <div class="mm-input mm-select campo-cuenta"><select id="mov-destino" v-model="form.destinoId" :aria-invalid="Boolean(verError('destinoId'))"><option v-for="c in cuentas" :key="c.id" :value="c.id">{{ c.nombre }}</option></select></div>
+                    <MmSelect id="mov-destino" v-model="form.destinoId" :options="opcionesCuenta" variante="plano" placeholder="Elige una cuenta" :invalid="Boolean(verError('destinoId'))" />
                     <div class="t-xs muted">{{ destino.detalle }}</div>
                   </div>
                 </div>

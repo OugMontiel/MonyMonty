@@ -146,7 +146,7 @@ const rutas = {
   "POST user": () => ({message: "Usuario creado (demo)"}),
   "GET user/me": () => usuario,
 
-  "GET divisa": () => ({data: [{value: "COP", label: "Peso colombiano"}, {value: "USD", label: "Dólar"}, {value: "EUR", label: "Euro"}, {value: "MXN", label: "Peso mexicano"}]}),
+  "GET divisa": () => ({data: [{value: "COP", label: "FIAT - COP - Peso colombiano"}, {value: "USD", label: "FIAT - USD - Dólar estadounidense"}, {value: "EUR", label: "FIAT - EUR - Euro"}, {value: "MXN", label: "FIAT - MXN - Peso mexicano"}]}),
   "GET categoria": () => ({
     data: categorias.map((c) => ({_id: c._id, value: c._id, label: c.categoria, isPrivate: false, subcategorias: c.subcategorias.map((s) => ({value: s._id, label: s.subcategoria}))})),
   }),
