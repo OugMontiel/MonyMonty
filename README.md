@@ -46,3 +46,7 @@ Para obtener más información sobre el proyecto, visita nuestras redes sociales
         <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" width="32" height="32" />
     </a>
 </p>
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).

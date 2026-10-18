@@ -93,7 +93,7 @@ export function useAuth() {
   async function verificacionTocken({token}) {
     loadingStore.start("auth");
     try {
-      const response = await axios.get(`${API_URL}auth/checkToken?token=${token}`, {
+      const response = await axios.get(`${API_URL}auth/checkToken?token=${encodeURIComponent(token)}`, {
         withCredentials: true,
       });
 
