@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+.github
+
+# Docker
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Dependencias
+node_modules
+vendor
+__pycache__
+*.pyc
+
+# Entornos
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Builds locales
+dist
+build
