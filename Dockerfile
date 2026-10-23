@@ -11,9 +11,13 @@ RUN npm ci --prefer-offline --no-audit
 
 # Compilación del código fuente recibiendo la URL de la API dinámicamente
 COPY . .
+ARG MODE=production
 ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-RUN npm run build
+RUN if [ -n "$VITE_API_URL" ]; then \
+      VITE_API_URL="$VITE_API_URL" npm run build -- --mode "$MODE"; \
+    else \
+      unset VITE_API_URL && npm run build -- --mode "$MODE"; \
+    fi
 
 # ==========================================
 # Etapa 2: Producción (Nginx Hardened)
