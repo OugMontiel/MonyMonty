@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+      secrets:
+        - node_auth_token
       args:
         VITE_API_URL: ${VITE_API_URL}
     env_file:
@@ -67,6 +69,10 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+secrets:
+  node_auth_token:
+    environment: NODE_AUTH_TOKEN
 
 networks:
   proxy:
