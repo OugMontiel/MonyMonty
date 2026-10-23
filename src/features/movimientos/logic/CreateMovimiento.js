@@ -1,13 +1,16 @@
 import {ref} from "vue";
 import axios from "axios";
-import {useGlobalState} from "@/composables/useGlobalState";
+
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
+import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useMovimientos() {
-  const loading = ref(false);
+  const loadingStore = useLoadingStore();
+  const dataStore = dataDashBoardStore();
+
   const error = ref(null);
-  const {triggerGlobalRefresh} = useGlobalState();
 
   /**
    * Crea un nuevo movimiento bancario.
@@ -15,20 +18,20 @@ export function useMovimientos() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createMovimiento(data) {
-    loading.value = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}movimiento/`, data, {
         withCredentials: true,
       });
-      triggerGlobalRefresh();
+      dataStore.fetchAll();
       return response.data;
     } catch (err) {
       console.error("Error creando movimiento:", err);
       error.value = err.response?.data?.message || "Error al crear el movimiento";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -38,20 +41,20 @@ export function useMovimientos() {
    * @param {Object} data - Los nuevos datos del movimiento.
    */
   async function updateMovimiento(id, data) {
-    loading.value = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.put(`${API_URL}movimiento/${id}`, data, {
         withCredentials: true,
       });
-      triggerGlobalRefresh();
+      dataStore.fetchAll();
       return response.data;
     } catch (err) {
       console.error("Error actualizando movimiento:", err);
       error.value = err.response?.data?.message || "Error al actualizar el movimiento";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -60,20 +63,20 @@ export function useMovimientos() {
    * @param {string} id - El ID del movimiento.
    */
   async function deleteMovimiento(id) {
-    loading.value = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.delete(`${API_URL}movimiento/${id}`, {
         withCredentials: true,
       });
-      triggerGlobalRefresh();
+      dataStore.fetchAll();
       return response.data;
     } catch (err) {
       console.error("Error eliminando movimiento:", err);
       error.value = err.response?.data?.message || "Error al eliminar el movimiento";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -83,7 +86,7 @@ export function useMovimientos() {
    * @returns {Promise<Object>} - Los datos del movimiento.
    */
   async function getMovimiento(id) {
-    loading.value = true;
+    loadingStore.start("createMovimiento");
     error.value = null;
     try {
       const response = await axios.get(`${API_URL}movimiento/${id}`, {
@@ -95,7 +98,7 @@ export function useMovimientos() {
       error.value = err.response?.data?.message || "Error al obtener el movimiento";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createMovimiento");
     }
   }
 
@@ -104,7 +107,6 @@ export function useMovimientos() {
     createMovimiento,
     updateMovimiento,
     deleteMovimiento,
-    loading,
     error,
   };
 }
