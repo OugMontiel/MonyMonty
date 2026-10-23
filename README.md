@@ -50,3 +50,20 @@ Para obtener más información sobre el proyecto, visita nuestras redes sociales
 ## License
 
 This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+
+## Desarrollo: tokens del sistema de diseño
+
+Los colores, la tipografía, los espacios, las formas, el movimiento y las sombras salen del paquete
+[`@ougmontiel/monymonty-tokens`](https://github.com/OugMontiel/MonyMontyUI) (repo MonyMontyUI), que se publica en GitHub Packages.
+`src/main.js` carga sus variables CSS en `:root` y `src/assets/mm/mm.css` les da los nombres cortos que usa la interfaz
+(`--brand`, `--surface`, `--space-4`…). Para cambiar un valor se edita el paquete, no `mm.css`.
+
+Para instalar hace falta un token de GitHub (classic) con permiso `read:packages`:
+
+```bash
+export NODE_AUTH_TOKEN=ghp_xxx   # PowerShell: $env:NODE_AUTH_TOKEN = "ghp_xxx"
+npm install
+```
+
+El `.npmrc` del proyecto ya apunta el scope `@ougmontiel` a GitHub Packages. Para construir la imagen de Docker el token se pasa como
+secreto de build: `docker compose build` lo toma de la variable `NODE_AUTH_TOKEN`.

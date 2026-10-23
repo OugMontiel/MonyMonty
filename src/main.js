@@ -1,5 +1,7 @@
 import {createApp} from "vue";
 import App from "./App.vue";
+// Tokens del sistema de diseño (variables CSS en :root)
+import "@ougmontiel/monymonty-tokens/build/web/MonyMontyStyle.css";
 
 // .use
 import router from "./router";

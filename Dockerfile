@@ -6,8 +6,11 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Optimización de caché de Docker para dependencias
-COPY package*.json ./
-RUN npm ci --prefer-offline --no-audit
+COPY package*.json .npmrc ./
+# @ougmontiel/monymonty-tokens vive en GitHub Packages: el token entra como secreto de build
+# (docker build --secret id=node_auth_token,env=NODE_AUTH_TOKEN) y no queda en ninguna capa de la imagen.
+RUN --mount=type=secret,id=node_auth_token \
+    NODE_AUTH_TOKEN="$(cat /run/secrets/node_auth_token)" npm ci --prefer-offline --no-audit
 
 # Compilación del código fuente recibiendo la URL de la API dinámicamente
 COPY . .
