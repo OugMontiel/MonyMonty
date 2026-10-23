@@ -11,6 +11,8 @@ import elTablero from "../features/dashBoard/views/elTablero.vue";
 
 //rutas base 
 import Dashboard from "../features/dashBoard/views/Dashboard.vue";
+import GastosLayout from "../features/gastos/views/GastosLayout.vue";
+import GastosFijos from "../features/gastos/views/GastosFijos.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +69,11 @@ const router = createRouter({
           path: "",
           name: "DashboardView",
           component: Dashboard,
+        },
+        {
+          path: "/gastos",
+          component: GastosLayout,
+          children: [{path: "fijos", name: "GastosFijos", component: GastosFijos}],
         },
       ],
     },
