@@ -11,6 +11,7 @@ import elTablero from "../features/dashBoard/views/elTablero.vue";
 
 //rutas base 
 import Dashboard from "../features/dashBoard/views/Dashboard.vue";
+import MovimientosView from "../features/movimientos/views/MovimientosView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,7 @@ const router = createRouter({
           name: "DashboardView",
           component: Dashboard,
         },
+        {path: "/movimientos", name: "Movimientos", component: MovimientosView},
       ],
     },
   ],
