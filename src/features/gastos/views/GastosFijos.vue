@@ -11,13 +11,15 @@ import {useAppUi} from "@/composables/useAppUi.js";
 import {moneda, compacto, iconoDe, nombreMes, nombreMesCorto} from "@/features/dashBoard/logic/formato.js";
 import {useReportes} from "@/features/reportes/logic/useReportes.js";
 import GastosTabs from "../components/GastosTabs.vue";
+import NuevoGastoFijo from "../components/NuevoGastoFijo.vue";
 import {detectarFijos, estadoDeCobro, resumenDeFijos, repartoDeFijos} from "../logic/fijos.js";
 
-const {abrirMovimiento, nuevoMovimiento} = useAppUi();
+const {abrirMovimiento} = useAppUi();
 const {movimientos, divisa, cargando, error, hoy, cargar} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 const soloSuscripciones = ref(false);
+const nuevoAbierto = ref(false);
 const fijos = computed(() => detectarFijos(movimientos.value, hoy));
 const r = computed(() => resumenDeFijos(fijos.value, movimientos.value, hoy));
 const reparto = computed(() => repartoDeFijos(fijos.value));
@@ -51,7 +53,7 @@ const tonoPct = computed(() => (r.value.pctIngresos !== null && r.value.pctIngre
 
 <template>
   <div class="mm-page">
-    <MmTopbar migas="Mi dinero · Mis gastos" titulo="Fijos y suscripciones" :periodo="null" cta="Registrar gasto" />
+    <MmTopbar migas="Mi dinero · Mis gastos" titulo="Fijos y suscripciones" :periodo="null" cta="Nuevo gasto fijo" cta-personalizado @cta="nuevoAbierto = true" />
 
     <div class="mm-content" :aria-busy="cargando">
       <GastosTabs activa="fijos" :con-mes="false" />
@@ -67,8 +69,8 @@ const tonoPct = computed(() => (r.value.pctIngresos !== null && r.value.pctIngre
         <div class="mm-empty">
           <div class="art"><div class="mm-ico lg info mm-float" style="width: 56px; height: 56px; border-radius: 18px"><MmIcon i="calendar" :s="26" /></div></div>
           <h3 class="t-h3">Aún no tienes gastos fijos</h3>
-          <p class="t-sm muted" style="max-width: 380px">Al registrar un gasto que se repite cada mes (arriendo, servicios, una suscripción) activa “Se repite” y aparecerá aquí con su calendario de cobros.</p>
-          <button type="button" class="mm-btn primary" @click="nuevoMovimiento"><MmIcon i="add" :s="18" />Registrar un gasto</button>
+          <p class="t-sm muted" style="max-width: 380px">Agrega el arriendo, los servicios o una suscripción y aparecerán aquí con su calendario de cobros. También puedes activar “Se repite” al registrar un gasto.</p>
+          <button type="button" class="mm-btn primary" @click="nuevoAbierto = true"><MmIcon i="add" :s="18" />Nuevo gasto fijo</button>
         </div>
       </div>
 
@@ -157,6 +159,7 @@ const tonoPct = computed(() => (r.value.pctIngresos !== null && r.value.pctIngre
         </div>
       </template>
     </div>
+    <NuevoGastoFijo v-if="nuevoAbierto" @cerrar="nuevoAbierto = false" />
   </div>
 </template>
 
