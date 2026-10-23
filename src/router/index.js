@@ -1,10 +1,13 @@
-import {createRouter, createWebHistory} from "vue-router";
+﻿import {createRouter, createWebHistory} from "vue-router";
 import {useAuth} from "../features/auth/logic/useAuth.js";
 
 import login from "../features/auth/views/LoginView.vue";
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
 import CambioDeClave from "../features/auth/views/CambioDeClave.vue";
+
+// configuraciÃ³n inicial tras el registro
+import OnboardingView from "../features/onboarding/views/OnboardingView.vue";
 
 // layaut 
 import elTablero from "../features/dashBoard/views/elTablero.vue";
@@ -16,7 +19,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     /**
-     *  Rutas públicas
+     *  Rutas pÃºblicas
      *
      * */
     {
@@ -42,6 +45,21 @@ const router = createRouter({
       name: "resetPassword",
       component: CambioDeClave,
       meta: {requiresAuth: false},
+    },
+
+    /**
+     *  ConfiguraciÃ³n inicial (requiere sesiÃ³n: crea la cuenta y las categorÃ­as del usuario)
+     *
+     * */
+    {
+      path: "/bienvenida",
+      redirect: "/bienvenida/divisa",
+    },
+    {
+      path: "/bienvenida/:paso(divisa|cuenta|categorias|listo)",
+      name: "Onboarding",
+      component: OnboardingView,
+      meta: {requiresAuth: true},
     },
 
     // Ruta 404
@@ -73,11 +91,11 @@ const router = createRouter({
   ],
 });
 
-// Guard de navegación optimizado
+// Guard de navegaciÃ³n optimizado
 router.beforeEach(async (to, from) => {
   const {checkAuth} = useAuth();
 
-  // Verificar si la ruta necesita autenticación (por defeczto sí)
+  // Verificar si la ruta necesita autenticaciÃ³n (por defeczto sÃ­)
   const requiresAuth = to.meta.requiresAuth !== false;
   const authValid = await checkAuth();
 
@@ -91,3 +109,5 @@ router.beforeEach(async (to, from) => {
 });
 
 export default router;
+
+

@@ -1,5 +1,6 @@
 import {createApp} from "vue";
 import App from "./App.vue";
+import "./assets/mm/mm.css";
 
 // .use
 import router from "./router";
@@ -50,7 +51,6 @@ import Checkbox from "primevue/checkbox";
 
 const app = createApp(App);
 
-app.use(router);
 app.use(PrimeVue, {
   ripple: true,
   inputStyle: "outlined",
@@ -106,4 +106,18 @@ app.component("Popover", Popover);
 
 app.directive("tooltip", Tooltip);
 
-app.mount("#app");
+// El router hace su primera navegación (y verifica la sesión) al instalarse, así que va al final:
+// en modo demo (solo desarrollo) primero se simula la API.
+const arrancar = () => {
+  app.use(router);
+  app.mount("#app");
+};
+
+if (import.meta.env.DEV && import.meta.env.VITE_MODO_DEMO === "true") {
+  import("./demo/modoDemo.js").then((m) => {
+    m.instalarDemo();
+    arrancar();
+  });
+} else {
+  arrancar();
+}

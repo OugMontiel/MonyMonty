@@ -8,364 +8,436 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import { ref } from "vue";
-import { useToast } from "primevue/usetoast";
-import { useRouter } from "vue-router";
-import { zodResolver } from "@primevue/forms/resolvers/zod";
-import { z } from "zod";
+import {ref, reactive, computed} from "vue";
+import {useRouter} from "vue-router";
+import {useToast} from "primevue/usetoast";
+import {z} from "zod";
 
-import { useAuth } from "../logic/useAuth.js";
+import {useAuth} from "../logic/useAuth.js";
+import {useOnboarding} from "@/features/onboarding/logic/useOnboarding.js";
+import {
+  emailSchema,
+  passwordSchema,
+  nombreSchema,
+  validar,
+  fortalezaClave,
+  parseFecha,
+  mascaraFecha,
+  fechaMinimaMayorDeEdad,
+} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
+import AuthSplit from "../components/AuthSplit.vue";
 import FooterAuth from "../components/FooterAuth.vue";
-
-import TerminosCondicionesDrawer from "@/features/auth/components/modales/terminosCondiciones.vue";
-import PoliticaPrivacidadDrawer from "@/features/auth/components/modales/politicaPrivacidad.vue";
+import MmIcon from "@/components/mm/MmIcon.vue";
+import TerminosCondicionesDrawer from "../components/modales/terminosCondiciones.vue";
+import PoliticaPrivacidadDrawer from "../components/modales/politicaPrivacidad.vue";
 
 const toast = useToast();
 const router = useRouter();
-const { CrearUsuario, loading } = useAuth();
+const {CrearUsuario, login, loading} = useAuth();
+const onboarding = useOnboarding();
 
-// Constantes
-const submitted = ref(false);
-const planes = ref([
-  { label: "Free", value: "Free" },
-  { label: "Basic", value: "Basic" },
-  { label: "Premium", value: "Premium" },
-]);
-const generos = ref([
-  { label: "Femenino", value: "Femenino" },
-  { label: "Masculino", value: "Masculino" },
-]);
+const TOTAL_PASOS = 3;
+const paso = ref(1);
 
-// variables para los selects
-const fechaMinima = new Date();
-fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
+// Valores que acepta la API hoy (la validación anterior solo permitía estos dos)
+const GENEROS = ["Femenino", "Masculino"];
+const PLANES = [
+  {
+    id: "Free",
+    icono: "wallet",
+    tono: "",
+    precio: "$ 0",
+    resumen: "Para ordenar lo básico y crear el hábito.",
+    items: ["Movimientos ilimitados", "Hasta 3 cuentas", "Tablero y categorías", "Lecciones nivel 1"],
+  },
+  {
+    id: "Basic",
+    icono: "rocket",
+    tono: "brand",
+    recomendado: true,
+    resumen: "Para planear el mes y salir de deudas.",
+    items: ["Todo lo de Free", "Cuentas ilimitadas", "Presupuesto y deudas", "Importar extractos CSV", "3 metas de ahorro"],
+  },
+  {
+    id: "Premium",
+    icono: "sparkles",
+    tono: "balance",
+    resumen: "Para crecer con acompañamiento experto.",
+    items: ["Todo lo de Basic", "Metas ilimitadas", "Reportes en PDF", "Asesoría con mentores", "Todas las lecciones"],
+  },
+];
 
-// Esquema de validación con Zod
-const resolver = zodResolver(
-  z
-    .object({
-      nombre: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().trim().min(1, { message: "El nombre es obligatorio" }).min(3, { message: "Debe tener al menos 3 caracteres" })
-      ),
-      apellido: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().trim().min(1, { message: "El apellido es obligatorio" }).min(3, { message: "Debe tener al menos 3 caracteres" })
+const form = reactive({
+  nombre: "",
+  apellido: "",
+  fechaTexto: "",
+  genero: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  acceptLegal: false,
+  plan: "Free",
+});
 
-      ),
-      email: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().trim().min(1, { message: "El email es obligatorio" }).email({ message: "Formato de email inválido" })
+const verClave = ref(false);
+const intentado = reactive({1: false, 2: false});
+const errorServidor = ref("");
+const showCondiciones = ref(false);
+const showPrivacidad = ref(false);
 
-      ),
-      password: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string()
-          .min(8, { message: "Debe tener al menos 8 caracteres" })
-          .refine((v) => /[A-Z]/.test(v), { message: "Debe contener al menos una mayúscula" })
-          .refine((v) => /\d/.test(v), { message: "Debe contener al menos un número" })
-          .refine((v) => /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(v), {
-            message: "Debe contener al menos un símbolo",
-          })
-      ),
-      confirmPassword: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().min(1, { message: "Confirma tu contraseña" })
-      ),
-      fechaNacimiento: z
-        .date({
-          required_error: "La fecha es obligatoria",
-          invalid_type_error: "Selecciona una fecha válida",
-        })
-        .nullable()
-        .refine((val) => val !== null, { message: "La fecha es obligatoria" })
-        .refine(
-          (val) => val === null || val <= fechaMinima, // si es null ya lo atrapa el refine anterior
-          { message: "Debes ser mayor de 18 años" }
-        ),
-      genero: z
-        .object({
-          label: z.string(),
-          value: z.string(),
-        })
-        .nullable()
-        .refine((val) => val !== null, { message: "Debes seleccionar un Genero" })
-        .refine(
-          (val) => val === null || ["Femenino", "Masculino"].includes(val.value),
-          { message: "Opción no válida" }
-        ),
-      plan: z
-        .object({
-          label: z.string(),
-          value: z.string(),
-        })
-        .nullable()
-        .refine((val) => val !== null, { message: "Debes seleccionar un plan" })
-        .refine(
-          (val) => val === null || ["Free", "Basic", "Premium"].includes(val.value),
-          { message: "Opción no válida" }
+// ---------- Validación por paso ----------
+const esquemaPaso1 = z.object({
+  nombre: nombreSchema("nombre"),
+  apellido: nombreSchema("apellido"),
+  fecha: z.date({message: "Escribe tu fecha con el formato DD/MM/AAAA"}).refine((f) => f <= fechaMinimaMayorDeEdad(), {message: "Debes ser mayor de 18 años"}),
+  genero: z.string().min(1, {message: "Debes seleccionar un género"}).refine((g) => GENEROS.includes(g), {message: "Opción no válida"}),
+});
 
-        ),
+const esquemaPaso2 = z
+  .object({
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, {message: "Confirma tu contraseña"}),
+    acceptLegal: z.literal(true, {message: "Debes aceptar los términos y la política de privacidad para continuar"}),
+  })
+  .refine((d) => d.password === d.confirmPassword, {message: "Las contraseñas no coinciden", path: ["confirmPassword"]});
 
-      acceptLegal: z.preprocess(
-        (val) => (val === null || val === undefined ? false : val), 
-        z.boolean({ required_error: "Debes aceptar los términos" }).refine((val) => val === true, {
-          message: "Debes aceptar los términos y la política de privacidad para continuar",
-        })
-      ),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Las contraseñas no coinciden",
-      path: ["confirmPassword"],
-    })
-);
+const erroresPaso1 = computed(() => validar(esquemaPaso1, {...form, fecha: parseFecha(form.fechaTexto)}).errores);
+const erroresPaso2 = computed(() => validar(esquemaPaso2, form).errores);
 
-// === SUBMIT DEL FORM ===
-const onFormSubmit = async ({ valid, values }) => {
-  submitted.value = true;
+// Los errores solo aparecen cuando la persona ya intentó avanzar, para no gritar desde la primera letra
+const verError1 = (campo) => (intentado[1] ? erroresPaso1.value[campo] : "");
+const verError2 = (campo) => (intentado[2] ? erroresPaso2.value[campo] : "");
 
-  if (!valid) return;
+const fuerza = computed(() => fortalezaClave(form.password));
+const coinciden = computed(() => form.confirmPassword.length > 0 && form.password === form.confirmPassword);
+const colorFuerza = computed(() => `var(--${fuerza.value.tono})`);
+
+function alEscribirFecha(e) {
+  form.fechaTexto = mascaraFecha(e.target.value);
+  e.target.value = form.fechaTexto;
+}
+
+function siguiente() {
+  errorServidor.value = "";
+  const pasoActual = paso.value;
+  intentado[pasoActual] = true;
+
+  const errores = pasoActual === 1 ? erroresPaso1.value : erroresPaso2.value;
+  if (Object.keys(errores).length) return;
+
+  paso.value = pasoActual + 1;
+}
+
+function atras() {
+  errorServidor.value = "";
+  paso.value -= 1;
+}
+
+// ---------- Envío (POST user, igual que antes) ----------
+async function crearCuenta() {
+  errorServidor.value = "";
 
   try {
     const result = await CrearUsuario({
-      nombre: values.nombre.trim(),
-      apellido: values.apellido.trim(),
-      fechaNacimiento: values.fechaNacimiento,
-      genero: values.genero.value,
-      email: values.email.trim(),
-      password: values.password,
-      planId: values.plan.value.toLowerCase(),
-      acceptLegal: values.acceptLegal,
+      nombre: form.nombre.trim(),
+      apellido: form.apellido.trim(),
+      fechaNacimiento: parseFecha(form.fechaTexto),
+      genero: form.genero,
+      email: form.email.trim(),
+      password: form.password,
+      planId: form.plan.toLowerCase(),
+      acceptLegal: form.acceptLegal,
     });
 
-    if (result.success) {
+    if (!result?.success) {
+      errorServidor.value = result?.error || "Error en Crear Cuenta";
+      return;
+    }
+
+    // La API no deja la sesión abierta al registrar: se inicia con las mismas credenciales
+    // para que la configuración inicial pueda crear la cuenta y las categorías.
+    onboarding.reiniciar();
+    onboarding.estado.nombre = form.nombre.trim();
+
+    const sesion = await login({email: form.email.trim(), password: form.password});
+    if (sesion?.success) {
+      router.push("/bienvenida/divisa");
+    } else {
       toast.add({
         severity: "success",
         summary: "Éxito",
-        detail: result.message || "Se ha creado el Usuario.",
+        detail: result.message || "Se ha creado el Usuario. Inicia sesión para continuar.",
         life: 4500,
       });
-      irALogin();
-    } else {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: result.error || "Error en Crear Cuenta",
-        life: 4500,
-      });
+      router.push("/");
     }
   } catch {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo.",
-      life: 4000,
-    });
+    errorServidor.value = "No pudimos conectar con el servidor. Inténtalo de nuevo.";
   }
-};
-
-// Redirecciones
-
-const irALogin = () => router.push("/");
-
-// Controles de visibilidad (locales a esta vista)
-const showPrivacidad = ref(false);
-const showCondiciones = ref(false);
-
+}
 </script>
 
 <template>
-  <div class="form-container p-4">
-    <div class="flex justify-center items-center flex-1">
-      <div class="card">
-        <div class="logo-section">
-          <img :src="logo" alt="Icono de la aplicación" class="logo-icon" />
-        </div>
-        <div class="p-1">
-          <div class="flex justify-center">
-            <Message severity="contrast" variant="simple" size="large"> Crea tu cuenta </Message>
-          </div>
-        </div>
-        <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']"
-          class="flex flex-col justify-around gap-4">
-          <div class="flex gap-4">
-            <FormField v-slot="$field" name="nombre" class="flex-1">
-              <FloatLabel variant="on" class="w-full">
-                <InputText id="nombre" v-bind="$field.props" class="w-full" :disabled="loading" />
-                <label for="nombre">Nombre</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-            <FormField v-slot="$field" name="apellido" class="flex-1">
-              <FloatLabel variant="on" class="w-full">
-                <InputText id="apellido" v-bind="$field.props" class="w-full" :disabled="loading" />
-                <label for="apellido">Apellido</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-          </div>
-
-          <FormField v-slot="$field" name="fechaNacimiento" class="w-full">
-            <FloatLabel variant="on" class="w-full">
-              <DatePicker id="fechaNacimiento" v-bind="$field.props" :max-date="new Date()" date-format="yy-mm-dd"
-                show-icon class="w-full" input-class="w-full" :disabled="loading" />
-              <label for="fechaNacimiento">Fecha de nacimiento</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-
-          <div class="flex gap-4">
-            <FormField v-slot="$field" name="plan" class="flex-1">
-              <FloatLabel variant="on" class="w-full">
-                <Select v-bind="$field.props" :options="planes" optionLabel="label" :disabled="loading"
-                  class="w-full" />
-                <label for="plan">Selecciona un plan</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-            <FormField v-slot="$field" name="genero" class="flex-1">
-              <FloatLabel variant="on" class="w-full">
-                <Select v-bind="$field.props" :options="generos" optionLabel="label" :disabled="loading"
-                  class="w-full" />
-                <label for="genero">Selecciona un género</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-          </div>
-
-          <FormField v-slot="$field" name="email" class="w-full">
-            <FloatLabel variant="on" class="w-full">
-              <InputText id="email" type="email" v-bind="$field.props" class="w-full" :disabled="loading" />
-              <label for="email">Correo electrónico</label>
-            </FloatLabel>
-            <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-              $field.error?.message
-            }}</Message>
-          </FormField>
-
-          <div class="flex gap-4">
-            <FormField v-slot="$field" name="password" class="flex-1">
-              <FloatLabel variant="on" class="w-full">
-                <Password id="password" v-bind="$field.props" :feedback="false" toggleMask class="w-full"
-                  inputClass="w-full" :disabled="loading" @blur="$field.onBlur" @input="$field.onChange" />
-                <label for="password">Contraseña</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-            <FormField v-slot="$field" name="confirmPassword" class="flex-1">
-              <FloatLabel variant="on" class="w-full">
-                <Password id="confirmPassword" v-bind="$field.props" :feedback="false" toggleMask class="w-full"
-                  inputClass="w-full" :disabled="loading" @blur="$field.onBlur" @input="$field.onChange" />
-                <label for="confirmPassword">Confirma tu contraseña</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
-                $field.error?.message
-              }}</Message>
-            </FormField>
-          </div>
-
-          <FormField v-slot="$field" name="acceptLegal" class="mt-2">
-            <div class="flex items-start gap-2">
-              <Checkbox inputId="acceptLegal" :binary="true" v-bind="$field.props" :disabled="loading"
-                :invalid="submitted && $field?.invalid" />
-              <label for="acceptLegal" class="text-sm text-gray-600 dark:text-gray-400 leading-snug">
-                Acepto los
-                <button type="button" class="text-primary underline hover:text-primary-300 cursor-pointer transition"
-                  @click="showCondiciones = true">
-                  Términos y Condiciones
-                </button>
-                <TerminosCondicionesDrawer v-model:visible="showCondiciones" />
-                y la
-                <button type="button" class="text-primary underline hover:text-primary-700 cursor-pointer transition"
-                  @click="showPrivacidad = true">
-                  Política de Privacidad
-                </button>
-                <PoliticaPrivacidadDrawer v-model:visible="showPrivacidad" />
-                de MonyMonty.
-              </label>
-              <br>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
-                {{ $field.error?.message }}
-              </Message>
-            </div>
-          </FormField>
-
-          <Button type="submit" label="Registrarte" severity="primary" :loading="loading"></Button>
-        </Form>
-
-        <Button label="¿Ya tienes una cuenta?" link @click="irALogin" :disabled="loading"></Button>
+  <!-- Pasos 1 y 2: formulario + panel informativo -->
+  <AuthSplit v-if="paso < 3" :info-start="paso === 1 ? 2 : 3" :ancho="440">
+    <template #cabecera>
+      <div class="row between" style="max-width: 440px; width: 100%">
+        <img :src="logo" alt="MonyMonty" style="height: 40px; width: auto" />
+        <router-link to="/" class="t-sm">Ya tengo cuenta</router-link>
       </div>
+    </template>
+
+    <div class="col gap-3">
+      <div class="row between t-xs">
+        <b>Paso {{ paso }} de {{ TOTAL_PASOS }} · {{ paso === 1 ? "Tus datos" : "Acceso" }}</b>
+        <span class="muted">Siguiente: {{ paso === 1 ? "acceso" : "plan" }}</span>
+      </div>
+      <div class="mm-steps"><i :class="paso > 1 ? 'done' : 'on'"></i><i :class="paso === 2 ? 'on' : ''"></i><i></i></div>
     </div>
 
-    <FooterAuth />
+    <!-- Paso 1 · Tus datos -->
+    <form v-if="paso === 1" class="col gap-6" novalidate @submit.prevent="siguiente">
+      <div class="col gap-1">
+        <h1 class="t-h1">Cuéntanos de ti</h1>
+        <p class="muted">Con esto personalizamos consejos y lecciones. Nada se comparte.</p>
+      </div>
+
+      <div class="grid g2" style="gap: 16px">
+        <div class="mm-field">
+          <label for="reg-nombre">Nombre</label>
+          <div class="mm-input" :class="{'is-error': verError1('nombre')}">
+            <input id="reg-nombre" v-model="form.nombre" autocomplete="given-name" :aria-invalid="Boolean(verError1('nombre'))" />
+          </div>
+          <span v-if="verError1('nombre')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError1("nombre") }}</span>
+        </div>
+        <div class="mm-field">
+          <label for="reg-apellido">Apellido</label>
+          <div class="mm-input" :class="{'is-error': verError1('apellido')}">
+            <input id="reg-apellido" v-model="form.apellido" autocomplete="family-name" placeholder="Tu apellido" :aria-invalid="Boolean(verError1('apellido'))" />
+          </div>
+          <span v-if="verError1('apellido')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError1("apellido") }}</span>
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label for="reg-fecha">Fecha de nacimiento</label>
+        <div class="mm-input" :class="{'is-error': verError1('fecha')}">
+          <MmIcon i="calendar" :s="18" />
+          <input
+            id="reg-fecha"
+            :value="form.fechaTexto"
+            inputmode="numeric"
+            autocomplete="bday"
+            placeholder="DD/MM/AAAA"
+            :aria-invalid="Boolean(verError1('fecha'))"
+            @input="alEscribirFecha"
+          />
+        </div>
+        <span v-if="verError1('fecha')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError1("fecha") }}</span>
+        <span v-else class="mm-help">Debes ser mayor de edad para usar MonyMonty.</span>
+      </div>
+
+      <div class="mm-field" role="group" aria-labelledby="reg-genero">
+        <span id="reg-genero" class="mm-flabel">Género</span>
+        <div class="row" style="flex-wrap: wrap; gap: 8px">
+          <button
+            v-for="g in GENEROS"
+            :key="g"
+            type="button"
+            class="mm-chip"
+            :class="{'is-on': form.genero === g}"
+            :aria-pressed="form.genero === g"
+            @click="form.genero = g"
+          >
+            {{ g }}
+          </button>
+        </div>
+        <span v-if="verError1('genero')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError1("genero") }}</span>
+      </div>
+
+      <div class="row gap-3">
+        <router-link to="/" class="mm-btn lg ghost"><MmIcon i="arrow-back" :s="18" />Volver</router-link>
+        <button type="submit" class="mm-btn primary lg grow">Continuar<MmIcon i="arrow-forward" :s="18" /></button>
+      </div>
+    </form>
+
+    <!-- Paso 2 · Acceso -->
+    <form v-else class="col gap-5" style="gap: 20px" novalidate @submit.prevent="siguiente">
+      <div class="col gap-1">
+        <h1 class="t-h1">Crea tu acceso{{ form.nombre.trim() ? `, ${form.nombre.trim()}` : "" }}</h1>
+        <p class="muted">Usarás este correo para entrar y recuperar tu cuenta.</p>
+      </div>
+
+      <div class="mm-field">
+        <label for="reg-email">Correo electrónico</label>
+        <div class="mm-input" :class="{'is-error': verError2('email')}">
+          <MmIcon i="mail" :s="18" />
+          <input id="reg-email" v-model="form.email" type="email" autocomplete="email" placeholder="tu@correo.co" :aria-invalid="Boolean(verError2('email'))" />
+          <span v-if="form.email && !erroresPaso2.email" class="income"><MmIcon i="checkmark-circle" :s="18" /></span>
+        </div>
+        <span v-if="verError2('email')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError2("email") }}</span>
+      </div>
+
+      <div class="mm-field">
+        <label for="reg-password">Contraseña</label>
+        <div class="mm-input" :class="{'is-error': verError2('password')}">
+          <MmIcon i="lock-closed" :s="18" />
+          <input
+            id="reg-password"
+            v-model="form.password"
+            :type="verClave ? 'text' : 'password'"
+            autocomplete="new-password"
+            :aria-invalid="Boolean(verError2('password'))"
+          />
+          <button
+            type="button"
+            class="mm-btn icon sm ghost"
+            :aria-label="verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            style="margin-right: -8px"
+            @click="verClave = !verClave"
+          >
+            <MmIcon :i="verClave ? 'eye-off' : 'eye'" :s="18" />
+          </button>
+        </div>
+        <div class="mm-strength" style="margin-top: 4px" aria-hidden="true">
+          <i v-for="n in 4" :key="n" :class="{on: n <= fuerza.nivel}" :style="n <= fuerza.nivel ? {background: colorFuerza} : null"></i>
+        </div>
+        <div class="row between t-xs">
+          <b :style="{color: form.password ? colorFuerza : 'var(--ink-muted)'}">{{ form.password ? fuerza.etiqueta : "Escribe una contraseña" }}</b>
+          <span class="muted">Cumple las 4 reglas para continuar</span>
+        </div>
+        <div class="grid g2" style="gap: 6px 16px; margin-top: 4px">
+          <span v-for="r in fuerza.reglas" :key="r.texto" class="row gap-1 t-xs" :class="r.ok ? 'income' : 'muted'">
+            <MmIcon :i="r.ok ? 'checkmark-circle' : 'add-circle'" :s="14" />{{ r.texto }}
+          </span>
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label for="reg-confirm">Confirma la contraseña</label>
+        <div class="mm-input" :class="{'is-error': verError2('confirmPassword')}">
+          <MmIcon i="lock-closed" :s="18" />
+          <input
+            id="reg-confirm"
+            v-model="form.confirmPassword"
+            :type="verClave ? 'text' : 'password'"
+            autocomplete="new-password"
+            placeholder="Repite tu contraseña"
+            :aria-invalid="Boolean(verError2('confirmPassword'))"
+          />
+          <span v-if="coinciden" class="income"><MmIcon i="checkmark-circle" :s="18" /></span>
+        </div>
+        <span v-if="verError2('confirmPassword')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError2("confirmPassword") }}</span>
+      </div>
+
+      <div class="col gap-1">
+        <div class="row t-sm" style="align-items: flex-start">
+          <input id="reg-legal" v-model="form.acceptLegal" type="checkbox" class="mm-sr-only" />
+          <label for="reg-legal" class="mm-check-label" :class="{'is-on': form.acceptLegal}">
+            <span class="mm-check" :class="{'is-on': form.acceptLegal}" style="margin-top: 1px">
+              <MmIcon v-if="form.acceptLegal" i="checkmark" :s="14" />
+            </span>
+          </label>
+          <span>
+            Acepto los
+            <a href="#" @click.prevent="showCondiciones = true">Términos y condiciones</a>
+            y la
+            <a href="#" @click.prevent="showPrivacidad = true">Política de privacidad</a>.
+          </span>
+        </div>
+        <span v-if="verError2('acceptLegal')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError2("acceptLegal") }}</span>
+        <TerminosCondicionesDrawer v-model="showCondiciones" con-aceptar @aceptar="form.acceptLegal = true" />
+        <PoliticaPrivacidadDrawer v-model="showPrivacidad" />
+      </div>
+
+      <div class="row gap-3">
+        <button type="button" class="mm-btn lg ghost" @click="atras"><MmIcon i="arrow-back" :s="18" />Atrás</button>
+        <button type="submit" class="mm-btn primary lg grow">Continuar<MmIcon i="arrow-forward" :s="18" /></button>
+      </div>
+    </form>
+  </AuthSplit>
+
+  <!-- Paso 3: plan, a pantalla completa -->
+  <div v-else class="mm-root" data-theme="light">
+    <div style="min-height: 100vh; padding: 32px 24px 48px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 28px">
+      <div class="row between" style="width: 100%; max-width: 1080px; flex-wrap: wrap; gap: 16px">
+        <img :src="logo" alt="MonyMonty" style="height: 40px; width: auto" />
+        <div class="col gap-1" style="width: 280px; max-width: 100%">
+          <div class="row between t-xs"><b>Paso 3 de 3 · Plan</b><span class="muted">Último paso</span></div>
+          <div class="mm-steps"><i class="done"></i><i class="done"></i><i class="on"></i></div>
+        </div>
+      </div>
+
+      <div class="col gap-2 mm-rise" style="text-align: center; align-items: center; max-width: 620px">
+        <h1 class="t-h1" style="font-size: 34px; line-height: 40px">Elige cómo quieres empezar</h1>
+        <p class="muted">Puedes cambiar de plan cuando quieras desde Configuración. Empezar en Free no tiene costo.</p>
+      </div>
+
+      <div v-if="errorServidor" class="mm-banner expense" role="alert" style="width: 100%; max-width: 1080px">
+        <MmIcon i="alert-circle" :s="18" /><span class="grow">{{ errorServidor }}</span>
+      </div>
+
+      <div role="radiogroup" aria-label="Plan" style="width: 100%; max-width: 1080px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+        <button
+          v-for="(p, k) in PLANES"
+          :key="p.id"
+          type="button"
+          role="radio"
+          :aria-checked="form.plan === p.id"
+          class="mm-plan mm-rise"
+          :class="{'is-on': form.plan === p.id}"
+          :style="{'--i': k + 1, textAlign: 'left', font: 'inherit', color: 'inherit'}"
+          @click="form.plan = p.id"
+        >
+          <span v-if="p.recomendado" class="mm-badge brand" style="position: absolute; top: -12px; left: 20px; box-shadow: var(--shadow-sm)">Recomendado</span>
+          <div class="row between">
+            <div class="mm-ico sm" :class="p.tono" :style="p.tono ? null : {background: 'var(--surface-2)'}"><MmIcon :i="p.icono" :s="18" /></div>
+            <span class="mm-radio" :class="{'is-on': form.plan === p.id}"></span>
+          </div>
+          <div class="t-h2" style="margin-top: 16px">{{ p.id }}</div>
+          <div v-if="p.precio" class="row gap-1" style="align-items: baseline; margin: 6px 0 4px">
+            <span class="t-amt-lg">{{ p.precio }}</span><span class="t-sm muted">/ mes</span>
+          </div>
+          <p class="t-sm muted" :style="p.precio ? null : {marginTop: '6px'}">{{ p.resumen }}</p>
+          <div class="divider"></div>
+          <div class="col gap-2 t-sm">
+            <span v-for="item in p.items" :key="item" class="row gap-2"><MmIcon i="checkmark" :s="16" />{{ item }}</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="row gap-3" style="width: 100%; max-width: 1080px; justify-content: flex-end">
+        <button type="button" class="mm-btn lg ghost" :disabled="loading" @click="atras"><MmIcon i="arrow-back" :s="18" />Atrás</button>
+        <button type="button" class="mm-btn primary lg" :class="{'is-loading': loading}" :disabled="loading" @click="crearCuenta">
+          Crear mi cuenta<MmIcon i="arrow-forward" :s="18" />
+        </button>
+      </div>
+
+      <FooterAuth />
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* ---Logo--- */
-
-.logo-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1em 0;
+/* Entrada de teclado accesible: el input real queda oculto y su label dibuja la casilla */
+.mm-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
-
-.logo-icon {
-  width: clamp(5rem, 10vw, 13rem);
+.mm-check-label {
+  display: inline-flex;
+  margin-right: 8px;
+  cursor: pointer;
 }
-
-/* ---Ajuste General--- */
-
-.form-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100vh;
-  width: 100%;
-  color: #000;
-  /* Color de texto predeterminado */
+.mm-sr-only:focus-visible + .mm-check-label .mm-check {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
 }
-
-.card {
-  background: var(--color-fondo);
-  border-radius: var(--border-radius-card);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {}
-
-/* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
-
-/* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
-
-/* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
-
-/* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
-
-/* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
 </style>

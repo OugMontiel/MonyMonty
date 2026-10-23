@@ -8,245 +8,208 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import {ref, onMounted, reactive} from "vue";
+import {ref, computed, onMounted, onBeforeUnmount} from "vue";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
-import {zodResolver} from "@primevue/forms/resolvers/zod";
 import {z} from "zod";
 
 import {useAuth} from "../logic/useAuth.js";
+import {passwordSchema, validar, fortalezaClave} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
+import MmIcon from "@/components/mm/MmIcon.vue";
 
 const toast = useToast();
 const router = useRouter();
 const {verificacionTocken, CambiodeClave, loading} = useAuth();
 
-const submitted = ref(false);
-const loadingUser = ref(false);
+// "verificando" -> "formulario" | "vencido" -> "listo"
+const vista = ref("verificando");
 const user = ref({});
-const Token = ref();
+const token = ref("");
+
+const password = ref("");
+const confirmPassword = ref("");
+const verClave = ref(false);
+const intentado = ref(false);
+const errorServidor = ref("");
+
+const SEGUNDOS_REDIRECCION = 5;
+const segundos = ref(SEGUNDOS_REDIRECCION);
+let timer = null;
 
 onMounted(async () => {
+  const params = new URLSearchParams(window?.location?.search);
+  token.value = params.get("token") ?? "";
+
+  if (!token.value) {
+    vista.value = "vencido";
+    return;
+  }
+
   try {
-    const params = new URLSearchParams(window?.location?.search);
-    const token = params.get("token");
+    const result = await verificacionTocken({token: token.value});
 
-    if (!token) {
-      toast.add({
-        severity: "error",
-        summary: "Error en token",
-        detail: "Tocken es Requerido.",
-        life: 4000,
-      });
-      return;
-    }
-
-    const result = await verificacionTocken({
-      token,
-    });
-
-    if (result.success) {
-      toast.add({
-        severity: "success",
-        summary: "Tocken Verificado",
-        detail: result?.message,
-        life: 3000,
-      });
-      user.value = result?.data?.userDelTocken;
-      Token.value = token;
-      loadingUser.value = true;
+    if (result?.success) {
+      user.value = result?.data?.userDelTocken ?? {};
+      vista.value = "formulario";
     } else {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: result?.error || "Error al verificar el Tocken",
-        life: 4000,
-      });
+      vista.value = "vencido";
     }
   } catch {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo.",
-      life: 4000,
-    });
+    vista.value = "vencido";
   }
 });
 
-// Esquema de validación con Zod
-const resolver = zodResolver(
-  z
-    .object({
-      password: z
-        .string()
-        .min(8, {message: "Debe tener al menos 8 caracteres"})
-        .refine((v) => /[A-Z]/.test(v), {message: "Debe contener al menos una mayúscula"})
-        .refine((v) => /\d/.test(v), {message: "Debe contener al menos un número"})
-        .refine((v) => /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(v), {
-          message: "Debe contener al menos un símbolo",
-        }),
-      confirmPassword: z.string().min(1, {message: "Confirma tu contraseña"}),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Las contraseñas no coinciden",
-      path: ["confirmPassword"],
-    })
-);
+const esquema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, {message: "Confirma tu contraseña"}),
+  })
+  .refine((d) => d.password === d.confirmPassword, {message: "Las contraseñas no coinciden", path: ["confirmPassword"]});
 
-// === SUBMIT DEL FORM ===
-const onFormSubmit = async ({valid, values}) => {
-  submitted.value = true;
+const errores = computed(() => validar(esquema, {password: password.value, confirmPassword: confirmPassword.value}).errores);
+const verError = (campo) => (intentado.value ? errores.value[campo] : "");
 
-  if (!loadingUser) return;
-  if (!valid) return;
+const fuerza = computed(() => fortalezaClave(password.value));
+const colorFuerza = computed(() => `var(--${fuerza.value.tono})`);
+const coinciden = computed(() => confirmPassword.value.length > 0 && password.value === confirmPassword.value);
+
+async function guardar() {
+  intentado.value = true;
+  errorServidor.value = "";
+  if (Object.keys(errores.value).length) return;
 
   try {
     const result = await CambiodeClave({
-      token: Token.value,
-      password: values.password,
-      confirmPassword: values.confirmPassword,
+      token: token.value,
+      password: password.value,
+      confirmPassword: confirmPassword.value,
     });
 
-    if (result.success) {
-      toast.add({
-        severity: "success",
-        summary: "Éxito",
-        detail: result.message,
-        life: 3000,
-      });
-      irALogin();
+    if (result?.success) {
+      vista.value = "listo";
+      cuentaAtrasHaciaLogin();
     } else {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: result.error || "Error al cambiar la contraseña",
-        life: 4000,
-      });
+      errorServidor.value = result?.error || "Error al cambiar la contraseña";
     }
   } catch {
-    toast.add({
-      severity: "error",
-      summary: "Error de conexión",
-      detail: "Inténtalo de nuevo.",
-      life: 4000,
-    });
+    toast.add({severity: "error", summary: "Error de conexión", detail: "Inténtalo de nuevo.", life: 4000});
   }
-};
+}
 
-const irALogin = () => router.push("/");
+function cuentaAtrasHaciaLogin() {
+  timer = setInterval(() => {
+    segundos.value -= 1;
+    if (segundos.value <= 0) irALogin();
+  }, 1000);
+}
+
+function irALogin() {
+  clearInterval(timer);
+  router.push("/");
+}
+
+onBeforeUnmount(() => clearInterval(timer));
 </script>
 
 <template>
-  <div class="flex flex-col justify-between items-center min-h-screen p-4">
-    <div class="flex justify-center items-center flex-1">
-      <div class="flex flex-col max-w-md shadow-lg p-4 gap-4">
-        <!-- LOGO -->
-        <div class="flex justify-center pt-6 pb-2">
-          <img :src="logo" alt="Icono de la aplicación" class="h-16 object-contain login-logo" />
-        </div>
-
-        <!-- Si hay data disponible -->
-        <template v-if="loadingUser">
-          <!-- MENSAJES SUPERIORES -->
-          <div>
-            <div class="flex justify-center">
-              <Message severity="contrast" variant="simple" size="large"> Restablece tu contraseña </Message>
-            </div>
-
-            <div class="flex justify-center">
-              <Message severity="secondary" variant="simple" class="p-4 text-lg">
-                <p class="mb-1">Estás recuperando el acceso a la cuenta:</p>
-                <p class="font-semibold text-xl">{{ user?.nombre }} ({{ user?.email }})</p>
-              </Message>
-            </div>
-          </div>
-
-          <!-- FORMULARIO PRIMEVUE -->
-          <Form :resolver="resolver" @submit="onFormSubmit" class="flex flex-col justify-around gap-4">
-            <!-- NUEVA CONTRASEÑA -->
-            <FormField v-slot="$field" name="password" class="w-full">
-              <FloatLabel variant="on" class="w-full">
-                <Password
-                  id="password"
-                  v-bind="$field.props"
-                  :feedback="false"
-                  :disabled="loading"
-                  toggleMask
-                  class="w-full"
-                  inputClass="w-full"
-                />
-                <label for="password">Nueva contraseña</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
-                {{ $field.error?.message }}
-              </Message>
-            </FormField>
-
-            <!-- CONFIRMAR CONTRASEÑA -->
-            <FormField v-slot="$field" name="confirmPassword" class="w-full">
-              <FloatLabel variant="on" class="w-full">
-                <Password
-                  id="confirmPassword"
-                  v-bind="$field.props"
-                  :feedback="false"
-                  :disabled="loading"
-                  toggleMask
-                  class="w-full"
-                  inputClass="w-full"
-                />
-                <label for="confirmPassword">Confirmar contraseña</label>
-              </FloatLabel>
-              <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple" class="mt-2">
-                {{ $field.error?.message }}
-              </Message>
-            </FormField>
-
-            <!-- BOTONES -->
-            <div class="flex flex-col gap-2 pt-2">
-              <Button type="submit" label="Actualizar contraseña" severity="primary" :loading="loading" class="w-full" />
-              <Button label="Volver al inicio" link :disabled="loading" @click="irALogin" outlined class="w-full" />
-            </div>
-          </Form>
-        </template>
-
-        <!-- Si NO hay data disponible -->
-        <template v-else>
-          <div class="flex flex-col justify-center items-center text-center p-8 gap-4">
-            <Message severity="warn" variant="simple" size="large"> El enlace de recuperación no es válido o ha expirado. </Message>
-            <Button label="Volver al inicio" @click="irALogin" outlined />
-          </div>
-        </template>
+  <div class="mm-root" data-theme="light">
+    <div class="mm-center" style="position: relative; overflow: hidden">
+      <!-- Comprobando el enlace -->
+      <div v-if="vista === 'verificando'" class="col gap-3" style="align-items: center" role="status">
+        <div class="mm-spin" style="width: 32px; height: 32px"></div>
+        <span class="muted t-sm">Verificando tu enlace…</span>
       </div>
-    </div>
 
-    <FooterAuth class="mt-8" />
+      <!-- Nueva contraseña -->
+      <template v-else-if="vista === 'formulario'">
+        <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; left: -120px; bottom: -160px; background: var(--brand-tint)"></div>
+
+        <form class="mm-card mm-rise" style="position: relative; width: min(460px, 100%); padding: 36px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 20px" novalidate @submit.prevent="guardar">
+          <img :src="logo" alt="MonyMonty" style="height: 36px; width: auto; align-self: flex-start" />
+          <div class="col gap-1">
+            <h1 class="t-h1">Crea tu nueva contraseña</h1>
+            <p class="muted">
+              Para <b style="color: var(--ink)">{{ user?.email }}</b>
+              <template v-if="user?.nombre"> ({{ user.nombre }})</template>.
+            </p>
+          </div>
+
+          <div v-if="errorServidor" class="mm-banner expense" role="alert">
+            <MmIcon i="alert-circle" :s="18" /><span class="grow">{{ errorServidor }}</span>
+          </div>
+
+          <div class="mm-field">
+            <label for="cc-password">Nueva contraseña</label>
+            <div class="mm-input" :class="{'is-error': verError('password')}">
+              <MmIcon i="lock-closed" :s="18" />
+              <input id="cc-password" v-model="password" :type="verClave ? 'text' : 'password'" autocomplete="new-password" :disabled="loading" :aria-invalid="Boolean(verError('password'))" />
+              <button type="button" class="mm-btn icon sm ghost" :aria-label="verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'" style="margin-right: -8px" @click="verClave = !verClave">
+                <MmIcon :i="verClave ? 'eye-off' : 'eye'" :s="18" />
+              </button>
+            </div>
+            <div class="mm-strength" style="margin-top: 4px" aria-hidden="true">
+              <i v-for="n in 4" :key="n" :class="{on: n <= fuerza.nivel}" :style="n <= fuerza.nivel ? {background: colorFuerza} : null"></i>
+            </div>
+            <div class="row between t-xs">
+              <b :style="{color: password ? colorFuerza : 'var(--ink-muted)'}">{{ password ? fuerza.etiqueta : "Escribe una contraseña" }}</b>
+              <span class="muted">{{ password.length }} caracteres</span>
+            </div>
+            <div class="grid g2" style="gap: 6px 16px; margin-top: 4px">
+              <span v-for="r in fuerza.reglas" :key="r.texto" class="row gap-1 t-xs" :class="r.ok ? 'income' : 'muted'">
+                <MmIcon :i="r.ok ? 'checkmark-circle' : 'add-circle'" :s="14" />{{ r.texto }}
+              </span>
+            </div>
+            <span v-if="verError('password')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("password") }}</span>
+          </div>
+
+          <div class="mm-field">
+            <label for="cc-confirm">Confírmala</label>
+            <div class="mm-input" :class="{'is-error': verError('confirmPassword')}">
+              <MmIcon i="lock-closed" :s="18" />
+              <input id="cc-confirm" v-model="confirmPassword" :type="verClave ? 'text' : 'password'" autocomplete="new-password" :disabled="loading" :aria-invalid="Boolean(verError('confirmPassword'))" />
+              <span v-if="coinciden" class="income"><MmIcon i="checkmark-circle" :s="18" /></span>
+            </div>
+            <span v-if="verError('confirmPassword')" class="mm-err"><MmIcon i="alert-circle" :s="14" />{{ verError("confirmPassword") }}</span>
+            <span v-else-if="coinciden" class="mm-help income">Coinciden</span>
+          </div>
+
+          <button type="submit" class="mm-btn primary lg block" :class="{'is-loading': loading}" :disabled="loading">Guardar contraseña</button>
+          <router-link to="/" class="mm-btn ghost block" :class="{'is-disabled': loading}">Volver al inicio</router-link>
+        </form>
+      </template>
+
+      <!-- enlace inválido o vencido -->
+      <template v-else-if="vista === 'vencido'">
+        <div class="mm-float" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; left: -120px; bottom: -160px; background: var(--brand-tint)"></div>
+        <div class="mm-card mm-rise" style="position: relative; width: min(420px, 100%); padding: 28px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; box-shadow: var(--shadow-md)">
+          <div class="mm-ico warn"><MmIcon i="hourglass" :s="22" /></div>
+          <h1 class="t-h2">Este enlace no es válido o ya venció</h1>
+          <p class="t-sm muted">Por seguridad, los enlaces de recuperación caducan. Pide uno nuevo y llegará en segundos.</p>
+          <router-link to="/recuperarCuenta" class="mm-btn soft block"><MmIcon i="refresh" :s="16" />Pedir otro enlace</router-link>
+          <router-link to="/" class="mm-btn ghost block">Volver al inicio</router-link>
+        </div>
+      </template>
+
+      <!-- Contraseña actualizada -->
+      <template v-else>
+        <div class="mm-float" style="position: absolute; width: 480px; height: 480px; border-radius: 50%; left: 50%; top: 50%; margin: -340px 0 0 -240px; background: var(--income-tint); opacity: 0.7"></div>
+        <div class="mm-card mm-rise" style="position: relative; width: min(440px, 100%); padding: 44px 36px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px">
+          <svg class="mm-success-check" width="112" height="112" viewBox="0 0 112 112" aria-hidden="true"><circle cx="56" cy="56" r="56"></circle><path d="M36 58l14 14 26-30"></path></svg>
+          <div class="col gap-2">
+            <h1 class="t-h1">¡Listo! Tu contraseña cambió</h1>
+            <p class="muted">Ya puedes entrar con tu nueva clave.</p>
+          </div>
+          <button type="button" class="mm-btn primary lg block" @click="irALogin">Iniciar sesión<MmIcon i="arrow-forward" :s="18" /></button>
+          <div class="col gap-2" style="width: 100%">
+            <div class="mm-progress sm"><i :style="{'--w': '100%', '--c': 'var(--income)', animationDuration: `${SEGUNDOS_REDIRECCION}s`, animationTimingFunction: 'linear'}"></i></div>
+            <span class="t-xs muted" role="status">Te llevamos al inicio de sesión en {{ segundos }} s</span>
+          </div>
+        </div>
+      </template>
+
+      <FooterAuth style="position: absolute; bottom: 16px; left: 0; right: 0; justify-content: center" />
+    </div>
   </div>
 </template>
-
-<style scoped>
-/* Sección derecha */
-.login-logo {
-  max-width: 9rem;
-}
-
-/* Asegura que el card tenga buen espaciado en móviles */
-:deep(.p-card-body) {
-  padding: 0;
-}
-
-:deep(.p-card-content) {
-  padding-top: 0;
-}
-
-/* Mejora la apariencia del título */
-:deep(.p-card-title) {
-  padding: 0 1.5rem;
-  margin-bottom: 0;
-}
-
-:deep(.p-card-subtitle) {
-  padding: 0 1.5rem 1rem;
-  line-height: 1.5;
-}
-</style>
