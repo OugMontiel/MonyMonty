@@ -11,6 +11,8 @@ RUN npm ci --prefer-offline --no-audit
 
 # Compilación del código fuente
 COPY . .
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build
 
 # ==========================================

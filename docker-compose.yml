@@ -3,6 +3,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    env_file:
+      - .env.production
     container_name: monymonty
     restart: unless-stopped
     expose:
