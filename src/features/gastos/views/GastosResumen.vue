@@ -14,13 +14,16 @@ import {filtros, limpiarFiltros, aInputFecha} from "@/features/movimientos/logic
 import {inicioDeMes, finDeMes} from "@/features/reportes/logic/calculos.js";
 import GastosTabs from "../components/GastosTabs.vue";
 import BarrasGasto from "../components/BarrasGasto.vue";
-import {resumenDeGastos} from "../logic/calculos.js";
+import GastosPrimerUso from "../components/GastosPrimerUso.vue";
+import {resumenDeGastos, soloGastos} from "../logic/calculos.js";
 
 const router = useRouter();
 const {anio, mes, movimientos, divisa, cargando, error, etiquetaMes, nombreDelMes, esMesActual, hoy, cargar} = useReportes();
 const dinero = (v) => moneda(v, divisa.value);
 
 const r = computed(() => resumenDeGastos(movimientos.value, anio.value, mes.value, hoy));
+// Sin ningún gasto en todo el historial se muestra la bienvenida; con historial pero un mes vacío, un aviso corto
+const primerUso = computed(() => !cargando.value && !error.value && soloGastos(movimientos.value).length === 0);
 const sinGastos = computed(() => !cargando.value && !error.value && r.value.movimientos.length === 0);
 const mesAnterior = computed(() => nombreMes(r.value.mesAnterior));
 
@@ -57,6 +60,8 @@ function verMovimientos() {
       </div>
 
       <div v-if="cargando" class="mm-card" role="status" aria-label="Cargando tus gastos"><div class="mm-skel" style="width: 100%; height: 340px"></div></div>
+
+      <GastosPrimerUso v-else-if="primerUso" />
 
       <div v-else-if="sinGastos" class="mm-card">
         <div class="mm-empty">
