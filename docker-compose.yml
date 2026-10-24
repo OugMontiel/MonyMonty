@@ -5,7 +5,9 @@ services:
       dockerfile: Dockerfile
       target: production
       args:
-        VITE_API_URL: ${VITE_API_URL}
+        MODE: production
+      secrets:
+        - env_file
     env_file:
       - .env.production
     image: monymonty-prod:latest
@@ -71,3 +73,7 @@ services:
 networks:
   proxy:
     external: true
+
+secrets:
+  env_file:
+    file: .env.production

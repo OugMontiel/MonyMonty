@@ -14,10 +14,11 @@ export function useAuth() {
         withCredentials: true,
       });
 
-      if (response.status === 200) {
-        isAuthenticated.value = response.data.authenticated;
+      if (response.status === 200 && response.data?.authenticated === true) {
+        isAuthenticated.value = true;
         return true;
       }
+      isAuthenticated.value = false;
     } catch (error) {
       console.error("Error verificando autenticación:", error);
       isAuthenticated.value = false;
