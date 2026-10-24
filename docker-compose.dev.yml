@@ -6,7 +6,8 @@ services:
       target: production
       args:
         MODE: development
-        VITE_API_URL: ${VITE_API_URL:-}
+      secrets:
+        - env_file
     env_file:
       - .env.development
     image: monymonty-dev:latest
@@ -77,3 +78,7 @@ services:
 networks:
   proxy:
     external: true
+
+secrets:
+  env_file:
+    file: .env.development

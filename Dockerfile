@@ -9,15 +9,19 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --prefer-offline --no-audit
 
-# Compilación del código fuente recibiendo la URL de la API dinámicamente
+# Compilación del código fuente montando el archivo de entorno de forma efímera y segura (Build Secret)
 COPY . .
 ARG MODE=production
-ARG VITE_API_URL
-RUN if [ -n "$VITE_API_URL" ]; then \
-      VITE_API_URL="$VITE_API_URL" npm run build -- --mode "$MODE"; \
+RUN --mount=type=secret,id=env_file \
+    if [ -f /run/secrets/env_file ]; then \
+      ln -sf /run/secrets/env_file ".env.${MODE}"; \
+    fi && \
+    if [ "$MODE" = "development" ]; then \
+      npm run build:dev; \
     else \
-      unset VITE_API_URL && npm run build -- --mode "$MODE"; \
-    fi
+      npm run build:prod; \
+    fi && \
+    rm -f ".env.${MODE}"
 
 # ==========================================
 # Etapa 2: Producción (Nginx Hardened)

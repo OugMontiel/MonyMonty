@@ -14,12 +14,11 @@ vendor
 __pycache__
 *.pyc
 
-# Entornos (se permiten en la etapa de build para que Vite inyecte las variables; no pasan a la etapa final de Nginx)
-.env.local
-.env.*.local
-!.env.development
-!.env.production
-!.env.example
+# Entornos
+.env
+.env.*
+.env.development
+.env.production
 
 # Logs
 *.log
