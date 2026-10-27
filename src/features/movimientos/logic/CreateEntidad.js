@@ -1,11 +1,12 @@
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import axios from "axios";
 import {useGlobalState} from "@/composables/useGlobalState";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useEntidades() {
-  const loading = ref(false);
+  const loadingStore = useLoadingStore();
   const error = ref(null);
   const {triggerGlobalRefresh} = useGlobalState();
 
@@ -15,7 +16,7 @@ export function useEntidades() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createEntidad(data) {
-    loading.value = true;
+    loadingStore.start("createEntidad");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}entidad/`, data, {
@@ -28,13 +29,12 @@ export function useEntidades() {
       error.value = err.response?.data?.message || "Error al crear la entidad";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createEntidad");
     }
   }
 
   return {
     createEntidad,
-    loading,
     error,
   };
 }
