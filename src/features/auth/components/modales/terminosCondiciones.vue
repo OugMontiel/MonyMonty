@@ -1,156 +1,211 @@
 <script setup>
-const isVisible = defineModel({required: true});
+/**
+ * Modal de Términos y condiciones (S07).
+ * Índice lateral, progreso de lectura y, si `conAceptar` está activo, un botón
+ * "Acepto" que solo se habilita al llegar al final del texto.
+ */
+import {ref, computed, watch, nextTick, onBeforeUnmount} from "vue";
+import Icono from "@/components/iconos/Icono.vue";
+
+const visible = defineModel({type: Boolean, required: true});
+defineProps({
+  // Muestra "Ahora no" / "Acepto" (registro). Sin esto solo hay "Cerrar" (pie de página)
+  conAceptar: {type: Boolean, default: false},
+});
+const emit = defineEmits(["aceptar"]);
+
+const ACTUALIZADO = "24 de enero de 2026";
+
+// El texto completo de cada sección se agrega donde está el marcador
+const SECCIONES = [
+  {id: "t1", titulo: "1. Qué es MonyMonty", resumen: "Una plataforma para registrar, entender y planear tu dinero personal. No es un banco ni mueve tu dinero real."},
+  {id: "t2", titulo: "2. Tu cuenta", resumen: "Eres responsable de mantener tu contraseña en privado y de la información que registras."},
+  {id: "t3", titulo: "3. Uso aceptable", resumen: "Usa MonyMonty solo para tus finanzas o las de tu hogar, sin intentar afectar el servicio."},
+  {id: "t4", titulo: "4. Planes y pagos", resumen: "El plan Free no tiene costo. Basic y Premium se cobran por periodo y puedes cancelarlos cuando quieras."},
+  {id: "t5", titulo: "5. Asesoría", resumen: "Los consejos y mentorías son educativos; las decisiones finales sobre tu dinero son tuyas."},
+  {id: "t6", titulo: "6. Responsabilidad", resumen: "Trabajamos para que el servicio esté disponible y seguro, sin garantizar que no tenga interrupciones."},
+  {id: "t7", titulo: "7. Cambios", resumen: "Podemos actualizar estos términos y te avisaremos de los cambios importantes dentro de la plataforma."},
+];
+
+const cuerpo = ref(null);
+const modal = ref(null);
+const progreso = ref(0);
+const seccionActiva = ref(SECCIONES[0].id);
+
+const leidoCompleto = computed(() => progreso.value >= 98);
+
+function actualizarProgreso() {
+  const el = cuerpo.value;
+  if (!el) return;
+
+  const recorrido = el.scrollHeight - el.clientHeight;
+  // Si todo cabe sin scroll, ya se leyó completo
+  progreso.value = recorrido <= 0 ? 100 : Math.min(100, Math.round((el.scrollTop / recorrido) * 100));
+
+  // La sección activa es la última cuyo inicio ya pasó la parte alta de la vista
+  let activa = SECCIONES[0].id;
+  for (const s of SECCIONES) {
+    const nodo = el.querySelector(`#${s.id}`);
+    if (nodo && nodo.offsetTop - el.offsetTop <= el.scrollTop + 40) activa = s.id;
+  }
+  seccionActiva.value = activa;
+}
+
+function irASeccion(id) {
+  const el = cuerpo.value;
+  const nodo = el?.querySelector(`#${id}`);
+  if (nodo) el.scrollTo({top: nodo.offsetTop - el.offsetTop, behavior: "smooth"});
+}
+
+function cerrar() {
+  visible.value = false;
+}
+
+function aceptar() {
+  emit("aceptar");
+  cerrar();
+}
+
+function alTeclear(e) {
+  if (e.key === "Escape") cerrar();
+}
+
+// Al abrir: foco en el modal, sin scroll de fondo y progreso calculado
+watch(visible, async (abierto) => {
+  document.body.style.overflow = abierto ? "hidden" : "";
+  if (!abierto) return;
+  progreso.value = 0;
+  await nextTick();
+  modal.value?.focus();
+  actualizarProgreso();
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = "";
+});
 </script>
 
 <template>
-  <!-- ──────────── Drawer Términos y Condiciones ──────────── -->
-
-  <Drawer v-model:visible="isVisible" position="full" :modal="true" :showCloseIcon="true" :dismissable="true" class="custom-drawer">
-    <template #header>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4 text-color text-center w-full">Términos y Condiciones</h1>
-    </template>
-
-    <div class="w-full px-4 sm:px-6 lg:px-8 py-8 transition-all duration-300 flex flex-col gap-8">
-      <div>
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-100 text-surface-600 text-sm font-medium">
-          <i class="pi pi-clock"></i>
-          <span>Última actualización: 24 de enero de 2026</span>
-        </div>
-        <!-- Introducción -->
-        <Card class="shadow-sm">
-          <template #content>
-            <p class="text-lg leading-relaxed mb-4">
-              Al acceder, descargar, instalar o usar la aplicación <strong>Mony Monty</strong>, ya sea en versión móvil, web o cualquier
-              otro medio, aceptas estar vinculado por estos <strong>Términos y Condiciones de Uso</strong>, la
-              <strong>Política de Privacidad</strong> y cualquier otra política o norma que publiquemos en la Plataforma.
-            </p>
-            <Message severity="warn" icon="pi pi-exclamation-triangle" class="mt-4">
-              Si no estás de acuerdo con estos Términos, <strong>no uses la Plataforma</strong>.
-            </Message>
-          </template>
-        </Card>
-      </div>
-
-      <!-- Secciones en Acordeón -->
-      <Accordion :value="['0']" class="shadow-md rounded-xl overflow-hidden">
-        <AccordionPanel value="0">
-          <AccordionHeader><span class="font-bold text-lg">1. Descripción del Servicio</span></AccordionHeader>
-          <AccordionContent>
-            <p class="mb-4">
-              MonyMonty es una herramienta digital de <strong>gestión de finanzas personales</strong> que permite a los usuarios:
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-4 p-2 mb-4">
-              <div class="flex flex-col p-4 border rounded-lg">
-                <span class="text-sm text-muted-color font-medium uppercase tracking-wider mb-1">Responsable</span>
-                <span class="font-semibold">[Nombre completo de la empresa o persona natural]</span>
-              </div>
-              <div class="flex flex-col p-4 border rounded-lg">
-                <span class="text-sm text-muted-color font-medium uppercase tracking-wider mb-1">Domicilio</span>
-                <span class="font-semibold">Bucaramanga, Santander, Colombia</span>
-              </div>
+  <Teleport to="body">
+    <div v-if="visible" class="mm-root" data-theme="light">
+      <div class="mm-overlay" @click.self="cerrar" @keydown="alTeclear">
+        <div
+          ref="modal"
+          class="mm-modal wide"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="terminos-titulo"
+          tabindex="-1"
+          style="width: min(880px, 100%); max-height: min(780px, 100vh - 32px); outline: 0"
+        >
+          <div class="mm-modal-h" style="border-bottom: 1px solid var(--line); padding-bottom: 18px">
+            <div class="mm-ico brand"><Icono i="document-text" :s="22" /></div>
+            <div class="grow">
+              <h2 id="terminos-titulo" class="t-h2">Términos y condiciones</h2>
+              <p class="t-sm muted">Última actualización: {{ ACTUALIZADO }}</p>
             </div>
-            <ul class="space-y-2 ml-4 list-disc">
-              <li>Primer elemento</li>
-              <li>Segundo elemento</li>
-              <li>Tercer elemento</li>
-            </ul>
-          </AccordionContent>
-        </AccordionPanel>
+            <button type="button" class="mm-x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
+          </div>
+          <div class="mm-progress sm" style="border-radius: 0; height: 3px" role="progressbar" aria-label="Avance de lectura" :aria-valuenow="progreso" aria-valuemin="0" aria-valuemax="100">
+            <i :style="{'--w': `${progreso}%`}"></i>
+          </div>
 
-        <AccordionPanel value="1">
-          <AccordionHeader><span class="font-bold text-lg">2. Datos que Recolectamos</span></AccordionHeader>
-          <AccordionContent>
-            <p class="mb-4">Recolectamos los siguientes tipos de datos:</p>
-            <ul class="space-y-3">
-              <li class="flex items-start gap-3">
-                <i class="pi pi-id-card text-primary mt-1"></i>
-                <span
-                  ><strong>Datos de identificación:</strong> nombre, documento de identidad, correo electrónico, número de teléfono.</span
-                >
-              </li>
-              <li class="flex items-start gap-3">
-                <i class="pi pi-wallet text-primary mt-1"></i>
-                <span><strong>Datos financieros/transaccionales:</strong> información relacionada con movimientos, categorías, etc.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <i class="pi pi-desktop text-primary mt-1"></i>
-                <span><strong>Datos de uso:</strong> dirección IP, tipo de dispositivo, navegador, fecha y hora de acceso.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <i class="pi pi-map-marker text-primary mt-1"></i>
-                <span><strong>Geolocalización:</strong> aproximada, solo si lo autorizas expresamente.</span>
-              </li>
-            </ul>
-          </AccordionContent>
-        </AccordionPanel>
+          <div class="legal-grid">
+            <nav class="legal-nav" aria-label="Índice">
+              <div class="t-over" style="padding: 0 12px 8px">Contenido</div>
+              <button
+                v-for="s in SECCIONES"
+                :key="s.id"
+                type="button"
+                class="mm-menu-item"
+                :class="{'is-on': seccionActiva === s.id}"
+                :style="seccionActiva === s.id ? {color: 'var(--brand-ink)'} : {color: 'var(--ink-muted)'}"
+                @click="irASeccion(s.id)"
+              >
+                <Icono v-if="seccionActiva === s.id" i="chevron-forward" :s="16" />{{ s.titulo }}
+              </button>
+            </nav>
 
-        <AccordionPanel value="2">
-          <AccordionHeader><span class="font-bold text-lg">3. Finalidades del Tratamiento</span></AccordionHeader>
-          <AccordionContent>
-            <ul class="list-none space-y-2">
-              <li class="flex items-center gap-2">
-                <i class="pi pi-check text-green-500"></i> Permitir el registro, inicio de sesión y uso de la plataforma.
-              </li>
-              <li class="flex items-center gap-2">
-                <i class="pi pi-check text-green-500"></i> Gestionar y mostrar tus movimientos, rankings y dashboard.
-              </li>
-              <li class="flex items-center gap-2">
-                <i class="pi pi-check text-green-500"></i> Mejorar la experiencia de usuario y el funcionamiento técnico.
-              </li>
-              <li class="flex items-center gap-2"><i class="pi pi-check text-green-500"></i> Cumplir con obligaciones legales.</li>
-            </ul>
-          </AccordionContent>
-        </AccordionPanel>
+            <div ref="cuerpo" class="legal-body" @scroll.passive="actualizarProgreso">
+              <section v-for="s in SECCIONES" :id="s.id" :key="s.id" class="col gap-2" :class="{'legal-activa': seccionActiva === s.id}">
+                <h3 class="t-h3">{{ s.titulo }}</h3>
+                <p class="muted">{{ s.resumen }}</p>
+                <p class="t-sm muted">[TEXTO LEGAL COMPLETO DE LA SECCIÓN {{ s.id.slice(1) }}]</p>
+              </section>
+            </div>
+          </div>
 
-        <AccordionPanel value="3">
-          <AccordionHeader><span class="font-bold text-lg">4. Derechos que te Asisten</span></AccordionHeader>
-          <AccordionContent>
-            <p class="mb-2">Como titular de los datos, puedes ejercer gratuitamente los siguientes derechos:</p>
-            <ul class="list-disc list-inside ml-2 space-y-1">
-              <li>Conocer, actualizar y rectificar tus datos.</li>
-              <li>Solicitar prueba de la autorización otorgada.</li>
-              <li>Revocar la autorización o solicitar supresión.</li>
-              <li>Presentar quejas ante la SIC.</li>
-            </ul>
-            <p class="mt-4 font-medium text-primary">Contacto: [privacidad@tuapp.com]</p>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="4">
-          <AccordionHeader><span class="font-bold text-lg">5. Compartición de Datos</span></AccordionHeader>
-          <AccordionContent>
-            <p>
-              No vendemos ni compartimos tus datos personales con fines comerciales. Solo cuando sea necesario para el servicio o por ley.
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="5">
-          <AccordionHeader><span class="font-bold text-lg">6. Seguridad de la Información</span></AccordionHeader>
-          <AccordionContent>
-            <p>Implementamos medidas técnicas y organizativas adecuadas para proteger tus datos.</p>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="6">
-          <AccordionHeader><span class="font-bold text-lg">7. Cambios a esta Política</span></AccordionHeader>
-          <AccordionContent>
-            <p>Podemos actualizar esta política ocasionalmente. Te notificaremos cambios importantes.</p>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="7">
-          <AccordionHeader><span class="font-bold text-lg">8. Contacto</span></AccordionHeader>
-          <AccordionContent>
-            <p>
-              Si tienes dudas, contáctanos en:<br />
-              <strong>Email:</strong> [privacidad@tuapp.com]<br />
-              <strong>Dirección:</strong> Bucaramanga, Santander – Colombia
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-      </Accordion>
+          <div class="mm-modal-f" style="align-items: center; margin-top: 0">
+            <template v-if="conAceptar">
+              <span class="t-xs muted grow row gap-1">
+                <Icono :i="leidoCompleto ? 'checkmark-circle' : 'arrow-down'" :s="14" />
+                {{ leidoCompleto ? "Listo, ya puedes aceptar" : `Sigue bajando para activar “Acepto” · ${progreso} % leído` }}
+              </span>
+              <button type="button" class="mm-btn ghost" @click="cerrar">Ahora no</button>
+              <button type="button" class="mm-btn primary" :disabled="!leidoCompleto" @click="aceptar"><Icono i="checkmark" :s="18" />Acepto</button>
+            </template>
+            <template v-else>
+              <span class="grow"></span>
+              <button type="button" class="mm-btn primary" @click="cerrar">Cerrar</button>
+            </template>
+          </div>
+        </div>
+      </div>
     </div>
-  </Drawer>
+  </Teleport>
 </template>
+
+<style scoped>
+.legal-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  min-height: 0;
+  flex: 1;
+}
+.legal-nav {
+  padding: 20px 16px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: auto;
+}
+.legal-nav .mm-menu-item {
+  border: 0;
+  background: none;
+  text-align: left;
+  width: 100%;
+}
+.legal-body {
+  position: relative;
+  padding: 20px 28px;
+  overflow: auto;
+  max-height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.legal-body section {
+  padding: 0;
+  transition: background var(--dur-base), padding var(--dur-base);
+}
+/* La sección que se está leyendo se resalta con un fondo suave */
+.legal-body section.legal-activa {
+  padding: 16px;
+  margin: 0 -16px;
+  border-radius: 14px;
+  background: var(--brand-tint);
+}
+
+@media (max-width: 720px) {
+  .legal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .legal-nav {
+    display: none;
+  }
+  .legal-body {
+    padding: 16px 20px;
+  }
+}
+</style>
