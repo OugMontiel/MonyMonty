@@ -1,20 +1,69 @@
 services:
-  monymonty:
+  monymonty_prod:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: monymonty
+      target: production
+      args:
+        MODE: production
+      secrets:
+        - env_file
+    env_file:
+      - .env.production
+    image: monymonty-prod:latest
+    container_name: monymonty_prod
     restart: unless-stopped
+
+    # ============================================================================
+    # PRINCIPIOS DE MÍNIMO PRIVILEGIO Y PROTECCIÓN DE CONTENEDOR
+    # ============================================================================
+    user: "101:101"
+    read_only: true
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+
+    # Sistemas de archivos volátiles requeridos para funcionamiento en modo sólo lectura
+    tmpfs:
+      - /tmp:size=32M,uid=101,gid=101,mode=1777
+      - /var/run:size=16M,uid=101,gid=101,mode=0755
+      - /var/cache/nginx:size=64M,uid=101,gid=101,mode=0755
+
+    # ============================================================================
+    # CONSUMO INTERNO DE PUERTO SIN EXPOSICIÓN PÚBLICA:
+    # Se expone únicamente el puerto 8082 en la red interna del proxy inverso
+    # evitando colisiones con otros servicios en la misma VPN/VPS.
+    # ============================================================================
     expose:
-      - "80"
+      - "8082"
+
+    # En caso de requerir acceso directo desde el host local (sin salir a internet):
+    # ports:
+    #   - "127.0.0.1:8082:8082"
+
     networks:
-      - proxy
+      proxy:
+        aliases:
+          - monymonty-prod
+
+    # Verificación de salud interna sin dependencias de red (sin curl, wget ni ping)
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/ || exit 1"]
+      test: ["CMD-SHELL", "pidof nginx || exit 1"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 3
-      start_period: 40s
+      start_period: 20s
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 64M
+
     logging:
       driver: "json-file"
       options:
@@ -24,3 +73,7 @@ services:
 networks:
   proxy:
     external: true
+
+secrets:
+  env_file:
+    file: .env.production
