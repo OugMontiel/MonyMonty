@@ -87,26 +87,26 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="mm-root" data-theme="light">
-      <div class="mm-overlay" @click.self="cerrar" @keydown="alTeclear">
+    <div v-if="visible" class="tema" data-theme="light">
+      <div class="overlay" @click.self="cerrar" @keydown="alTeclear">
         <div
           ref="modal"
-          class="mm-modal wide"
+          class="modal wide"
           role="dialog"
           aria-modal="true"
           aria-labelledby="terminos-titulo"
           tabindex="-1"
           style="width: min(880px, 100%); max-height: min(780px, 100vh - 32px); outline: 0"
         >
-          <div class="mm-modal-h" style="border-bottom: 1px solid var(--line); padding-bottom: 18px">
-            <div class="mm-ico brand"><Icono i="document-text" :s="22" /></div>
+          <div class="modal-h" style="border-bottom: 1px solid var(--line); padding-bottom: 18px">
+            <div class="ico brand"><Icono i="document-text" :s="22" /></div>
             <div class="grow">
               <h2 id="terminos-titulo" class="t-h2">Términos y condiciones</h2>
               <p class="t-sm muted">Última actualización: {{ ACTUALIZADO }}</p>
             </div>
-            <button type="button" class="mm-x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
           </div>
-          <div class="mm-progress sm" style="border-radius: 0; height: 3px" role="progressbar" aria-label="Avance de lectura" :aria-valuenow="progreso" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress sm" style="border-radius: 0; height: 3px" role="progressbar" aria-label="Avance de lectura" :aria-valuenow="progreso" aria-valuemin="0" aria-valuemax="100">
             <i :style="{'--w': `${progreso}%`}"></i>
           </div>
 
@@ -117,7 +117,7 @@ onBeforeUnmount(() => {
                 v-for="s in SECCIONES"
                 :key="s.id"
                 type="button"
-                class="mm-menu-item"
+                class="menu-item"
                 :class="{'is-on': seccionActiva === s.id}"
                 :style="seccionActiva === s.id ? {color: 'var(--brand-ink)'} : {color: 'var(--ink-muted)'}"
                 @click="irASeccion(s.id)"
@@ -135,18 +135,18 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <div class="mm-modal-f" style="align-items: center; margin-top: 0">
+          <div class="modal-f" style="align-items: center; margin-top: 0">
             <template v-if="conAceptar">
               <span class="t-xs muted grow row gap-1">
                 <Icono :i="leidoCompleto ? 'checkmark-circle' : 'arrow-down'" :s="14" />
                 {{ leidoCompleto ? "Listo, ya puedes aceptar" : `Sigue bajando para activar “Acepto” · ${progreso} % leído` }}
               </span>
-              <button type="button" class="mm-btn ghost" @click="cerrar">Ahora no</button>
-              <button type="button" class="mm-btn primary" :disabled="!leidoCompleto" @click="aceptar"><Icono i="checkmark" :s="18" />Acepto</button>
+              <button type="button" class="btn ghost" @click="cerrar">Ahora no</button>
+              <button type="button" class="btn primary" :disabled="!leidoCompleto" @click="aceptar"><Icono i="checkmark" :s="18" />Acepto</button>
             </template>
             <template v-else>
               <span class="grow"></span>
-              <button type="button" class="mm-btn primary" @click="cerrar">Cerrar</button>
+              <button type="button" class="btn primary" @click="cerrar">Cerrar</button>
             </template>
           </div>
         </div>
@@ -170,7 +170,7 @@ onBeforeUnmount(() => {
   gap: 2px;
   overflow: auto;
 }
-.legal-nav .mm-menu-item {
+.legal-nav .menu-item {
   border: 0;
   background: none;
   text-align: left;

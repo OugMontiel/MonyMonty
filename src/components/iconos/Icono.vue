@@ -17,7 +17,7 @@ const px = computed(() => `${props.s}px`);
 </script>
 
 <template>
-  <span class="mm-icon" :style="{width: px, height: px}">
+  <span class="icono" :style="{width: px, height: px}">
     <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" v-html="markup"></svg>
   </span>
 </template>

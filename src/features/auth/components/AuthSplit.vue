@@ -1,7 +1,7 @@
 <script setup>
 /**
  * Pantalla de acceso a dos columnas: formulario a la izquierda (slot) y panel
- * informativo a la derecha. En móvil el panel se oculta por CSS (.mm-auth-info).
+ * informativo a la derecha. Por debajo de 960px el panel se oculta por CSS (.auth-info).
  */
 import InfoLogin from "./infoLogin.vue";
 import FooterAuth from "./FooterAuth.vue";
@@ -15,14 +15,17 @@ defineProps({
 </script>
 
 <template>
-  <div class="mm-root" data-theme="light">
-    <div class="mm-auth">
-      <div class="mm-auth-form">
-        <slot name="cabecera" />
-        <div class="col gap-6" :style="{maxWidth: `${ancho}px`, width: '100%'}">
-          <slot />
+  <div class="tema" data-theme="light">
+    <div class="auth">
+      <div class="auth-form">
+        <!-- Logo, formulario y pie comparten la misma columna para quedar alineados y centrados -->
+        <div class="auth-col" :style="{maxWidth: `${ancho}px`}">
+          <slot name="cabecera" />
+          <div class="col gap-6">
+            <slot />
+          </div>
+          <FooterAuth />
         </div>
-        <FooterAuth />
       </div>
       <InfoLogin :start="infoStart" />
     </div>

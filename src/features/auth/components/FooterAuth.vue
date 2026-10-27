@@ -13,8 +13,8 @@ const showPrivacidad = ref(false);
 
 <template>
   <footer class="t-xs muted row gap-4" style="flex-wrap: wrap">
-    <button type="button" class="mm-footer-link" @click="showCondiciones = true">Términos</button>
-    <button type="button" class="mm-footer-link" @click="showPrivacidad = true">Privacidad</button>
+    <button type="button" class="footer-link" @click="showCondiciones = true">Términos</button>
+    <button type="button" class="footer-link" @click="showPrivacidad = true">Privacidad</button>
     <span>&copy; {{ currentYear }} MonyMonty</span>
     <TerminosCondicionesDrawer v-model="showCondiciones" />
     <PoliticaPrivacidadDrawer v-model="showPrivacidad" />
@@ -22,14 +22,14 @@ const showPrivacidad = ref(false);
 </template>
 
 <style scoped>
-.mm-footer-link {
+.footer-link {
   border: 0;
   padding: 0;
   background: none;
   font-weight: 600;
   color: var(--ink-muted);
 }
-.mm-footer-link:hover {
+.footer-link:hover {
   color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;

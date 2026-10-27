@@ -64,36 +64,36 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="mm-root" data-theme="light">
-      <div class="mm-overlay" @click.self="cerrar" @keydown="alTeclear">
+    <div v-if="visible" class="tema" data-theme="light">
+      <div class="overlay" @click.self="cerrar" @keydown="alTeclear">
         <div
           ref="modal"
-          class="mm-modal wide"
+          class="modal wide"
           role="dialog"
           aria-modal="true"
           aria-labelledby="privacidad-titulo"
           tabindex="-1"
           style="max-height: calc(100vh - 32px); outline: 0"
         >
-          <div class="mm-modal-h">
-            <div class="mm-ico income"><Icono i="shield-checkmark" :s="22" /></div>
+          <div class="modal-h">
+            <div class="ico income"><Icono i="shield-checkmark" :s="22" /></div>
             <div class="grow">
               <h2 id="privacidad-titulo" class="t-h2">Tu privacidad, en corto</h2>
               <p class="t-sm muted">Lo esencial en 30 segundos. Última actualización: {{ ACTUALIZADO }}.</p>
             </div>
-            <button type="button" class="mm-x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
           </div>
 
-          <div class="mm-modal-b" style="overflow: auto">
+          <div class="modal-b" style="overflow: auto">
             <div class="grid g2 resumen" style="gap: 14px">
-              <div v-for="r in RESUMEN" :key="r.titulo" class="mm-card flat" style="background: var(--surface-2); border: 0">
-                <div class="mm-ico sm" :class="r.tono"><Icono :i="r.icono" :s="18" /></div>
+              <div v-for="r in RESUMEN" :key="r.titulo" class="card flat" style="background: var(--surface-2); border: 0">
+                <div class="ico sm" :class="r.tono"><Icono :i="r.icono" :s="18" /></div>
                 <h3 class="t-h3" style="margin-top: 12px">{{ r.titulo }}</h3>
                 <p class="t-sm muted" style="margin-top: 4px">{{ r.texto }}</p>
               </div>
             </div>
 
-            <div class="mm-banner info">
+            <div class="banner info">
               <Icono i="information-circle" :s="18" />
               <span class="grow">Tratamiento de datos conforme a la Ley 1581 de 2012 (Colombia).</span>
               <a href="#" class="t-sm" :aria-expanded="textoCompleto" @click.prevent="textoCompleto = !textoCompleto">
@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
               </a>
             </div>
 
-            <div v-if="textoCompleto" class="col gap-4 mm-rise" style="gap: 18px">
+            <div v-if="textoCompleto" class="col gap-4 rise" style="gap: 18px">
               <section v-for="s in SECCIONES" :key="s.titulo" class="col gap-2">
                 <h3 class="t-h3">{{ s.titulo }}</h3>
                 <p v-for="(l, k) in s.lineas" :key="k" class="t-sm muted">{{ l }}</p>
@@ -109,8 +109,8 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <div class="mm-modal-f">
-            <button type="button" class="mm-btn primary" @click="cerrar"><Icono i="checkmark" :s="18" />Entendido</button>
+          <div class="modal-f">
+            <button type="button" class="btn primary" @click="cerrar"><Icono i="checkmark" :s="18" />Entendido</button>
           </div>
         </div>
       </div>

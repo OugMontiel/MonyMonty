@@ -74,16 +74,16 @@ onMounted(() => {
       <p class="muted">Ingresa para ver cómo van tus finanzas hoy.</p>
     </div>
 
-    <div v-if="errorServidor" class="mm-banner expense" role="alert">
+    <div v-if="errorServidor" class="banner expense" role="alert">
       <Icono i="alert-circle" :s="18" />
       <span class="grow">{{ errorServidor }}</span>
     </div>
 
     <form class="col gap-6" novalidate @submit.prevent="onSubmit">
       <div class="col gap-4">
-        <div class="mm-field">
+        <div class="field">
           <label for="login-email">Correo electrónico</label>
-          <div class="mm-input" :class="{'is-error': errorEmail}">
+          <div class="input" :class="{'is-error': errorEmail}">
             <Icono i="mail" :s="18" />
             <input
               id="login-email"
@@ -96,15 +96,15 @@ onMounted(() => {
               @blur="tocado.email = true"
             />
           </div>
-          <span v-if="errorEmail" class="mm-err"><Icono i="alert-circle" :s="14" />{{ errorEmail }}</span>
+          <span v-if="errorEmail" class="err"><Icono i="alert-circle" :s="14" />{{ errorEmail }}</span>
         </div>
 
-        <div class="mm-field">
+        <div class="field">
           <div class="row between">
-            <label class="mm-flabel" for="login-password">Contraseña</label>
+            <label class="flabel" for="login-password">Contraseña</label>
             <router-link to="/recuperarCuenta" class="t-sm">¿La olvidaste?</router-link>
           </div>
-          <div class="mm-input" :class="{'is-error': errorClave}">
+          <div class="input" :class="{'is-error': errorClave}">
             <Icono i="lock-closed" :s="18" />
             <input
               id="login-password"
@@ -117,7 +117,7 @@ onMounted(() => {
             />
             <button
               type="button"
-              class="mm-btn icon sm ghost"
+              class="btn icon sm ghost"
               :aria-label="verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'"
               style="margin-right: -8px"
               @click="verClave = !verClave"
@@ -125,16 +125,16 @@ onMounted(() => {
               <Icono :i="verClave ? 'eye-off' : 'eye'" :s="18" />
             </button>
           </div>
-          <span v-if="errorClave" class="mm-err"><Icono i="alert-circle" :s="14" />{{ errorClave }}</span>
+          <span v-if="errorClave" class="err"><Icono i="alert-circle" :s="14" />{{ errorClave }}</span>
         </div>
       </div>
 
-      <button type="submit" class="mm-btn primary lg block" :class="{'is-loading': loading}" :disabled="loading || hayErrores">
+      <button type="submit" class="btn primary lg block" :class="{'is-loading': loading}" :disabled="loading || hayErrores">
         Iniciar sesión<Icono i="arrow-forward" :s="18" />
       </button>
     </form>
 
-    <router-link to="/crearCuenta" class="mm-btn lg block" :class="{'is-disabled': loading}">
+    <router-link to="/crearCuenta" class="btn lg block" :class="{'is-disabled': loading}">
       <Icono i="person-add" :s="18" />Crear cuenta gratis
     </router-link>
   </AuthSplit>
