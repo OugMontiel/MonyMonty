@@ -1,11 +1,12 @@
 import {ref} from "vue";
 import axios from "axios";
 import {useGlobalState} from "@/composables/useGlobalState";
+import {useLoadingStore} from "@/stores/contexto/loadingStore";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function useCategorias() {
-  const loading = ref(false);
+  const loadingStore = useLoadingStore();
   const error = ref(null);
   const {triggerGlobalRefresh} = useGlobalState();
 
@@ -15,7 +16,7 @@ export function useCategorias() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createCategoria(data) {
-    loading.value = true;
+    loadingStore.start("createCategoria");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}categoria/`, data, {
@@ -28,7 +29,7 @@ export function useCategorias() {
       error.value = err.response?.data?.message || "Error al crear la categoría";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createCategoria");
     }
   }
 
@@ -39,7 +40,7 @@ export function useCategorias() {
    * @returns {Promise<Object>} - La respuesta del servidor.
    */
   async function createSubcategoria(categoriaId, data) {
-    loading.value = true;
+    loadingStore.start("createCategoria");
     error.value = null;
     try {
       const response = await axios.post(`${API_URL}categoria/${categoriaId}/subcategoria`, data, {
@@ -52,14 +53,13 @@ export function useCategorias() {
       error.value = err.response?.data?.message || "Error al crear la subcategoría";
       throw err;
     } finally {
-      loading.value = false;
+      loadingStore.stop("createCategoria");
     }
   }
 
   return {
     createCategoria,
     createSubcategoria,
-    loading,
     error,
   };
 }

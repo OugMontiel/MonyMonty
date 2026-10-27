@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {useAuth} from "../features/auth/logic/useAuth.js";
+import { useAuthStore } from '../stores/autenticacion/authStore'
 
 import login from "../features/auth/views/LoginView.vue";
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
@@ -75,17 +75,16 @@ const router = createRouter({
 
 // Guard de navegación optimizado
 router.beforeEach(async (to, from) => {
-  const {checkAuth} = useAuth();
+  const authStore = useAuthStore()
 
   // Verificar si la ruta necesita autenticación (por defeczto sí)
   const requiresAuth = to.meta.requiresAuth !== false;
-  const authValid = await checkAuth();
 
-  if (requiresAuth && !authValid) {
+  if (requiresAuth && !authStore.isAuthenticated) {
     return {name: "Login"};
   }
 
-  if (to.name === "Login" && authValid) {
+  if (to.name === "Login" && authStore.isAuthenticated) {
     return {name: "HomeTablero"};
   }
 });
