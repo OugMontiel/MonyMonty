@@ -32,4 +32,10 @@ dist-ssr
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Environment variables & secrets
 .env
+.env.*
+.env.development
+.env.production
+.htpasswd

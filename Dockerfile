@@ -9,16 +9,26 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --prefer-offline --no-audit
 
-# Compilación del código fuente
+# Compilación del código fuente montando el archivo de entorno de forma efímera y segura (Build Secret)
 COPY . .
-RUN npm run build
+ARG MODE=production
+RUN --mount=type=secret,id=env_file \
+    if [ -f /run/secrets/env_file ]; then \
+      ln -sf /run/secrets/env_file ".env.${MODE}"; \
+    fi && \
+    if [ "$MODE" = "development" ]; then \
+      npm run build:dev; \
+    else \
+      npm run build:prod; \
+    fi && \
+    rm -f ".env.${MODE}"
 
 # ==========================================
 # Etapa 2: Producción (Nginx Hardened)
 # ==========================================
 FROM nginx:alpine AS production
 
-# Metadatos estándar para auditoría y CI/CD
+# Metadatos del contenedor
 LABEL maintainer="MonyMonty"
 LABEL description="Contenedor seguro y de mínimo privilegio para MonyMonty"
 
@@ -36,15 +46,17 @@ RUN chown -R nginx:nginx /var/cache/nginx /var/run /var/log/nginx /tmp/nginx.pid
     chmod -R 550 /usr/share/nginx/html && \
     chmod 770 /tmp /var/cache/nginx /var/run /var/log/nginx
 
-# 4. Bastionado (Hardening): Eliminación de vectores de ataque
-RUN rm -rf /sbin/apk /etc/apk /lib/apk /usr/share/apk && \
+# 4. Bastionado (Hardening): Ajuste de Nginx y eliminación de vectores de ataque
+RUN sed -i 's/^user/#user/' /etc/nginx/nginx.conf && \
+    sed -i 's|^pid .*|pid /tmp/nginx.pid;|' /etc/nginx/nginx.conf && \
+    rm -rf /sbin/apk /etc/apk /lib/apk /usr/share/apk && \
     rm -f /usr/bin/wget /usr/bin/curl /bin/ping /bin/ping6 /usr/bin/nc /usr/bin/netcat /usr/bin/telnet
 
 # 5. Ejecución como usuario sin privilegios
 USER nginx
 
-# 6. Exposición de puerto no privilegiado
-EXPOSE 8080
+# 6. Exposición de puerto interno no privilegiado
+EXPOSE 8082
 
-# 7. Arranque de Nginx apuntando al PID correcto
-CMD ["nginx", "-g", "daemon off; pid /tmp/nginx.pid;"]
+# 7. Arranque de Nginx
+CMD ["nginx", "-g", "daemon off;"]

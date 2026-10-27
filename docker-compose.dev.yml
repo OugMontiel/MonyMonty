@@ -1,0 +1,84 @@
+services:
+  monymonty_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args:
+        MODE: development
+      secrets:
+        - env_file
+    env_file:
+      - .env.development
+    image: monymonty-dev:latest
+    container_name: monymonty_dev
+    restart: unless-stopped
+
+    # ============================================================================
+    # PRINCIPIOS DE MÍNIMO PRIVILEGIO Y PROTECCIÓN DE CONTENEDOR
+    # ============================================================================
+    user: "101:101"
+    read_only: true
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+
+    # Sistemas de archivos volátiles requeridos para modo sólo lectura
+    tmpfs:
+      - /tmp:size=32M,uid=101,gid=101,mode=1777
+      - /var/run:size=16M,uid=101,gid=101,mode=0755
+      - /var/cache/nginx:size=64M,uid=101,gid=101,mode=0755
+
+    # Montaje de configuración segura y autenticación para entorno de desarrollo
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./.htpasswd:/etc/nginx/.htpasswd:ro
+
+    # ============================================================================
+    # CONSUMO INTERNO DE PUERTO SIN EXPOSICIÓN PÚBLICA NI COLISIONES:
+    # - Se expone internamente el puerto 8082 en la red compartida del proxy.
+    # - No colisiona con los contenedores de YMCA ni con el de producción.
+    # ============================================================================
+    expose:
+      - "8082"
+
+    # En caso de requerir depuración local en el host (puerto diferenciado 8083 en loopback):
+    # ports:
+    #   - "127.0.0.1:8083:8082"
+
+    networks:
+      proxy:
+        aliases:
+          - monymonty-dev
+
+    # Verificación de salud interna sin curl ni herramientas de red
+    healthcheck:
+      test: ["CMD-SHELL", "pidof nginx || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 64M
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  proxy:
+    external: true
+
+secrets:
+  env_file:
+    file: .env.development
