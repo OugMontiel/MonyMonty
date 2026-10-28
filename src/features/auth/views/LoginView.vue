@@ -70,7 +70,7 @@ onMounted(() => {
     </template>
 
     <div class="col gap-1">
-      <h1 class="t-h1" style="font-size: 32px; line-height: 38px">Hola de nuevo</h1>
+      <h1 class="t-h1" style="font-size: 32px; line-height: 38px">¡Qué bueno verte!</h1>
       <p class="muted">Ingresa para ver cómo van tus finanzas hoy.</p>
     </div>
 

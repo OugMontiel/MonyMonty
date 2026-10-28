@@ -12,7 +12,7 @@ export const emailSchema = z
   .string()
   .trim()
   .min(1, {message: "Por favor, ingresa tu correo electrónico."})
-  .email({message: "Escribe un correo válido, por ejemplo laura@correo.co"});
+  .email({message: "Escribe un correo válido, por ejemplo contacto@monteflor.co"});
 
 export const passwordSchema = z
   .string()
