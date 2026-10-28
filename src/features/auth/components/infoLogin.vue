@@ -145,6 +145,4 @@ export default {
     max-width: 280px;
   }
 }
-
-
 </style>
