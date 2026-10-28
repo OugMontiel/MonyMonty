@@ -17,7 +17,7 @@ import {useAuth} from "../logic/useAuth.js";
 import {emailSchema, mensajeDe} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import AuthSplit from "../components/AuthSplit.vue";
-import Icono from "@/components/iconos/Icono.vue";
+import Icono from "../../../components/iconos/Icono.vue";
 
 const authStore = useAuthStore();
 const router = useRouter();

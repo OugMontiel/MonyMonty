@@ -22,7 +22,11 @@ export const passwordSchema = z
   .refine((v) => SIMBOLO.test(v), {message: "Debe contener al menos un símbolo"});
 
 export const nombreSchema = (campo) =>
-  z.string().trim().min(1, {message: `El ${campo} es obligatorio`}).min(3, {message: "Debe tener al menos 3 caracteres"});
+  z
+    .string()
+    .trim()
+    .min(1, {message: `El ${campo} es obligatorio`})
+    .min(3, {message: "Debe tener al menos 3 caracteres"});
 
 /**
  * Valida `values` contra un z.object y devuelve el primer mensaje por campo.

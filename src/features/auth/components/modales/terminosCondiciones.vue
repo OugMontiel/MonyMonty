@@ -18,13 +18,33 @@ const ACTUALIZADO = "24 de enero de 2026";
 
 // El texto completo de cada sección se agrega donde está el marcador
 const SECCIONES = [
-  {id: "t1", titulo: "1. Qué es MonyMonty", resumen: "Una plataforma para registrar, entender y planear tu dinero personal. No es un banco ni mueve tu dinero real."},
+  {
+    id: "t1",
+    titulo: "1. Qué es MonyMonty",
+    resumen: "Una plataforma para registrar, entender y planear tu dinero personal. No es un banco ni mueve tu dinero real.",
+  },
   {id: "t2", titulo: "2. Tu cuenta", resumen: "Eres responsable de mantener tu contraseña en privado y de la información que registras."},
-  {id: "t3", titulo: "3. Uso aceptable", resumen: "Usa MonyMonty solo para tus finanzas o las de tu hogar, sin intentar afectar el servicio."},
-  {id: "t4", titulo: "4. Planes y pagos", resumen: "El plan Free no tiene costo. Basic y Premium se cobran por periodo y puedes cancelarlos cuando quieras."},
+  {
+    id: "t3",
+    titulo: "3. Uso aceptable",
+    resumen: "Usa MonyMonty solo para tus finanzas o las de tu hogar, sin intentar afectar el servicio.",
+  },
+  {
+    id: "t4",
+    titulo: "4. Planes y pagos",
+    resumen: "El plan Free no tiene costo. Basic y Premium se cobran por periodo y puedes cancelarlos cuando quieras.",
+  },
   {id: "t5", titulo: "5. Asesoría", resumen: "Los consejos y mentorías son educativos; las decisiones finales sobre tu dinero son tuyas."},
-  {id: "t6", titulo: "6. Responsabilidad", resumen: "Trabajamos para que el servicio esté disponible y seguro, sin garantizar que no tenga interrupciones."},
-  {id: "t7", titulo: "7. Cambios", resumen: "Podemos actualizar estos términos y te avisaremos de los cambios importantes dentro de la plataforma."},
+  {
+    id: "t6",
+    titulo: "6. Responsabilidad",
+    resumen: "Trabajamos para que el servicio esté disponible y seguro, sin garantizar que no tenga interrupciones.",
+  },
+  {
+    id: "t7",
+    titulo: "7. Cambios",
+    resumen: "Podemos actualizar estos términos y te avisaremos de los cambios importantes dentro de la plataforma.",
+  },
 ];
 
 const cuerpo = ref(null);
@@ -106,7 +126,15 @@ onBeforeUnmount(() => {
             </div>
             <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
           </div>
-          <div class="progress sm" style="border-radius: 0; height: 3px" role="progressbar" aria-label="Avance de lectura" :aria-valuenow="progreso" aria-valuemin="0" aria-valuemax="100">
+          <div
+            class="progress sm"
+            style="border-radius: 0; height: 3px"
+            role="progressbar"
+            aria-label="Avance de lectura"
+            :aria-valuenow="progreso"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
             <i :style="{'--w': `${progreso}%`}"></i>
           </div>
 
@@ -142,7 +170,9 @@ onBeforeUnmount(() => {
                 {{ leidoCompleto ? "Listo, ya puedes aceptar" : `Sigue bajando para activar “Acepto” · ${progreso} % leído` }}
               </span>
               <button type="button" class="btn ghost" @click="cerrar">Ahora no</button>
-              <button type="button" class="btn primary" :disabled="!leidoCompleto" @click="aceptar"><Icono i="checkmark" :s="18" />Acepto</button>
+              <button type="button" class="btn primary" :disabled="!leidoCompleto" @click="aceptar">
+                <Icono i="checkmark" :s="18" />Acepto
+              </button>
             </template>
             <template v-else>
               <span class="grow"></span>
@@ -187,7 +217,9 @@ onBeforeUnmount(() => {
 }
 .legal-body section {
   padding: 0;
-  transition: background var(--dur-base), padding var(--dur-base);
+  transition:
+    background var(--dur-base),
+    padding var(--dur-base);
 }
 /* La sección que se está leyendo se resalta con un fondo suave */
 .legal-body section.legal-activa {
