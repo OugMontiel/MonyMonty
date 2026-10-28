@@ -1,0 +1,183 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-theme-light-bg: #f8f7f5; /** Fondo de toda la app, detrás de tarjetas y sidebar. Blanco cálido. */
+  --color-theme-light-surface: #ffffff; /** Tarjetas, modales, sidebar, tablas, drawers. */
+  --color-theme-light-surface-2: #f2f0ec; /** Relleno de inputs, hover de filas y de ítems del menú, pistas de segmented control y barras de progreso. */
+  --color-theme-light-surface-3: #e9e6e1; /** Estado presionado, skeletons, divisores gruesos. */
+  --color-theme-light-line: #e5e1db; /** Bordes de tarjetas y separadores de tabla (decorativos, no identifican controles). */
+  --color-theme-light-line-strong: #8f887f; /** Borde de inputs, checkboxes y selects: >=3:1 sobre surface. */
+  --color-theme-light-ink: #2f2f2f; /** Texto principal y montos sobre bg, surface, surface-2. */
+  --color-theme-light-ink-muted: #67625b; /** Texto secundario, etiquetas, descripciones y ejes de gráficos sobre surface y surface-2 (>=5:1). */
+  --color-theme-light-ink-subtle: #8a847c; /** Solo iconos decorativos, placeholders grandes y marcas de eje (>=3:1). Nunca texto de párrafo. */
+  --color-theme-light-brand: #f25c2f; /** Naranja MonyMonty (--color-acento). Iconos activos, indicador del menú, gráficos, texto >=24px. */
+  --color-theme-light-brand-strong: #c9441a; /** Relleno del botón primario y del FAB; anillo de foco. Siempre con texto on-brand. */
+  --color-theme-light-brand-ink: #b23c15; /** Texto naranja pequeño: enlaces, badges de marca sobre brand-tint o surface (>=5:1). */
+  --color-theme-light-brand-soft: #ff9b73; /** --color-acento-suave: halos, gradientes del landing, hover suave de gráficos. */
+  --color-theme-light-brand-tint: #fff1eb; /** Fondo de la píldora activa del menú, chips seleccionados, banners de marca. */
+  --color-theme-light-on-brand: #ffffff; /** Texto e iconos sobre brand-strong. */
+  --color-theme-light-income: #077650; /** Ingresos: montos positivos, badge Ingreso, serie de ingresos. */
+  --color-theme-light-income-tint: #e6f5ee; /** Fondo de badges e iconos de ingreso; texto income encima. */
+  --color-theme-light-expense: #c4223f; /** Gastos/egresos: montos negativos, badge Gasto, errores de formulario. */
+  --color-theme-light-expense-tint: #fdebef; /** Fondo de badges de gasto y del modal de eliminar; texto expense encima. */
+  --color-theme-light-balance: #4a4fd1; /** Saldo disponible y patrimonio. */
+  --color-theme-light-balance-tint: #eeeffd; /** Fondo de icono/badge de saldo; texto balance encima. */
+  --color-theme-light-warning: #955900; /** Presupuesto al 80-99%, deudas por vencer. */
+  --color-theme-light-warning-tint: #fdf3e1; /** Fondo de avisos de advertencia. */
+  --color-theme-light-info: #1a63bd; /** Transferencias entre cuentas y mensajes informativos. */
+  --color-theme-light-info-tint: #e8f1fc; /** Fondo de badge Transferencia y banners informativos. */
+  --color-theme-light-overlay: rgba(28, 24, 20, 0.46); /** Capa detrás de modales y drawers. */
+  --color-theme-dark-bg: #121110; /** Fondo oscuro de toda la app. */
+  --color-theme-dark-surface: #1b1a18; /** Tarjetas, modales, sidebar en modo oscuro. */
+  --color-theme-dark-surface-2: #24221f; /** Relleno de inputs, hover de filas en modo oscuro. */
+  --color-theme-dark-surface-3: #2e2b28; /** Estado presionado, skeletons en modo oscuro. */
+  --color-theme-dark-line: #33302c; /** Bordes de tarjetas y separadores en modo oscuro. */
+  --color-theme-dark-line-strong: #6e675f; /** Borde de inputs en modo oscuro: >=3:1 sobre surface. */
+  --color-theme-dark-ink: #f4f1ec; /** Texto principal sobre fondo oscuro. */
+  --color-theme-dark-ink-muted: #b3ada5; /** Texto secundario sobre fondo oscuro. */
+  --color-theme-dark-ink-subtle: #8a847c; /** Iconos decorativos y marcas de eje en modo oscuro. */
+  --color-theme-dark-brand: #ff6b3d; /** Naranja de marca adaptado para modo oscuro. */
+  --color-theme-dark-brand-strong: #ff7a4f; /** Relleno de botón primario y FAB en modo oscuro. */
+  --color-theme-dark-brand-ink: #ffab8a; /** Texto naranja pequeño en modo oscuro. */
+  --color-theme-dark-brand-soft: #ffab8a; /** Halos y gradientes en modo oscuro. */
+  --color-theme-dark-brand-tint: #3a2016; /** Fondo de píldora activa en modo oscuro. */
+  --color-theme-dark-on-brand: #1b0d06; /** Texto sobre brand-strong en modo oscuro. */
+  --color-theme-dark-income: #3ccf91; /** Ingresos en modo oscuro. */
+  --color-theme-dark-income-tint: #12291f; /** Fondo de badge de ingresos en modo oscuro. */
+  --color-theme-dark-expense: #ff6b86; /** Gastos en modo oscuro. */
+  --color-theme-dark-expense-tint: #351820; /** Fondo de badge de gastos en modo oscuro. */
+  --color-theme-dark-balance: #8d93ff; /** Saldo disponible en modo oscuro. */
+  --color-theme-dark-balance-tint: #1f2040; /** Fondo de badge de saldo en modo oscuro. */
+  --color-theme-dark-warning: #f2b544; /** Advertencias en modo oscuro. */
+  --color-theme-dark-warning-tint: #33270f; /** Fondo de advertencias en modo oscuro. */
+  --color-theme-dark-info: #5ea8ff; /** Mensajes informativos en modo oscuro. */
+  --color-theme-dark-info-tint: #14243a; /** Fondo informativo en modo oscuro. */
+  --color-theme-dark-overlay: rgba(0, 0, 0, 0.62); /** Capa overlay para modales en modo oscuro. */
+  --color-category-orange: #e4572e; /** Categoría: Comida y restaurantes. */
+  --color-category-teal: #0f8f8a; /** Categoría: Mercado y supermercado. */
+  --color-category-indigo: #5458d6; /** Categoría: Hogar y arriendo. */
+  --color-category-plum: #8b4fb3; /** Categoría: Educación. */
+  --color-category-amber: #c27c00; /** Categoría: Transporte. */
+  --color-category-pink: #c93f72; /** Categoría: Salud y cuidado. */
+  --color-category-sky: #2878c7; /** Categoría: Suscripciones y tecnología. */
+  --color-category-green: #3d8a3a; /** Categoría: Salario y negocio. */
+  --color-category-slate: #5f6b7a; /** Categoría: Otros / sin categoría. */
+  --font-family-sans: Plus Jakarta Sans; /** Tipografía principal de MonyMonty para Web y Móvil */
+  --font-weight-regular: 400; /** Peso regular para lectura estándar */
+  --font-weight-medium: 500; /** Peso medium para body, inputs y filas */
+  --font-weight-bold: 700; /** Peso bold para títulos h2/h3, montos y labels */
+  --font-weight-extrabold: 800; /** Peso extrabold para display, h1, amount-xl, amount-lg y overline */
+  --typography-title-display-font-size: 44px; /** Landing y pantallas de bienvenida */
+  --typography-title-display-line-height: 48px;
+  --typography-title-display-letter-spacing: -0.02em;
+  --typography-title-h1-font-size: 28px; /** Título de página en la barra superior */
+  --typography-title-h1-line-height: 34px;
+  --typography-title-h1-letter-spacing: -0.015em;
+  --typography-title-h2-font-size: 20px; /** Título de modal y de sección */
+  --typography-title-h2-line-height: 28px;
+  --typography-title-h2-letter-spacing: -0.01em;
+  --typography-title-h3-font-size: 16px; /** Título de tarjeta */
+  --typography-title-h3-line-height: 24px;
+  --typography-amount-xl-font-size: 36px; /** Saldo principal. Siempre con tabular-nums */
+  --typography-amount-xl-line-height: 40px;
+  --typography-amount-xl-letter-spacing: -0.02em;
+  --typography-amount-lg-font-size: 26px; /** Valores de tarjetas KPI */
+  --typography-amount-lg-line-height: 32px;
+  --typography-amount-lg-letter-spacing: -0.015em;
+  --typography-amount-md-font-size: 15px; /** Montos en filas y tablas */
+  --typography-amount-md-line-height: 22px;
+  --typography-text-body-font-size: 15px; /** Texto general, inputs, filas */
+  --typography-text-body-line-height: 22px;
+  --typography-text-body-sm-font-size: 13px; /** Descripciones, ayudas de campo, metadatos */
+  --typography-text-body-sm-line-height: 20px;
+  --typography-text-label-font-size: 13px; /** Etiquetas de campo y botones pequeños */
+  --typography-text-label-line-height: 18px;
+  --typography-text-overline-font-size: 11px; /** Rótulos en mayúscula sobre KPI y grupos del menú */
+  --typography-text-overline-line-height: 16px;
+  --typography-text-overline-letter-spacing: 0.08em;
+  --space-1: 4px; /** Separación icono-texto en chips. */
+  --space-2: 8px; /** Gap entre botones y dentro de filas. */
+  --space-3: 12px; /** Padding de inputs y de ítems del menú. */
+  --space-4: 16px; /** Gap de grids de tarjetas en móvil; padding de filas. */
+  --space-5: 20px; /** Padding de tarjetas. */
+  --space-6: 24px; /** Gap de grids en escritorio; padding de modales. */
+  --space-8: 32px; /** Padding del contenido principal. */
+  --space-12: 48px; /** Separación entre secciones en landing y onboarding. */
+  --radius-sm: 8px; /** Chips, badges, kbd, checkbox. */
+  --radius-md: 12px; /** Inputs, botones, ítems del menú. */
+  --radius-lg: 18px; /** Tarjetas y tablas. */
+  --radius-xl: 26px; /** Modales, drawers, hero del landing. */
+  --radius-pill: 999px; /** Segmented control, avatares, barras de progreso, FAB. */
+  --motion-duration-fast: 0.14s; /** Hover, press, cambio de color. */
+  --motion-duration-base: 0.24s; /** Segmented control, tabs, toggles, tooltips. */
+  --motion-duration-slow: 0.42s; /** Entrada de modales, drawers y tarjetas. */
+  --motion-duration-chart: 1.10s; /** Trazado de gráficos y conteo de montos. */
+  --motion-duration-reduced: 0.00s; /** Respeta prefers-reduced-motion: todo pasa a 1ms. */
+  --motion-easing-out: cubic-bezier(0.22, 1, 0.36, 1); /** Entradas: tarjetas, modales, gráficos. */
+  --motion-easing-in-out: cubic-bezier(0.65, 0, 0.35, 1); /** Movimientos de un punto a otro: indicador del menú, thumb del segmented. */
+  --motion-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /** Micro-rebotes: FAB, check de éxito, toggle. */
+  --icon-size-sm: 16px; /** Separación e iconos dentro de chips y badges. */
+  --icon-size-md: 20px; /** Iconos en inputs, botones pequeños y filas. */
+  --icon-size-lg: 24px; /** Iconos estándar de navegación, tabs y FAB. */
+  --icon-size-xl: 32px; /** Iconos destacados de categorías con fondo de color. */
+  --icon-size-display: 48px; /** Iconos grandes para empty states e ilustraciones. */
+  --asset-logo-primary: url("assets/img/MonyMontySinFondo3.png"); /** Logo principal de MonyMonty. */
+  --asset-logo-secondary: url("assets/img/MonyMontySinFondo2.png"); /** Variante del logo de MonyMonty. */
+  --component-mobile-fab-radius: 999px; /** Radio píldora para FAB según tocken.json */
+  --component-mobile-fab-size: 56px; /** Dimensión estándar del botón de acción flotante */
+  --component-mobile-touch-target-min: 48px; /** Área mínima accesible de toque en móviles */
+  --component-mobile-segmented-track-radius: 999px; /** Radio píldora de la pista del segmented control */
+  --component-mobile-segmented-thumb-radius: 999px; /** Radio del selector activo del segmented control */
+  --component-mobile-segmented-padding: 4px; /** Padding interno del segmented control (space-1) */
+  --component-mobile-card-grid-gap: 16px; /** Gap de grids de tarjetas en móvil (space-4) */
+  --component-mobile-card-padding: 20px; /** Padding de tarjetas (space-5) */
+  --component-mobile-card-radius: 18px; /** Radio de esquina de tarjetas (radius-lg) */
+  --component-mobile-drawer-radius: 26px; /** Radio de bordes superiores para bottom sheets y modales (radius-xl) */
+  --component-mobile-drawer-padding: 24px; /** Padding interno de drawers y modales móviles (space-6) */
+  --component-mobile-input-padding: 12px; /** Padding de inputs (space-3) */
+  --component-mobile-input-radius: 12px; /** Radio de bordes de inputs (radius-md) */
+  --component-web-sidebar-width: 260px; /** Ancho del sidebar en escritorio */
+  --component-web-sidebar-collapsed-width: 80px; /** Ancho del sidebar colapsado */
+  --component-web-sidebar-item-padding: 12px; /** Padding de ítems del menú (space-3) */
+  --component-web-sidebar-item-radius: 12px; /** Radio de esquina de los ítems del menú (radius-md) */
+  --component-web-table-row-padding: 16px; /** Padding de filas de tablas (space-4) */
+  --component-web-table-radius: 18px; /** Radio de tarjetas y tablas (radius-lg) */
+  --component-web-modal-padding: 24px; /** Padding de modales (space-6) */
+  --component-web-modal-radius: 26px; /** Radio de modales y drawers (radius-xl) */
+  --component-web-modal-max-width: 600px; /** Ancho máximo estándar de modal de transacción */
+  --component-web-layout-content-padding: 32px; /** Padding del contenido principal (space-8) */
+  --component-web-layout-section-gap: 48px; /** Separación entre secciones en landing y onboarding (space-12) */
+  --component-web-layout-grid-gap: 24px; /** Gap de grids en escritorio (space-6) */
+  --component-web-layout-max-width: 1280px; /** Ancho máximo del contenedor principal */
+  --shadow-sm-light: 0 1px 2px rgba(31, 24, 18, 0.06), 0 1px 1px rgba(31, 24, 18, 0.04); /** Tarjetas en reposo (tema claro). */
+  --shadow-sm-dark: 0 1px 2px rgba(0, 0, 0, 0.5); /** Tarjetas en reposo (tema oscuro). */
+  --shadow-md-light: 0 10px 24px -8px rgba(31, 24, 18, 0.14), 0 2px 4px rgba(31, 24, 18, 0.05); /** Tarjetas en hover, popovers, menús (tema claro). */
+  --shadow-md-dark: 0 10px 24px -8px rgba(0, 0, 0, 0.6); /** Tarjetas en hover, popovers, menús (tema oscuro). */
+  --shadow-lg-light: 0 32px 64px -16px rgba(31, 24, 18, 0.28), 0 4px 12px rgba(31, 24, 18, 0.08); /** Modales y drawers (tema claro). */
+  --shadow-lg-dark: 0 32px 64px -16px rgba(0, 0, 0, 0.75); /** Modales y drawers (tema oscuro). */
+  --shadow-brand-light: 0 10px 24px -8px rgba(201, 68, 26, 0.5); /** Botón primario en hover y FAB (tema claro). */
+  --shadow-brand-dark: 0 10px 24px -8px rgba(255, 107, 61, 0.35); /** Botón primario en hover y FAB (tema oscuro). */
+  --state-opacity-hover: 0.08; /** Opacidad de capa de interacción hover */
+  --state-opacity-focus: 0.12; /** Opacidad de capa de interacción focus */
+  --state-opacity-pressed: 0.16; /** Opacidad de capa de interacción pressed / active */
+  --state-opacity-disabled: 0.38; /** Opacidad general de componentes deshabilitados (38%) */
+  --state-ring-width: 2px; /** Grosor del anillo de foco accesible */
+  --state-ring-offset: 2px; /** Separación del anillo de foco respecto al componente */
+  --state-skeleton-pulse-duration: 1.50s; /** Duración del pulso de carga en placeholders y skeletons */
+  --chart-duration-draw: 1.10s; /** Trazado de gráficos y conteo animado de montos (dur-chart) */
+  --chart-easing-draw: cubic-bezier(0.22, 1, 0.36, 1); /** Curva de entrada y trazado de series en gráficos (ease-out) */
+  --chart-axis-label-light: #67625b; /** Texto de etiquetas y valores en ejes de gráficos (ink-muted claro) */
+  --chart-axis-label-dark: #b3ada5; /** Texto de etiquetas y valores en ejes de gráficos (ink-muted oscuro) */
+  --chart-axis-grid: #8a847c; /** Líneas de cuadrícula y marcas de eje (ink-subtle >=3:1) */
+  --chart-series-food: #e4572e; /** Serie: Comida y restaurantes (cat-orange) */
+  --chart-series-groceries: #0f8f8a; /** Serie: Mercado y supermercado (cat-teal) */
+  --chart-series-housing: #5458d6; /** Serie: Hogar y arriendo (cat-indigo) */
+  --chart-series-education: #8b4fb3; /** Serie: Educación (cat-plum) */
+  --chart-series-transport: #c27c00; /** Serie: Transporte (cat-amber) */
+  --chart-series-health: #c93f72; /** Serie: Salud y cuidado (cat-pink) */
+  --chart-series-tech: #2878c7; /** Serie: Suscripciones y tecnología (cat-sky) */
+  --chart-series-income: #3d8a3a; /** Serie: Salario y negocio (cat-green) */
+  --chart-series-other: #5f6b7a; /** Serie: Otros / sin categoría (cat-slate) */
+}

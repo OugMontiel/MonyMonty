@@ -1,184 +1,184 @@
 <script setup>
-const showPrivacidad = defineModel("visible", {required: true});
+/**
+ * Modal de Política de privacidad (S08): primero un resumen en 4 tarjetas y,
+ * con "Texto completo", las 8 secciones de la política.
+ */
+import {ref, watch, nextTick, onBeforeUnmount} from "vue";
+import Icono from "@/components/iconos/Icono.vue";
+
+const visible = defineModel({type: Boolean, required: true});
+
+const ACTUALIZADO = "24 de enero de 2026";
+// Pendiente de definir por el responsable del tratamiento (igual que en la política anterior)
+const CORREO_PRIVACIDAD = "[privacidad@tuapp.com]";
+
+const RESUMEN = [
+  {
+    icono: "layers",
+    tono: "balance",
+    titulo: "Qué guardamos",
+    texto: "Tus datos de perfil y lo que registras: movimientos, categorías y presupuesto, además de datos de uso como IP y navegador.",
+  },
+  {
+    icono: "bulb",
+    tono: "brand",
+    titulo: "Para qué",
+    texto: "Para tu registro e inicio de sesión, mostrarte tu tablero y rankings, mejorar la experiencia y cumplir obligaciones legales.",
+  },
+  {
+    icono: "people",
+    tono: "info",
+    titulo: "Con quién",
+    texto: "No vendemos tus datos. Solo se comparten si el servicio lo necesita (hosting, analítica) o si lo exige una autoridad.",
+  },
+  {
+    icono: "download",
+    tono: "income",
+    titulo: "Tus derechos",
+    texto: "Conocer, actualizar, rectificar, revocar y suprimir tus datos, de forma gratuita.",
+  },
+];
+
+const SECCIONES = [
+  {
+    titulo: "1. Responsable del tratamiento",
+    lineas: [
+      "Responsable: [Nombre completo de la empresa o persona natural]",
+      "NIT / CC: [Tu NIT o documento]",
+      "Domicilio: Bucaramanga, Santander, Colombia",
+      `Contacto: ${CORREO_PRIVACIDAD}`,
+    ],
+  },
+  {
+    titulo: "2. Datos que recolectamos",
+    lineas: [
+      "Datos de identificación: nombre, documento de identidad, correo electrónico, número de teléfono.",
+      "Datos financieros: información relacionada con movimientos, categorías y presupuesto (estrictamente necesario).",
+      "Datos de uso: dirección IP, tipo de dispositivo, navegador, fecha y hora de acceso.",
+      "Geolocalización: aproximada, solo si lo autorizas expresamente.",
+    ],
+  },
+  {
+    titulo: "3. Finalidades del tratamiento",
+    lineas: [
+      "Registro y autenticación.",
+      "Gestión de dashboard y rankings.",
+      "Mejora de la experiencia técnica.",
+      "Cumplimiento de obligaciones legales.",
+    ],
+  },
+  {
+    titulo: "4. Derechos (Habeas Data)",
+    lineas: [
+      "Como titular tienes derecho gratuito a conocer, actualizar, rectificar, revocar y suprimir tus datos.",
+      `Para ejercerlos escribe a ${CORREO_PRIVACIDAD}.`,
+    ],
+  },
+  {
+    titulo: "5. Compartición de datos",
+    lineas: [
+      "No vendemos tus datos. Solo los compartimos si:",
+      "Es necesario para el servicio (proveedores de hosting, analítica).",
+      "Lo exige una autoridad competente.",
+    ],
+  },
+  {
+    titulo: "6. Seguridad",
+    lineas: [
+      "Implementamos medidas técnicas y organizativas (cifrado, firewalls) para proteger tus datos contra acceso no autorizado, pérdida o alteración.",
+    ],
+  },
+  {
+    titulo: "7. Cambios a la política",
+    lineas: ["Podemos actualizar esta política. Te notificaremos los cambios importantes en la plataforma o por correo."],
+  },
+  {titulo: "8. Contacto", lineas: [`Email: ${CORREO_PRIVACIDAD}`, "Dirección: Bucaramanga, Santander – Colombia"]},
+];
+
+const modal = ref(null);
+const textoCompleto = ref(false);
+
+function cerrar() {
+  visible.value = false;
+}
+
+function alTeclear(e) {
+  if (e.key === "Escape") cerrar();
+}
+
+watch(visible, async (abierto) => {
+  document.body.style.overflow = abierto ? "hidden" : "";
+  if (!abierto) return;
+  textoCompleto.value = false;
+  await nextTick();
+  modal.value?.focus();
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = "";
+});
 </script>
 
 <template>
-  <!-- ──────────── Drawer Política de Privacidad ──────────── -->
+  <Teleport to="body">
+    <div v-if="visible" class="tema" data-theme="light">
+      <div class="overlay" @click.self="cerrar" @keydown="alTeclear">
+        <div
+          ref="modal"
+          class="modal wide"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="privacidad-titulo"
+          tabindex="-1"
+          style="max-height: calc(100vh - 32px); outline: 0"
+        >
+          <div class="modal-h">
+            <div class="ico income"><Icono i="shield-checkmark" :s="22" /></div>
+            <div class="grow">
+              <h2 id="privacidad-titulo" class="t-h2">Tu privacidad, en corto</h2>
+              <p class="t-sm muted">Lo esencial en 30 segundos. Última actualización: {{ ACTUALIZADO }}.</p>
+            </div>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
+          </div>
 
-  <Drawer v-model:visible="showPrivacidad" position="full" :modal="true" :showCloseIcon="true" :dismissable="true" class="custom-drawer">
-    <template #header>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4 text-color text-center w-full">Política de Privacidad</h1>
-    </template>
+          <div class="modal-b" style="overflow: auto">
+            <div class="grid g2 resumen" style="gap: 14px">
+              <div v-for="r in RESUMEN" :key="r.titulo" class="card flat" style="background: var(--surface-2); border: 0">
+                <div class="ico sm" :class="r.tono"><Icono :i="r.icono" :s="18" /></div>
+                <h3 class="t-h3" style="margin-top: 12px">{{ r.titulo }}</h3>
+                <p class="t-sm muted" style="margin-top: 4px">{{ r.texto }}</p>
+              </div>
+            </div>
 
-    <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-all duration-300 flex flex-col gap-8">
-      <div>
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-100 text-surface-600 text-sm font-medium">
-          <i class="pi pi-clock"></i>
-          <span>Última actualización: 24 de enero de 2026</span>
+            <div class="banner info">
+              <Icono i="information-circle" :s="18" />
+              <span class="grow">Tratamiento de datos conforme a la Ley 1581 de 2012 (Colombia).</span>
+              <a href="#" class="t-sm" :aria-expanded="textoCompleto" @click.prevent="textoCompleto = !textoCompleto">
+                {{ textoCompleto ? "Ocultar texto" : "Texto completo" }}
+              </a>
+            </div>
+
+            <div v-if="textoCompleto" class="col gap-4 rise" style="gap: 18px">
+              <section v-for="s in SECCIONES" :key="s.titulo" class="col gap-2">
+                <h3 class="t-h3">{{ s.titulo }}</h3>
+                <p v-for="(l, k) in s.lineas" :key="k" class="t-sm muted">{{ l }}</p>
+              </section>
+            </div>
+          </div>
+
+          <div class="modal-f">
+            <button type="button" class="btn primary" @click="cerrar"><Icono i="checkmark" :s="18" />Entendido</button>
+          </div>
         </div>
-
-        <!-- Introducción -->
-        <Card class="shadow-sm">
-          <template #content>
-            <p class="text-lg leading-relaxed">
-              En <strong>[Nombre de tu Empresa / Aplicación]</strong> (en adelante “nosotros”, “nuestra” o “la Plataforma”), valoramos
-              profundamente tu privacidad y nos comprometemos a proteger tus datos personales de acuerdo con la legislación colombiana
-              vigente, en particular la <span class="font-semibold text-primary">Ley 1581 de 2012</span>, el Decreto 1377 de 2013 y demás
-              normas concordantes.
-            </p>
-            <Message severity="warn" icon="pi pi-exclamation-triangle" class="mt-4">
-              Si no estás de acuerdo con estos Términos, <strong>no uses la Plataforma</strong>.
-            </Message>
-          </template>
-        </Card>
       </div>
-
-      <!-- Secciones en Acordeón -->
-      <Accordion :value="['0']" class="shadow-md rounded-xl overflow-hidden">
-        <AccordionPanel value="0">
-          <AccordionHeader><span class="font-bold text-lg">1. Responsable del Tratamiento</span></AccordionHeader>
-          <AccordionContent>
-            <div class="grid md:grid-cols-2 gap-4 p-2">
-              <div class="flex flex-col p-4 border rounded-lg">
-                <span class="text-sm text-muted-color font-medium uppercase tracking-wider mb-1">Responsable</span>
-                <span class="font-semibold">[Nombre completo de la empresa o persona natural]</span>
-              </div>
-              <div class="flex flex-col p-4 border rounded-lg">
-                <span class="text-sm text-muted-color font-medium uppercase tracking-wider mb-1">NIT / CC</span>
-                <span class="font-semibold">[Tu NIT o documento]</span>
-              </div>
-              <div class="flex flex-col p-4 border rounded-lg">
-                <span class="text-sm text-muted-color font-medium uppercase tracking-wider mb-1">Domicilio</span>
-                <span class="font-semibold">Bucaramanga, Santander, Colombia</span>
-              </div>
-              <div class="flex flex-col p-4 border rounded-lg">
-                <span class="text-sm text-muted-color font-medium uppercase tracking-wider mb-1">Contacto</span>
-                <span class="font-semibold break-all">[privacidad@tuapp.com]</span>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="1">
-          <AccordionHeader><span class="font-bold text-lg">2. Datos que Recolectamos</span></AccordionHeader>
-          <AccordionContent>
-            <p class="mb-4">Recolectamos los siguientes tipos de datos para brindarte el mejor servicio:</p>
-            <ul class="space-y-3">
-              <li class="flex items-start gap-3">
-                <i class="pi pi-id-card text-primary mt-1"></i>
-                <span
-                  ><strong>Datos de identificación:</strong> nombre, documento de identidad, correo electrónico, número de teléfono.</span
-                >
-              </li>
-              <li class="flex items-start gap-3">
-                <i class="pi pi-wallet text-primary mt-1"></i>
-                <span
-                  ><strong>Datos financieros:</strong> información relacionada con movimientos, categorías, presupuesto (estrictamente
-                  necesario).</span
-                >
-              </li>
-              <li class="flex items-start gap-3">
-                <i class="pi pi-desktop text-primary mt-1"></i>
-                <span><strong>Datos de uso:</strong> dirección IP, tipo de dispositivo, navegador, fecha y hora de acceso.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <i class="pi pi-map-marker text-primary mt-1"></i>
-                <span><strong>Geolocalización:</strong> aproximada, solo si lo autorizas expresamente.</span>
-              </li>
-            </ul>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="2">
-          <AccordionHeader><span class="font-bold text-lg">3. Finalidades del Tratamiento</span></AccordionHeader>
-          <AccordionContent>
-            <ul class="grid md:grid-cols-2 gap-3">
-              <li class="flex items-center gap-2 p-3 border rounded-lg">
-                <i class="pi pi-check-circle text-green-500"></i>
-                <span>Registro y autenticación</span>
-              </li>
-              <li class="flex items-center gap-2 p-3 border rounded-lg">
-                <i class="pi pi-chart-bar text-blue-500"></i>
-                <span>Gestión de dashboard y rankings</span>
-              </li>
-              <li class="flex items-center gap-2 p-3 border rounded-lg">
-                <i class="pi pi-cog text-purple-500"></i>
-                <span>Mejora de experiencia técnica</span>
-              </li>
-              <li class="flex items-center gap-2 p-3 border rounded-lg">
-                <i class="pi pi-file text-orange-500"></i>
-                <span>Obligaciones legales</span>
-              </li>
-            </ul>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="3">
-          <AccordionHeader><span class="font-bold text-lg">4. Derechos (Habeas Data)</span></AccordionHeader>
-          <AccordionContent>
-            <p class="mb-4">Como titular, tienes derecho gratuito a:</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <Tag value="Conocer" severity="info"></Tag>
-              <Tag value="Actualizar" severity="info"></Tag>
-              <Tag value="Rectificar" severity="info"></Tag>
-              <Tag value="Revocar" severity="warn"></Tag>
-              <Tag value="Suprimir" severity="danger"></Tag>
-            </div>
-            <p class="text-sm bg-surface-100 p-3 rounded-lg border-l-4 border-primary">
-              Para ejercer estos derechos, escribe a:
-              <a href="mailto:[privacidad@tuapp.com]" class="text-primary hover:underline font-medium">[privacidad@tuapp.com]</a>
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="4">
-          <AccordionHeader><span class="font-bold text-lg">5. Compartición de Datos</span></AccordionHeader>
-          <AccordionContent>
-            <p>No vendemos tus datos. Solo los compartimos si:</p>
-            <ul class="list-disc list-inside mt-2 ml-2">
-              <li>Es necesario para el servicio (proveedores de hosting, analítica).</li>
-              <li>Lo exige una autoridad competente.</li>
-            </ul>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="5">
-          <AccordionHeader><span class="font-bold text-lg">6. Seguridad</span></AccordionHeader>
-          <AccordionContent>
-            <div class="flex items-center gap-4">
-              <i class="pi pi-lock text-4xl text-primary"></i>
-              <p>
-                Implementamos medidas técnicas y organizativas robustas (cifrado, firewalls) para proteger tus datos contra acceso no
-                autorizado, pérdida o alteración.
-              </p>
-            </div>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="6">
-          <AccordionHeader><span class="font-bold text-lg">7. Cambios a la Política</span></AccordionHeader>
-          <AccordionContent>
-            <p>Podemos actualizar esta política. Te notificaremos cambios importantes directamente en la plataforma o vía email.</p>
-          </AccordionContent>
-        </AccordionPanel>
-
-        <AccordionPanel value="7">
-          <AccordionHeader><span class="font-bold text-lg">8. Contacto</span></AccordionHeader>
-          <AccordionContent>
-            <p class="mb-2">¿Dudas? Contáctanos:</p>
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center gap-2">
-                <i class="pi pi-envelope text-muted-color"></i>
-                <span class="font-medium">[privacidad@tuapp.com]</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <i class="pi pi-building text-muted-color"></i>
-                <span>Bucaramanga, Santander – Colombia</span>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionPanel>
-      </Accordion>
     </div>
-  </Drawer>
+  </Teleport>
 </template>
+
+<style scoped>
+@media (max-width: 720px) {
+  .resumen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>
