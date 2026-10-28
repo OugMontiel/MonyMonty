@@ -7,13 +7,13 @@ import {useToast} from "primevue/usetoast";
 import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
 import {useLoadingStore} from "../../../stores/contexto/loadingStore";
 
-// UI PrimeVue 
+// UI PrimeVue
 const toast = useToast();
 
 //store
 const loadingStore = useLoadingStore();
 const storeData = dataDashBoardStore();
- 
+
 // Estado
 const activeCategoryIndex = ref(null);
 
