@@ -5,13 +5,11 @@
  */
 import {ref, computed, onMounted, onBeforeUnmount} from "vue";
 import {Icon} from "@iconify/vue";
+import {TITULOS, INTERVALO_MS} from "../views/Const.js";
 
 const props = defineProps({
   start: {type: Number, default: 0},
 });
-
-const TITULOS = ["¿Qué es nuestra aplicación?", "Nuestra promesa", "Asesorías personalizadas", "Asesorías grupales", "Gestión moderna"];
-const INTERVALO_MS = 8000;
 
 const actual = ref(props.start % TITULOS.length);
 let timer = null;

@@ -6,6 +6,7 @@
  */
 import {ref, computed, watch, nextTick, onBeforeUnmount} from "vue";
 import {Icon} from "@iconify/vue";
+import {ACTUALIZADO, SECCIONES_TERMINOS as SECCIONES} from "../../views/Const.js";
 
 const visible = defineModel({type: Boolean, required: true});
 defineProps({
@@ -13,39 +14,6 @@ defineProps({
   conAceptar: {type: Boolean, default: false},
 });
 const emit = defineEmits(["aceptar"]);
-
-const ACTUALIZADO = "24 de enero de 2026";
-
-// El texto completo de cada sección se agrega donde está el marcador
-const SECCIONES = [
-  {
-    id: "t1",
-    titulo: "1. Qué es MonyMonty",
-    resumen: "Una plataforma para registrar, entender y planear tu dinero personal. No es un banco ni mueve tu dinero real.",
-  },
-  {id: "t2", titulo: "2. Tu cuenta", resumen: "Eres responsable de mantener tu contraseña en privado y de la información que registras."},
-  {
-    id: "t3",
-    titulo: "3. Uso aceptable",
-    resumen: "Usa MonyMonty solo para tus finanzas o las de tu hogar, sin intentar afectar el servicio.",
-  },
-  {
-    id: "t4",
-    titulo: "4. Planes y pagos",
-    resumen: "El plan Free no tiene costo. Basic y Premium se cobran por periodo y puedes cancelarlos cuando quieras.",
-  },
-  {id: "t5", titulo: "5. Asesoría", resumen: "Los consejos y mentorías son educativos; las decisiones finales sobre tu dinero son tuyas."},
-  {
-    id: "t6",
-    titulo: "6. Responsabilidad",
-    resumen: "Trabajamos para que el servicio esté disponible y seguro, sin garantizar que no tenga interrupciones.",
-  },
-  {
-    id: "t7",
-    titulo: "7. Cambios",
-    resumen: "Podemos actualizar estos términos y te avisaremos de los cambios importantes dentro de la plataforma.",
-  },
-];
 
 const cuerpo = ref(null);
 const modal = ref(null);
