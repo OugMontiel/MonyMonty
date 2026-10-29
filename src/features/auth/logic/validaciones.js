@@ -12,6 +12,8 @@ export const emailSchema = z
   .min(1, {message: "Por favor, ingresa tu correo electrónico."})
   .email({message: "Escribe un correo válido, por ejemplo contacto@monteflor.co"});
 
+export const claveSchema = z.string().min(8, {message: "La contraseña tiene mínimo 8 caracteres"});
+
 /** Valida un solo valor contra un schema (para validar mientras se escribe). */
 export function mensajeDe(schema, valor) {
   const res = schema.safeParse(valor);
