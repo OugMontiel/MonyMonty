@@ -51,8 +51,16 @@ const cuerpo = ref(null);
 const modal = ref(null);
 const progreso = ref(0);
 const seccionActiva = ref(SECCIONES[0].id);
+let scrollPorClickTimer = null;
 
 const leidoCompleto = computed(() => progreso.value >= 98);
+
+function liberarScrollManual() {
+  if (scrollPorClickTimer) {
+    clearTimeout(scrollPorClickTimer);
+    scrollPorClickTimer = null;
+  }
+}
 
 function actualizarProgreso() {
   const el = cuerpo.value;
@@ -61,6 +69,8 @@ function actualizarProgreso() {
   const recorrido = el.scrollHeight - el.clientHeight;
   // Si todo cabe sin scroll, ya se leyó completo
   progreso.value = recorrido <= 0 ? 100 : Math.min(100, Math.round((el.scrollTop / recorrido) * 100));
+
+  if (scrollPorClickTimer) return;
 
   // La sección activa es la última cuyo inicio ya pasó la parte alta de la vista
   let activa = SECCIONES[0].id;
@@ -72,9 +82,17 @@ function actualizarProgreso() {
 }
 
 function irASeccion(id) {
+  seccionActiva.value = id;
   const el = cuerpo.value;
   const nodo = el?.querySelector(`#${id}`);
-  if (nodo) el.scrollTo({top: nodo.offsetTop - el.offsetTop, behavior: "smooth"});
+  if (!nodo) return;
+
+  clearTimeout(scrollPorClickTimer);
+  scrollPorClickTimer = setTimeout(() => {
+    scrollPorClickTimer = null;
+  }, 500);
+
+  el.scrollTo({top: nodo.offsetTop - el.offsetTop, behavior: "smooth"});
 }
 
 function cerrar() {
@@ -101,6 +119,7 @@ watch(visible, async (abierto) => {
 });
 
 onBeforeUnmount(() => {
+  liberarScrollManual();
   document.body.style.overflow = "";
 });
 </script>
@@ -124,7 +143,9 @@ onBeforeUnmount(() => {
               <h2 id="terminos-titulo" class="t-h2">Términos y condiciones</h2>
               <p class="t-sm muted">Última actualización: {{ ACTUALIZADO }}</p>
             </div>
-            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icon icon="ion:close-outline" :width="20" :height="20" /></button>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar">
+              <Icon icon="ion:close-outline" :width="20" :height="20" />
+            </button>
           </div>
           <div
             class="progress sm"
@@ -154,7 +175,13 @@ onBeforeUnmount(() => {
               </button>
             </nav>
 
-            <div ref="cuerpo" class="legal-body" @scroll.passive="actualizarProgreso">
+            <div
+              ref="cuerpo"
+              class="legal-body"
+              @wheel.passive="liberarScrollManual"
+              @touchmove.passive="liberarScrollManual"
+              @scroll.passive="actualizarProgreso"
+            >
               <section v-for="s in SECCIONES" :id="s.id" :key="s.id" class="col gap-2" :class="{'legal-activa': seccionActiva === s.id}">
                 <h3 class="t-h3">{{ s.titulo }}</h3>
                 <p class="muted">{{ s.resumen }}</p>
