@@ -10,11 +10,10 @@
  */
 import {ref, computed, onMounted} from "vue";
 import {useRouter} from "vue-router";
-import {z} from "zod";
 
 import {useAuthStore} from "../../../stores/autenticacion/authStore";
 import {useAuth} from "../logic/useAuth.js";
-import {emailSchema, mensajeDe} from "../logic/validaciones.js";
+import {emailSchema, claveSchema, mensajeDe} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import AuthSplit from "../components/AuthSplit.vue";
 import {Icon} from "@iconify/vue";
@@ -30,8 +29,6 @@ const tocado = ref({email: false, password: false});
 const intentado = ref(false);
 // Mensaje que devuelve el servidor (credenciales incorrectas, etc.)
 const errorServidor = ref("");
-
-const claveSchema = z.string().min(8, {message: "La contraseña tiene mínimo 8 caracteres"});
 
 // La validación corre mientras se escribe, pero solo se muestra tras tocar el campo o enviar
 const errorEmail = computed(() => (tocado.value.email || intentado.value ? mensajeDe(emailSchema, email.value) : ""));
