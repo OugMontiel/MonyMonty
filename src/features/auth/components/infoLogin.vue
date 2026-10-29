@@ -4,7 +4,7 @@
  * `start` permite que cada pantalla abra en una tarjeta distinta.
  */
 import {ref, computed, onMounted, onBeforeUnmount} from "vue";
-import Icono from "@/components/iconos/Icono.vue";
+import {Icon} from "@iconify/vue";
 
 const props = defineProps({
   start: {type: Number, default: 0},
@@ -43,7 +43,7 @@ onBeforeUnmount(() => clearInterval(timer));
     <div style="position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center">
       <!-- 0 · Qué es -->
       <div v-if="actual === 0" :key="0" class="col" style="gap: 24px">
-        <span class="badge brand rise" style="align-self: flex-start"><Icono i="sparkles" :s="12" />Conócenos</span>
+        <span class="badge brand rise" style="align-self: flex-start"><Icon icon="ion:sparkles-outline" :width="12" :height="12" />Conócenos</span>
         <h2 class="rise" style="--i: 1">¿Qué es nuestra aplicación?</h2>
         <p class="muted rise" style="--i: 2; font-size: 18px; line-height: 29px">
           Una innovadora solución <strong style="color: var(--ink)">SaaS</strong> para gestionar tus finanzas personales de forma
@@ -51,17 +51,17 @@ onBeforeUnmount(() => clearInterval(timer));
         </p>
         <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
           <div class="card popin" style="--i: 3; padding: 16px; box-shadow: none">
-            <div class="ico sm balance"><Icono i="layers" :s="18" /></div>
+            <div class="ico sm balance"><Icon icon="ion:layers-outline" :width="18" :height="18" /></div>
             <b class="t-h3" style="display: block; margin-top: 12px">SaaS</b>
             <span class="t-xs muted">Sin instalar nada, desde cualquier dispositivo</span>
           </div>
           <div class="card popin" style="--i: 4; padding: 16px; box-shadow: none">
-            <div class="ico sm brand"><Icono i="time" :s="18" /></div>
+            <div class="ico sm brand"><Icon icon="ion:time-outline" :width="18" :height="18" /></div>
             <b class="t-h3" style="display: block; margin-top: 12px">Eficiente</b>
             <span class="t-xs muted">Registra un gasto en segundos</span>
           </div>
           <div class="card popin" style="--i: 5; padding: 16px; box-shadow: none">
-            <div class="ico sm income"><Icono i="checkmark-circle" :s="18" /></div>
+            <div class="ico sm income"><Icon icon="ion:checkmark-circle-outline" :width="18" :height="18" /></div>
             <b class="t-h3" style="display: block; margin-top: 12px">Sencilla</b>
             <span class="t-xs muted">Todo tu dinero en un vistazo</span>
           </div>
@@ -70,7 +70,7 @@ onBeforeUnmount(() => clearInterval(timer));
 
       <!-- 1 · Promesa -->
       <div v-else-if="actual === 1" :key="1" class="col" style="gap: 28px">
-        <span class="badge brand rise" style="align-self: flex-start"><Icono i="flag" :s="12" />Nuestra promesa</span>
+        <span class="badge brand rise" style="align-self: flex-start"><Icon icon="ion:flag-outline" :width="12" :height="12" />Nuestra promesa</span>
         <blockquote class="auth-quote rise" style="--i: 1; font-size: 30px; line-height: 40px; padding: 28px 30px">
           "Tu camino hacia la <strong>libertad financiera</strong> comienza aquí."
         </blockquote>
@@ -78,19 +78,19 @@ onBeforeUnmount(() => clearInterval(timer));
           <div style="position: absolute; left: 12%; right: 12%; top: 21px; height: 3px; border-radius: 3px; background: var(--line)"></div>
           <div style="position: absolute; left: 12%; right: 12%; top: 21px; height: 3px; border-radius: 3px; background: var(--brand); transform-origin: left; animation: grow-x 1.6s var(--ease-out) 0.5s both"></div>
           <div class="col popin" style="--i: 3; align-items: center; gap: 8px; position: relative">
-            <div class="ico sm" style="background: var(--surface); border: 2px solid var(--brand); color: var(--brand-ink)"><Icono i="add" :s="18" /></div>
+            <div class="ico sm" style="background: var(--surface); border: 2px solid var(--brand); color: var(--brand-ink)"><Icon icon="ion:add-outline" :width="18" :height="18" /></div>
             <b class="t-sm">Registra</b>
           </div>
           <div class="col popin" style="--i: 5; align-items: center; gap: 8px; position: relative">
-            <div class="ico sm" style="background: var(--surface); border: 2px solid var(--brand); color: var(--brand-ink)"><Icono i="pie-chart" :s="18" /></div>
+            <div class="ico sm" style="background: var(--surface); border: 2px solid var(--brand); color: var(--brand-ink)"><Icon icon="ion:pie-chart-outline" :width="18" :height="18" /></div>
             <b class="t-sm">Entiende</b>
           </div>
           <div class="col popin" style="--i: 7; align-items: center; gap: 8px; position: relative">
-            <div class="ico sm" style="background: var(--surface); border: 2px solid var(--brand); color: var(--brand-ink)"><Icono i="bulb" :s="18" /></div>
+            <div class="ico sm" style="background: var(--surface); border: 2px solid var(--brand); color: var(--brand-ink)"><Icon icon="ion:bulb-outline" :width="18" :height="18" /></div>
             <b class="t-sm">Decide</b>
           </div>
           <div class="col popin" style="--i: 9; align-items: center; gap: 8px; position: relative">
-            <div class="ico sm" style="background: var(--brand-strong); color: var(--on-brand); box-shadow: var(--shadow-brand)"><Icono i="trophy" :s="18" /></div>
+            <div class="ico sm" style="background: var(--brand-strong); color: var(--on-brand); box-shadow: var(--shadow-brand)"><Icon icon="ion:trophy-outline" :width="18" :height="18" /></div>
             <b class="t-sm brand-ink">Libertad</b>
           </div>
         </div>
@@ -210,8 +210,8 @@ onBeforeUnmount(() => clearInterval(timer));
         ></button>
       </div>
       <div class="row gap-2">
-        <button type="button" class="btn icon sm" aria-label="Anterior" @click="ir(actual - 1)"><Icono i="chevron-back" :s="16" /></button>
-        <button type="button" class="btn icon sm" aria-label="Siguiente" @click="ir(actual + 1)"><Icono i="chevron-forward" :s="16" /></button>
+        <button type="button" class="btn icon sm" aria-label="Anterior" @click="ir(actual - 1)"><Icon icon="ion:chevron-back-outline" :width="16" :height="16" /></button>
+        <button type="button" class="btn icon sm" aria-label="Siguiente" @click="ir(actual + 1)"><Icon icon="ion:chevron-forward-outline" :width="16" :height="16" /></button>
       </div>
     </div>
   </aside>

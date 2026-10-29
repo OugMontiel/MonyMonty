@@ -17,7 +17,7 @@ import {useAuth} from "../logic/useAuth.js";
 import {emailSchema, mensajeDe} from "../logic/validaciones.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import AuthSplit from "../components/AuthSplit.vue";
-import Icono from "../../../components/iconos/Icono.vue";
+import {Icon} from "@iconify/vue";
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -75,7 +75,7 @@ onMounted(() => {
     </div>
 
     <div v-if="errorServidor" class="banner expense" role="alert">
-      <Icono i="alert-circle" :s="18" />
+      <Icon icon="ion:alert-circle-outline" :width="18" :height="18" />
       <span class="grow">{{ errorServidor }}</span>
     </div>
 
@@ -84,7 +84,7 @@ onMounted(() => {
         <div class="field">
           <label for="login-email">Correo electrónico</label>
           <div class="input" :class="{'is-error': errorEmail}">
-            <Icono i="mail" :s="18" />
+            <Icon icon="ion:mail-outline" :width="18" :height="18" />
             <input
               id="login-email"
               v-model="email"
@@ -96,7 +96,7 @@ onMounted(() => {
               @blur="tocado.email = true"
             />
           </div>
-          <span v-if="errorEmail" class="err"><Icono i="alert-circle" :s="14" />{{ errorEmail }}</span>
+          <span v-if="errorEmail" class="err"><Icon icon="ion:alert-circle-outline" :width="14" :height="14" />{{ errorEmail }}</span>
         </div>
 
         <div class="field">
@@ -105,7 +105,7 @@ onMounted(() => {
             <router-link to="/recuperarCuenta" class="t-sm">¿La olvidaste?</router-link>
           </div>
           <div class="input" :class="{'is-error': errorClave}">
-            <Icono i="lock-closed" :s="18" />
+            <Icon icon="ion:lock-closed-outline" :width="18" :height="18" />
             <input
               id="login-password"
               v-model="password"
@@ -122,20 +122,20 @@ onMounted(() => {
               style="margin-right: -8px"
               @click="verClave = !verClave"
             >
-              <Icono :i="verClave ? 'eye-off' : 'eye'" :s="18" />
+              <Icon :icon="verClave ? 'ion:eye-off-outline' : 'ion:eye-outline'" :width="18" :height="18" />
             </button>
           </div>
-          <span v-if="errorClave" class="err"><Icono i="alert-circle" :s="14" />{{ errorClave }}</span>
+          <span v-if="errorClave" class="err"><Icon icon="ion:alert-circle-outline" :width="14" :height="14" />{{ errorClave }}</span>
         </div>
       </div>
 
       <button type="submit" class="btn primary lg block" :class="{'is-loading': loading}" :disabled="loading || hayErrores">
-        Iniciar sesión<Icono i="arrow-forward" :s="18" />
+        Iniciar sesión<Icon icon="ion:arrow-forward-outline" :width="18" :height="18" />
       </button>
     </form>
 
     <router-link to="/crearCuenta" class="btn lg block" :class="{'is-disabled': loading}">
-      <Icono i="person-add" :s="18" />Crear cuenta gratis
+      <Icon icon="ion:person-add-outline" :width="18" :height="18" />Crear cuenta gratis
     </router-link>
   </AuthSplit>
 </template>

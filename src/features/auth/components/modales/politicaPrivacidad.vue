@@ -4,7 +4,7 @@
  * con "Texto completo", las 8 secciones de la política.
  */
 import {ref, watch, nextTick, onBeforeUnmount} from "vue";
-import Icono from "@/components/iconos/Icono.vue";
+import {Icon} from "@iconify/vue";
 
 const visible = defineModel({type: Boolean, required: true});
 
@@ -14,25 +14,25 @@ const CORREO_PRIVACIDAD = "[privacidad@tuapp.com]";
 
 const RESUMEN = [
   {
-    icono: "layers",
+    icono: "ion:layers-outline",
     tono: "balance",
     titulo: "Qué guardamos",
     texto: "Tus datos de perfil y lo que registras: movimientos, categorías y presupuesto, además de datos de uso como IP y navegador.",
   },
   {
-    icono: "bulb",
+    icono: "ion:bulb-outline",
     tono: "brand",
     titulo: "Para qué",
     texto: "Para tu registro e inicio de sesión, mostrarte tu tablero y rankings, mejorar la experiencia y cumplir obligaciones legales.",
   },
   {
-    icono: "people",
+    icono: "ion:people-outline",
     tono: "info",
     titulo: "Con quién",
     texto: "No vendemos tus datos. Solo se comparten si el servicio lo necesita (hosting, analítica) o si lo exige una autoridad.",
   },
   {
-    icono: "download",
+    icono: "ion:download-outline",
     tono: "income",
     titulo: "Tus derechos",
     texto: "Conocer, actualizar, rectificar, revocar y suprimir tus datos, de forma gratuita.",
@@ -133,25 +133,25 @@ onBeforeUnmount(() => {
           style="max-height: calc(100vh - 32px); outline: 0"
         >
           <div class="modal-h">
-            <div class="ico income"><Icono i="shield-checkmark" :s="22" /></div>
+            <div class="ico income"><Icon icon="ion:shield-checkmark-outline" :width="22" :height="22" /></div>
             <div class="grow">
               <h2 id="privacidad-titulo" class="t-h2">Tu privacidad, en corto</h2>
               <p class="t-sm muted">Lo esencial en 30 segundos. Última actualización: {{ ACTUALIZADO }}.</p>
             </div>
-            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icon icon="ion:close-outline" :width="20" :height="20" /></button>
           </div>
 
           <div class="modal-b" style="overflow: auto">
             <div class="grid g2 resumen" style="gap: 14px">
               <div v-for="r in RESUMEN" :key="r.titulo" class="card flat" style="background: var(--surface-2); border: 0">
-                <div class="ico sm" :class="r.tono"><Icono :i="r.icono" :s="18" /></div>
+                <div class="ico sm" :class="r.tono"><Icon :icon="r.icono" :width="18" :height="18" /></div>
                 <h3 class="t-h3" style="margin-top: 12px">{{ r.titulo }}</h3>
                 <p class="t-sm muted" style="margin-top: 4px">{{ r.texto }}</p>
               </div>
             </div>
 
             <div class="banner info">
-              <Icono i="information-circle" :s="18" />
+              <Icon icon="ion:information-circle-outline" :width="18" :height="18" />
               <span class="grow">Tratamiento de datos conforme a la Ley 1581 de 2012 (Colombia).</span>
               <a href="#" class="t-sm" :aria-expanded="textoCompleto" @click.prevent="textoCompleto = !textoCompleto">
                 {{ textoCompleto ? "Ocultar texto" : "Texto completo" }}
@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="modal-f">
-            <button type="button" class="btn primary" @click="cerrar"><Icono i="checkmark" :s="18" />Entendido</button>
+            <button type="button" class="btn primary" @click="cerrar"><Icon icon="ion:checkmark-outline" :width="18" :height="18" />Entendido</button>
           </div>
         </div>
       </div>

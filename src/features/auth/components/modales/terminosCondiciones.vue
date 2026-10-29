@@ -5,7 +5,7 @@
  * "Acepto" que solo se habilita al llegar al final del texto.
  */
 import {ref, computed, watch, nextTick, onBeforeUnmount} from "vue";
-import Icono from "@/components/iconos/Icono.vue";
+import {Icon} from "@iconify/vue";
 
 const visible = defineModel({type: Boolean, required: true});
 defineProps({
@@ -119,12 +119,12 @@ onBeforeUnmount(() => {
           style="width: min(880px, 100%); max-height: min(780px, 100vh - 32px); outline: 0"
         >
           <div class="modal-h" style="border-bottom: 1px solid var(--line); padding-bottom: 18px">
-            <div class="ico brand"><Icono i="document-text" :s="22" /></div>
+            <div class="ico brand"><Icon icon="ion:document-text-outline" :width="22" :height="22" /></div>
             <div class="grow">
               <h2 id="terminos-titulo" class="t-h2">Términos y condiciones</h2>
               <p class="t-sm muted">Última actualización: {{ ACTUALIZADO }}</p>
             </div>
-            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icono i="close" :s="20" /></button>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icon icon="ion:close-outline" :width="20" :height="20" /></button>
           </div>
           <div
             class="progress sm"
@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
                 :style="seccionActiva === s.id ? {color: 'var(--brand-ink)'} : {color: 'var(--ink-muted)'}"
                 @click="irASeccion(s.id)"
               >
-                <Icono v-if="seccionActiva === s.id" i="chevron-forward" :s="16" />{{ s.titulo }}
+                <Icon v-if="seccionActiva === s.id" icon="ion:chevron-forward-outline" :width="16" :height="16" />{{ s.titulo }}
               </button>
             </nav>
 
@@ -166,12 +166,12 @@ onBeforeUnmount(() => {
           <div class="modal-f" style="align-items: center; margin-top: 0">
             <template v-if="conAceptar">
               <span class="t-xs muted grow row gap-1">
-                <Icono :i="leidoCompleto ? 'checkmark-circle' : 'arrow-down'" :s="14" />
+                <Icon :icon="leidoCompleto ? 'ion:checkmark-circle-outline' : 'ion:arrow-down-outline'" :width="14" :height="14" />
                 {{ leidoCompleto ? "Listo, ya puedes aceptar" : `Sigue bajando para activar “Acepto” · ${progreso} % leído` }}
               </span>
               <button type="button" class="btn ghost" @click="cerrar">Ahora no</button>
               <button type="button" class="btn primary" :disabled="!leidoCompleto" @click="aceptar">
-                <Icono i="checkmark" :s="18" />Acepto
+                <Icon icon="ion:checkmark-outline" :width="18" :height="18" />Acepto
               </button>
             </template>
             <template v-else>
