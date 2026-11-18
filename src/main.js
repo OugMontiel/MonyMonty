@@ -1,6 +1,7 @@
 import {createApp} from "vue";
 import {createPinia} from "pinia";
 import App from "./App.vue";
+import "./assets/tema/tema.css";
 import {initAuth} from "./bootstrap/initAuth";
 import {registerPrimeVue} from "./plugins/primevue/primevue";
 import router from "./router";
