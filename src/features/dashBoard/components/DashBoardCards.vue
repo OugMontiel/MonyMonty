@@ -13,7 +13,7 @@ const toast = useToast();
 
 // Stores
 const loadingStore = useLoadingStore();
-const storeData = dataDashBoardStore()
+const storeData = dataDashBoardStore();
 
 // Estado para el filtro de tiempo
 const currentPeriod = ref(PERIOD_FILTERS.ANO);

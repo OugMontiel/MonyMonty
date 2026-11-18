@@ -10,7 +10,7 @@ import DashboardFilters from "../components/DashboardFilters.vue";
 import {dataDashBoardStore} from "../../../stores/contexto/dataDashBoardStore";
 
 // Stores
-const storeData = dataDashBoardStore()
+const storeData = dataDashBoardStore();
 
 onMounted(() => {
   storeData.fetchAll();

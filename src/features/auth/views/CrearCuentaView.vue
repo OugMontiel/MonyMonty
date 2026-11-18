@@ -8,13 +8,13 @@
  * sin autorización está estrictamente prohibido.
  * ============================================================
  */
-import { ref } from "vue";
-import { useToast } from "primevue/usetoast";
-import { useRouter } from "vue-router";
-import { zodResolver } from "@primevue/forms/resolvers/zod";
-import { z } from "zod";
+import {ref} from "vue";
+import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
+import {zodResolver} from "@primevue/forms/resolvers/zod";
+import {z} from "zod";
 
-import { useAuth } from "../logic/useAuth.js";
+import {useAuth} from "../logic/useAuth.js";
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import FooterAuth from "../components/FooterAuth.vue";
 
@@ -23,18 +23,18 @@ import PoliticaPrivacidadDrawer from "@/features/auth/components/modales/politic
 
 const toast = useToast();
 const router = useRouter();
-const { CrearUsuario, loading } = useAuth();
+const {CrearUsuario, loading} = useAuth();
 
 // Constantes
 const submitted = ref(false);
 const planes = ref([
-  { label: "Free", value: "Free" },
-  { label: "Basic", value: "Basic" },
-  { label: "Premium", value: "Premium" },
+  {label: "Free", value: "Free"},
+  {label: "Basic", value: "Basic"},
+  {label: "Premium", value: "Premium"},
 ]);
 const generos = ref([
-  { label: "Femenino", value: "Femenino" },
-  { label: "Masculino", value: "Masculino" },
+  {label: "Femenino", value: "Femenino"},
+  {label: "Masculino", value: "Masculino"},
 ]);
 
 // variables para los selects
@@ -46,43 +46,39 @@ const resolver = zodResolver(
   z
     .object({
       nombre: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().trim().min(1, { message: "El nombre es obligatorio" }).min(3, { message: "Debe tener al menos 3 caracteres" })
+        (val) => (val === null ? "" : val),
+        z.string().trim().min(1, {message: "El nombre es obligatorio"}).min(3, {message: "Debe tener al menos 3 caracteres"})
       ),
       apellido: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().trim().min(1, { message: "El apellido es obligatorio" }).min(3, { message: "Debe tener al menos 3 caracteres" })
-
+        (val) => (val === null ? "" : val),
+        z.string().trim().min(1, {message: "El apellido es obligatorio"}).min(3, {message: "Debe tener al menos 3 caracteres"})
       ),
       email: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().trim().min(1, { message: "El email es obligatorio" }).email({ message: "Formato de email inválido" })
-
+        (val) => (val === null ? "" : val),
+        z.string().trim().min(1, {message: "El email es obligatorio"}).email({message: "Formato de email inválido"})
       ),
       password: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string()
-          .min(8, { message: "Debe tener al menos 8 caracteres" })
-          .refine((v) => /[A-Z]/.test(v), { message: "Debe contener al menos una mayúscula" })
-          .refine((v) => /\d/.test(v), { message: "Debe contener al menos un número" })
+        (val) => (val === null ? "" : val),
+        z
+          .string()
+          .min(8, {message: "Debe tener al menos 8 caracteres"})
+          .refine((v) => /[A-Z]/.test(v), {message: "Debe contener al menos una mayúscula"})
+          .refine((v) => /\d/.test(v), {message: "Debe contener al menos un número"})
           .refine((v) => /[!@#$%^&*()_\-+=<>?{}[\]~]/.test(v), {
             message: "Debe contener al menos un símbolo",
           })
       ),
-      confirmPassword: z.preprocess(
-        (val) => (val === null ? '' : val),
-        z.string().min(1, { message: "Confirma tu contraseña" })
-      ),
+      confirmPassword: z.preprocess((val) => (val === null ? "" : val), z.string().min(1, {message: "Confirma tu contraseña"})),
       fechaNacimiento: z
         .date({
           required_error: "La fecha es obligatoria",
           invalid_type_error: "Selecciona una fecha válida",
         })
         .nullable()
-        .refine((val) => val !== null, { message: "La fecha es obligatoria" })
+        .refine((val) => val !== null, {message: "La fecha es obligatoria"})
         .refine(
           (val) => val === null || val <= fechaMinima, // si es null ya lo atrapa el refine anterior
-          { message: "Debes ser mayor de 18 años" }
+          {message: "Debes ser mayor de 18 años"}
         ),
       genero: z
         .object({
@@ -90,27 +86,20 @@ const resolver = zodResolver(
           value: z.string(),
         })
         .nullable()
-        .refine((val) => val !== null, { message: "Debes seleccionar un Genero" })
-        .refine(
-          (val) => val === null || ["Femenino", "Masculino"].includes(val.value),
-          { message: "Opción no válida" }
-        ),
+        .refine((val) => val !== null, {message: "Debes seleccionar un Genero"})
+        .refine((val) => val === null || ["Femenino", "Masculino"].includes(val.value), {message: "Opción no válida"}),
       plan: z
         .object({
           label: z.string(),
           value: z.string(),
         })
         .nullable()
-        .refine((val) => val !== null, { message: "Debes seleccionar un plan" })
-        .refine(
-          (val) => val === null || ["Free", "Basic", "Premium"].includes(val.value),
-          { message: "Opción no válida" }
-
-        ),
+        .refine((val) => val !== null, {message: "Debes seleccionar un plan"})
+        .refine((val) => val === null || ["Free", "Basic", "Premium"].includes(val.value), {message: "Opción no válida"}),
 
       acceptLegal: z.preprocess(
-        (val) => (val === null || val === undefined ? false : val), 
-        z.boolean({ required_error: "Debes aceptar los términos" }).refine((val) => val === true, {
+        (val) => (val === null || val === undefined ? false : val),
+        z.boolean({required_error: "Debes aceptar los términos"}).refine((val) => val === true, {
           message: "Debes aceptar los términos y la política de privacidad para continuar",
         })
       ),
@@ -122,7 +111,7 @@ const resolver = zodResolver(
 );
 
 // === SUBMIT DEL FORM ===
-const onFormSubmit = async ({ valid, values }) => {
+const onFormSubmit = async ({valid, values}) => {
   submitted.value = true;
 
   if (!valid) return;
@@ -172,7 +161,6 @@ const irALogin = () => router.push("/");
 // Controles de visibilidad (locales a esta vista)
 const showPrivacidad = ref(false);
 const showCondiciones = ref(false);
-
 </script>
 
 <template>
@@ -187,8 +175,7 @@ const showCondiciones = ref(false);
             <Message severity="contrast" variant="simple" size="large"> Crea tu cuenta </Message>
           </div>
         </div>
-        <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']"
-          class="flex flex-col justify-around gap-4">
+        <Form :resolver="resolver" @submit="onFormSubmit" :validate-on="['blur', 'input']" class="flex flex-col justify-around gap-4">
           <div class="flex gap-4">
             <FormField v-slot="$field" name="nombre" class="flex-1">
               <FloatLabel variant="on" class="w-full">
@@ -212,8 +199,16 @@ const showCondiciones = ref(false);
 
           <FormField v-slot="$field" name="fechaNacimiento" class="w-full">
             <FloatLabel variant="on" class="w-full">
-              <DatePicker id="fechaNacimiento" v-bind="$field.props" :max-date="new Date()" date-format="yy-mm-dd"
-                show-icon class="w-full" input-class="w-full" :disabled="loading" />
+              <DatePicker
+                id="fechaNacimiento"
+                v-bind="$field.props"
+                :max-date="new Date()"
+                date-format="yy-mm-dd"
+                show-icon
+                class="w-full"
+                input-class="w-full"
+                :disabled="loading"
+              />
               <label for="fechaNacimiento">Fecha de nacimiento</label>
             </FloatLabel>
             <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
@@ -224,8 +219,7 @@ const showCondiciones = ref(false);
           <div class="flex gap-4">
             <FormField v-slot="$field" name="plan" class="flex-1">
               <FloatLabel variant="on" class="w-full">
-                <Select v-bind="$field.props" :options="planes" optionLabel="label" :disabled="loading"
-                  class="w-full" />
+                <Select v-bind="$field.props" :options="planes" optionLabel="label" :disabled="loading" class="w-full" />
                 <label for="plan">Selecciona un plan</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
@@ -234,8 +228,7 @@ const showCondiciones = ref(false);
             </FormField>
             <FormField v-slot="$field" name="genero" class="flex-1">
               <FloatLabel variant="on" class="w-full">
-                <Select v-bind="$field.props" :options="generos" optionLabel="label" :disabled="loading"
-                  class="w-full" />
+                <Select v-bind="$field.props" :options="generos" optionLabel="label" :disabled="loading" class="w-full" />
                 <label for="genero">Selecciona un género</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
@@ -257,8 +250,17 @@ const showCondiciones = ref(false);
           <div class="flex gap-4">
             <FormField v-slot="$field" name="password" class="flex-1">
               <FloatLabel variant="on" class="w-full">
-                <Password id="password" v-bind="$field.props" :feedback="false" toggleMask class="w-full"
-                  inputClass="w-full" :disabled="loading" @blur="$field.onBlur" @input="$field.onChange" />
+                <Password
+                  id="password"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                  :disabled="loading"
+                  @blur="$field.onBlur"
+                  @input="$field.onChange"
+                />
                 <label for="password">Contraseña</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
@@ -267,8 +269,17 @@ const showCondiciones = ref(false);
             </FormField>
             <FormField v-slot="$field" name="confirmPassword" class="flex-1">
               <FloatLabel variant="on" class="w-full">
-                <Password id="confirmPassword" v-bind="$field.props" :feedback="false" toggleMask class="w-full"
-                  inputClass="w-full" :disabled="loading" @blur="$field.onBlur" @input="$field.onChange" />
+                <Password
+                  id="confirmPassword"
+                  v-bind="$field.props"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  inputClass="w-full"
+                  :disabled="loading"
+                  @blur="$field.onBlur"
+                  @input="$field.onChange"
+                />
                 <label for="confirmPassword">Confirma tu contraseña</label>
               </FloatLabel>
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">{{
@@ -279,24 +290,35 @@ const showCondiciones = ref(false);
 
           <FormField v-slot="$field" name="acceptLegal" class="mt-2">
             <div class="flex items-start gap-2">
-              <Checkbox inputId="acceptLegal" :binary="true" v-bind="$field.props" :disabled="loading"
-                :invalid="submitted && $field?.invalid" />
+              <Checkbox
+                inputId="acceptLegal"
+                :binary="true"
+                v-bind="$field.props"
+                :disabled="loading"
+                :invalid="submitted && $field?.invalid"
+              />
               <label for="acceptLegal" class="text-sm text-gray-600 dark:text-gray-400 leading-snug">
                 Acepto los
-                <button type="button" class="text-primary underline hover:text-primary-300 cursor-pointer transition"
-                  @click="showCondiciones = true">
+                <button
+                  type="button"
+                  class="text-primary underline hover:text-primary-300 cursor-pointer transition"
+                  @click="showCondiciones = true"
+                >
                   Términos y Condiciones
                 </button>
                 <TerminosCondicionesDrawer v-model:visible="showCondiciones" />
                 y la
-                <button type="button" class="text-primary underline hover:text-primary-700 cursor-pointer transition"
-                  @click="showPrivacidad = true">
+                <button
+                  type="button"
+                  class="text-primary underline hover:text-primary-700 cursor-pointer transition"
+                  @click="showPrivacidad = true"
+                >
                   Política de Privacidad
                 </button>
                 <PoliticaPrivacidadDrawer v-model:visible="showPrivacidad" />
                 de MonyMonty.
               </label>
-              <br>
+              <br />
               <Message v-if="submitted && $field?.invalid" severity="error" size="small" variant="simple">
                 {{ $field.error?.message }}
               </Message>
@@ -352,20 +374,26 @@ const showCondiciones = ref(false);
 }
 
 /* Extra pequeño: móviles pequeños (xs) */
-@media (max-width: 575.98px) {}
+@media (max-width: 575.98px) {
+}
 
 /* Pequeño: móviles medianos y grandes (sm) */
-@media (min-width: 576px) and (max-width: 767.98px) {}
+@media (min-width: 576px) and (max-width: 767.98px) {
+}
 
 /* Mediano: tablets (md) */
-@media (min-width: 768px) and (max-width: 991.98px) {}
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
 
 /* Grande: laptops (lg) */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
 
 /* Extra grande: pantallas grandes (xl) */
-@media (min-width: 1200px) and (max-width: 1399.98px) {}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+}
 
 /* XXL: monitores muy grandes */
-@media (min-width: 1400px) {}
+@media (min-width: 1400px) {
+}
 </style>

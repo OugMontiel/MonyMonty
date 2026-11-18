@@ -2,10 +2,7 @@ import {defineStore} from "pinia";
 import {DateTime} from "luxon";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
-const defaultRange = () => ([
-  DateTime.now().startOf("month").toJSDate(),
-  DateTime.now().endOf("month").toJSDate()
-]);
+const defaultRange = () => [DateTime.now().startOf("month").toJSDate(), DateTime.now().endOf("month").toJSDate()];
 
 const defaultState = () => ({
   dateRange: defaultRange(),
@@ -44,11 +41,11 @@ export const useDashboardFilters = defineStore("filter", {
 
   actions: {
     setDateRange(range) {
-      this.dateRange = range ?? defaultRange()
+      this.dateRange = range ?? defaultRange();
     },
 
     clearDates() {
-      this.dateRange = defaultRange()
+      this.dateRange = defaultRange();
     },
     setCuentas(accounts = []) {
       this.cuentas = [...accounts];

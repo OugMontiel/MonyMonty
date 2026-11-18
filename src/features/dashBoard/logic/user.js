@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ref } from "vue";
+import {ref} from "vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

@@ -1,15 +1,15 @@
 import {createRouter, createWebHistory} from "vue-router";
-import { useAuthStore } from '../stores/autenticacion/authStore'
+import {useAuthStore} from "../stores/autenticacion/authStore";
 
 import login from "../features/auth/views/LoginView.vue";
 import crearCuentaNueva from "../features/auth/views/CrearCuentaView.vue";
 import recuperarCuentaCliente from "../features/auth/views/RecuperarCuentaView.vue";
 import CambioDeClave from "../features/auth/views/CambioDeClave.vue";
 
-// layaut 
+// layaut
 import elTablero from "../features/dashBoard/views/elTablero.vue";
 
-//rutas base 
+//rutas base
 import Dashboard from "../features/dashBoard/views/Dashboard.vue";
 
 const router = createRouter({
@@ -75,7 +75,7 @@ const router = createRouter({
 
 // Guard de navegación optimizado
 router.beforeEach(async (to, from) => {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
 
   // Verificar si la ruta necesita autenticación (por defeczto sí)
   const requiresAuth = to.meta.requiresAuth !== false;
