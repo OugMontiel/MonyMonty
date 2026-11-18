@@ -11,9 +11,8 @@ import {useAuth} from "../../../auth/logic/useAuth.js";
 const toast = useToast();
 const router = useRouter();
 const {logout} = useAuth();
-const {cargarUsuario, usuario: cachedUsuario} = userData();
+const {cargarUsuario, usuario} = userData();
 const isLoading = ref(false);
-const usuario = ref(cachedUsuario ? cachedUsuario.value : null);
 const userMenuPopover = ref();
 
 const displayName = computed(() => {
@@ -59,12 +58,8 @@ const handleLogout = () => {
 };
 
 onMounted(async () => {
-  // Si ya hay datos del usuario
-  if (usuario.value) {
-    return;
-  }
-
-  // Si no hay datos, cargarlos
+  // Recargar el perfil para no reutilizar datos de una sesión anterior.
+  usuario.value = null;
   isLoading.value = true;
   try {
     const result = await cargarUsuario();
@@ -127,7 +122,7 @@ onMounted(async () => {
             <h3 class="m-0 text-lg font-semibold text-slate-900 sm:text-base">{{ displayName }}</h3>
             <div class="mt-1 flex items-center justify-end gap-2">
               <Tag :value="planLabel" :severity="planSeverity" class="text-[11px] py-0.5 px-2 font-medium" rounded />
-              <span class="text-[11px] text-slate-500" v-if="usuario?.correo">{{ usuario.correo }}</span>
+              <span class="text-[11px] text-slate-500" v-if="usuario?.email">{{ usuario.email }}</span>
             </div>
           </div>
 
