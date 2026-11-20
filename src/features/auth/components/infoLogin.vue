@@ -3,7 +3,7 @@
  * Panel informativo del acceso: carrusel de 5 tarjetas (qué es la app, promesa y 3 características).
  * `start` permite que cada pantalla abra en una tarjeta distinta.
  */
-import {ref, computed, watch, onMounted, onBeforeUnmount} from "vue";
+import {ref, computed, onMounted, onBeforeUnmount} from "vue";
 import {Icon} from "@iconify/vue";
 import {TITULOS, INTERVALO_MS} from "../views/Const.js";
 
@@ -28,9 +28,6 @@ function ir(n) {
   // Tras una acción manual se reinicia el reloj para no saltar de tarjeta enseguida
   programar();
 }
-
-// El registro por pasos cambia `start` sin remontar el panel: se salta a la tarjeta nueva
-watch(() => props.start, ir);
 
 onMounted(programar);
 onBeforeUnmount(() => clearInterval(timer));
