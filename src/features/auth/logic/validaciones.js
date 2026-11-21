@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {DateTime} from "luxon";
 import {EDAD_MINIMA, GENEROS} from "./registroConstants.js";
 
 /**
@@ -28,18 +29,17 @@ export const nombreSchema = nombreDe("nombre");
 export const apellidoSchema = nombreDe("apellido");
 
 /** Fecha más reciente (YYYY-MM-DD) con la que una persona ya cumple la edad mínima. */
-export function fechaMaximaNacimiento(hoy = new Date()) {
-  const limite = new Date(hoy);
-  limite.setFullYear(limite.getFullYear() - EDAD_MINIMA);
-  const mes = String(limite.getMonth() + 1).padStart(2, "0");
-  const dia = String(limite.getDate()).padStart(2, "0");
-  return `${limite.getFullYear()}-${mes}-${dia}`;
+export function fechaMaximaNacimiento(hoy = DateTime.now()) {
+  return hoy.minus({years: EDAD_MINIMA}).toISODate();
 }
 
 export const fechaNacimientoSchema = z
   .string()
   .min(1, {message: "La fecha es obligatoria"})
-  .refine((valor) => valor <= fechaMaximaNacimiento(), {message: `Debes ser mayor de ${EDAD_MINIMA} años`});
+  .refine((valor) => DateTime.fromISO(valor).isValid, {message: "Selecciona una fecha válida"})
+  .refine((valor) => DateTime.fromISO(valor).startOf("day") <= DateTime.now().minus({years: EDAD_MINIMA}).startOf("day"), {
+    message: `Debes ser mayor de ${EDAD_MINIMA} años`,
+  });
 
 export const generoSchema = z.enum(GENEROS, {message: "Selecciona una opción"});
 

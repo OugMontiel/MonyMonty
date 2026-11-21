@@ -4,6 +4,7 @@
  */
 import {ref, computed} from "vue";
 import {Icon} from "@iconify/vue";
+import {DateTime} from "luxon";
 
 import logo from "../../../assets/img/MonyMontySinFondo3.png";
 import PasosRegistro from "./PasosRegistro.vue";
@@ -32,7 +33,7 @@ const tarjetas = computed(() =>
 const elegido = computed(() => PLANES_REGISTRO.find((p) => p.id === plan.value));
 
 // Fecha en la que termina la prueba gratis de los planes de pago
-const finDePrueba = new Date(Date.now() + TRIAL_DIAS * 24 * 60 * 60 * 1000).toLocaleDateString("es-CO", {day: "numeric", month: "long"});
+const finDePrueba = DateTime.now().plus({days: TRIAL_DIAS}).setLocale("es-CO").toLocaleString({day: "numeric", month: "long"});
 
 const textoBoton = computed(() =>
   elegido.value.gratis ? "Crear mi cuenta gratis" : `Probar ${elegido.value.nombre} ${TRIAL_DIAS} días gratis`

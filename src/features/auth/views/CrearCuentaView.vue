@@ -12,6 +12,7 @@ import {ref, reactive, computed} from "vue";
 import {useRouter} from "vue-router";
 import {useToast} from "primevue/usetoast";
 import {Icon} from "@iconify/vue";
+import {DateTime} from "luxon";
 
 import {useAuth} from "../logic/useAuth.js";
 import {useLoadingStore} from "../../../stores/contexto/loadingStore";
@@ -118,7 +119,7 @@ async function crearCuenta() {
     const result = await CrearUsuario({
       nombre: form.nombre.trim(),
       apellido: form.apellido.trim(),
-      fechaNacimiento: new Date(`${form.fechaNacimiento}T00:00:00`),
+      fechaNacimiento: DateTime.fromISO(form.fechaNacimiento).toJSDate(),
       genero: form.genero,
       email: form.email.trim(),
       password: form.clave,
