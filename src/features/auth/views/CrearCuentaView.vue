@@ -128,7 +128,7 @@ async function crearCuenta() {
 
     if (result?.success) {
       toast.add({severity: "success", summary: "Éxito", detail: result.message || "Se ha creado el Usuario.", life: 4500});
-      router.push("/");
+      void router.push("/");
     } else {
       toast.add({severity: "error", summary: "Error", detail: result?.error || "Error en Crear Cuenta", life: 4500});
     }
@@ -214,19 +214,22 @@ async function crearCuenta() {
         <div class="field" role="radiogroup" aria-labelledby="registro-genero">
           <span id="registro-genero" class="flabel">Género</span>
           <div class="row" style="flex-wrap: wrap; gap: 8px">
-            <button
+            <label
               v-for="g in GENEROS"
               :key="g"
-              type="button"
-              role="radio"
               class="chip"
               :class="{'is-on': form.genero === g}"
-              :aria-checked="form.genero === g"
-              @click="form.genero = g"
-              @blur="marcar('genero')"
             >
+              <input
+                v-model="form.genero"
+                type="radio"
+                name="registro-genero"
+                :value="g"
+                :aria-invalid="Boolean(error('genero'))"
+                @blur="marcar('genero')"
+              />
               {{ g }}
-            </button>
+            </label>
           </div>
           <MensajeError :texto="error('genero')" />
         </div>
