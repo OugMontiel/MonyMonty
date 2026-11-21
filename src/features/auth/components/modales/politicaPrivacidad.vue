@@ -52,7 +52,9 @@ onBeforeUnmount(() => {
               <h2 id="privacidad-titulo" class="t-h2">Tu privacidad, en corto</h2>
               <p class="t-sm muted">Lo esencial en 30 segundos. Última actualización: {{ ACTUALIZADO }}.</p>
             </div>
-            <button type="button" class="x" aria-label="Cerrar" @click="cerrar"><Icon icon="ion:close-outline" :width="20" :height="20" /></button>
+            <button type="button" class="x" aria-label="Cerrar" @click="cerrar">
+              <Icon icon="ion:close-outline" :width="20" :height="20" />
+            </button>
           </div>
 
           <div class="modal-b" style="overflow: auto">
@@ -81,7 +83,9 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="modal-f">
-            <button type="button" class="btn primary" @click="cerrar"><Icon icon="ion:checkmark-outline" :width="18" :height="18" />Entendido</button>
+            <button type="button" class="btn primary" @click="cerrar">
+              <Icon icon="ion:checkmark-outline" :width="18" :height="18" />Entendido
+            </button>
           </div>
         </div>
       </div>

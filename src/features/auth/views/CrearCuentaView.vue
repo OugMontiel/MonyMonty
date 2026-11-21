@@ -215,12 +215,7 @@ async function crearCuenta() {
         <div class="field" role="radiogroup" aria-labelledby="registro-genero">
           <span id="registro-genero" class="flabel">Género</span>
           <div class="row" style="flex-wrap: wrap; gap: 8px">
-            <label
-              v-for="g in GENEROS"
-              :key="g"
-              class="chip"
-              :class="{'is-on': form.genero === g}"
-            >
+            <label v-for="g in GENEROS" :key="g" class="chip" :class="{'is-on': form.genero === g}">
               <input
                 v-model="form.genero"
                 type="radio"
